@@ -1,0 +1,1579 @@
+/**
+ * SCORY — hub.css
+ * Styles du hub character-select + rubriques stubs.
+ *
+ * Architecture :
+ *  1. Reset + base
+ *  2. Background ambient (grid, scanlines, vignette)
+ *  3. Brand (haut) + footer (bas)
+ *  4. Hub : roue rotative + nœuds + slot actif + bouton entrer
+ *  5. Rubriques : layout commun (back, head, body)
+ *  6. Transitions router (enter/leave)
+ *  7. Hint clavier
+ *  8. Responsive
+ */
+
+/* ==========================================================================
+   1. Reset + base
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { overflow-x: clip; -webkit-font-smoothing: antialiased; }
+
+:root {
+  /* === DYG ACTIVISION DESIGN LANGUAGE (palette officielle DYG) === */
+  --bg: #09090B;
+  --bg-elev: #111113;
+  --bg-elev-2: #1A1A1F;
+  --bg-glass: rgba(17, 17, 19, 0.8);
+
+  --text: #FAFAFA;
+  --text-dim: #71717A;
+  --text-faint: #3F3F46;
+
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(255, 255, 255, 0.12);
+
+  /* Brand DYG : primary orange + accent jaune */
+  --dyg-primary: #E8620A;
+  --dyg-accent-yellow: #F5C542;
+
+  /* Accent dynamique : mis a jour par le wheel selon la rubrique active.
+     Couleurs = archetypes DYG. */
+  --accent: var(--dyg-primary);
+  --accent-rgb: 232, 98, 10;
+
+  /* Fonts DYG : Bebas Neue (display condensé uppercase) + Inter (body) */
+  --font-display: "Bebas Neue", "Syne", system-ui, sans-serif;
+  --font-body: "Inter", "DM Sans", -apple-system, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+
+  /* Spacing DYG (4px base) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* Radius DYG */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Cercle GEANT pour effet Soul Calibur : seule la moitie haute visible,
+     centre positionne au bord bas de l'ecran. */
+  --wheel-size: min(105vmin, 1100px);
+  --wheel-radius: calc(var(--wheel-size) / 2);
+  --node-size: 96px;
+
+  /* Anim lente type "temps reel" — on voit chaque nœud glisser sur le rail */
+  --wheel-anim-duration: 1.4s;
+  --wheel-anim-ease: cubic-bezier(0.16, 1, 0.3, 1); /* easing DYG signature */
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-aggressive: cubic-bezier(0.22, 0.68, 0, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: clip;
+  /* Transition globale de l'accent : quand --accent change, glow et glitch suivent */
+  transition: background-color 0.6s var(--ease-smooth);
+}
+
+/* HUB (page index) = menu plein viewport, AUCUN scroll de la page. La molette
+   est interceptee par la roue et fait tourner les rubriques. */
+body.is-hub {
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  overscroll-behavior: none;
+}
+
+body.is-hub .app-root {
+  padding: 0;
+  min-height: 0;
+  height: 100vh;
+  height: 100dvh;
+}
+
+/* Scroll-track inutile en mode "molette intercepte" — toujours cache */
+.hub-scroll-track { display: none; }
+
+/* Selection text : style DYG */
+::selection {
+  background: rgba(var(--accent-rgb), 0.25);
+  color: var(--text);
+}
+
+/* Scrollbar minimal DYG (visible uniquement sur les rubriques scrollables) */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* Focus visible style DYG : outline 2px accent */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   2. Background ambient
+   ========================================================================== */
+
+/* Canvas orbes DYG (positionne en arriere-plan absolu) */
+.page-orbs {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Canvas billes DYG : invisible par defaut, garde pour usage futur sur
+   d'autres rubriques (actuellement aucune ne l'active vu la nouvelle
+   direction "minimaliste sur apprentissage"). */
+.dyg-bubbles {
+  position: fixed;
+  top: 100%;
+  left: 50%;
+  width: var(--wheel-size);
+  height: var(--wheel-size);
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-out);
+}
+
+/* En meme temps, on assombrit le rail accent du cercle pour laisser la place
+   aux billes (le visuel central devient les billes DYG, pas l'anneau). */
+/* Sur la rubrique apprentissage : SEUL l'anneau exterieur reste visible.
+   On vire les graduations + l'arc lumineux + les billes pour donner une
+   ambiance minimale orange DYG (un cercle de couleur, point). */
+body.is-rubrique-apprentissage .hub__wheel::before,
+body.is-rubrique-apprentissage .hub__wheel::after {
+  opacity: 0;
+}
+
+/* Override du background : SEUL l'anneau exterieur, plus marque (opacite x2),
+   au lieu des deux anneaux (exterieur + interieur). */
+body.is-rubrique-apprentissage .hub__wheel {
+  background: radial-gradient(
+    circle at center,
+    transparent 0,
+    transparent calc(var(--wheel-radius) - 3px),
+    rgba(var(--accent-rgb), 0.6) calc(var(--wheel-radius) - 3px),
+    rgba(var(--accent-rgb), 0.6) calc(var(--wheel-radius)),
+    transparent calc(var(--wheel-radius))
+  );
+  box-shadow: 0 0 80px rgba(var(--accent-rgb), 0.15);
+}
+
+/* Les billes DYG aussi disparaissent sur la rubrique apprentissage : on
+   garde l'esthetique minimale "un cercle". */
+body.is-rubrique-apprentissage .dyg-bubbles {
+  opacity: 0;
+}
+
+.hub__wheel,
+.hub__wheel::before,
+.hub__wheel::after {
+  transition: opacity 0.9s var(--ease-out), background 0.9s var(--ease-out),
+              box-shadow 0.9s var(--ease-out);
+}
+
+.bg-grid {
+  position: fixed; inset: 0; z-index: 1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.bg-scanlines {
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0,
+    transparent 3px,
+    rgba(255, 255, 255, 0.012) 3px,
+    rgba(255, 255, 255, 0.012) 4px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+.bg-vignette {
+  position: fixed; inset: 0; z-index: 3;
+  pointer-events: none;
+  /* Vignette plus marquee pour DYG : centre transparent, bords noir profond */
+  background:
+    radial-gradient(ellipse at center, transparent 35%, var(--bg) 90%),
+    linear-gradient(to top, var(--bg) 0%, transparent 40%);
+}
+
+/* Halo accent dynamique en arriere-plan — discret, par dessus les orbes */
+body::before {
+  content: "";
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 50vmax 50vmax at 50% 50%,
+    rgba(var(--accent-rgb), 0.06) 0%,
+    transparent 60%
+  );
+  transition: background 0.8s var(--ease-out);
+}
+
+/* ==========================================================================
+   3. Brand (haut) + footer (bas)
+   ========================================================================== */
+
+.brand {
+  position: fixed; top: var(--space-lg); left: var(--space-lg);
+  z-index: 50;
+  display: flex; align-items: center; gap: var(--space-sm);
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+.brand__mark {
+  display: inline-grid; place-items: center;
+  width: 36px; height: 36px;
+  background: var(--bg-elev);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.15);
+  transition: all var(--wheel-anim-duration) var(--ease-out);
+}
+
+.brand__name {
+  font-size: 1.3rem;
+  font-family: var(--font-display);
+  color: var(--text);
+  letter-spacing: 0.14em;
+  line-height: 1;
+}
+
+.brand__sub {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-left: var(--space-sm);
+  padding-left: var(--space-sm);
+  border-left: 1px solid var(--color-border);
+}
+
+.brand-footer {
+  position: fixed; bottom: var(--space-md); right: var(--space-lg);
+  z-index: 50;
+  display: flex; gap: var(--space-sm);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   4. Hub : roue rotative + nœuds + slot actif
+   ========================================================================== */
+
+.app-root {
+  position: relative; z-index: 10;
+  min-height: 100vh; min-height: 100dvh;
+  /* Pour les pages rubriques on garde le centrage. Le hub override avec son
+     propre layout absolu plein viewport. */
+  display: grid; place-items: center;
+  padding: 80px 24px 120px;
+}
+
+/* Le HUB sort du flow normal de .app-root pour occuper tout le viewport :
+   on a besoin du bord bas exact pour positionner le centre du cercle dessus. */
+.hub {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none; /* les enfants (wheel/slot) re-activent leurs events */
+}
+
+.hub > * { pointer-events: auto; }
+
+/* La roue : conteneur circulaire ENORME, centre du cercle sur le bord BAS
+   de l'ecran. Seule la moitie HAUTE est visible, comme un dome qui jaillit
+   du sol. Effet Soul Calibur. */
+.hub__wheel {
+  position: absolute;
+  left: 50%; top: 100%;
+  width: var(--wheel-size); height: var(--wheel-size);
+  transform: translate(-50%, -50%); /* centre du cercle = pile sur le bord bas */
+  border-radius: 50%;
+  /* Le RAIL statique : trace fine de l'anneau (ne tourne pas).
+     Plus une serie de graduations (tirets) en background pour bien voir
+     que c'est les nœuds qui glissent, pas le cercle. */
+  background:
+    /* Anneau exterieur fin */
+    radial-gradient(
+      circle at center,
+      transparent 0,
+      transparent calc(var(--wheel-radius) - 2px),
+      rgba(var(--accent-rgb), 0.35) calc(var(--wheel-radius) - 2px),
+      rgba(var(--accent-rgb), 0.35) calc(var(--wheel-radius) - 1px),
+      transparent calc(var(--wheel-radius) - 1px)
+    ),
+    /* Anneau interieur, decalé de 20px */
+    radial-gradient(
+      circle at center,
+      transparent 0,
+      transparent calc(var(--wheel-radius) - 22px),
+      rgba(var(--accent-rgb), 0.12) calc(var(--wheel-radius) - 22px),
+      rgba(var(--accent-rgb), 0.12) calc(var(--wheel-radius) - 21px),
+      transparent calc(var(--wheel-radius) - 21px)
+    );
+  transition: background 1s var(--ease-smooth);
+  cursor: grab;
+}
+
+.hub__wheel:active { cursor: grabbing; }
+
+/* Graduations sur le cercle : tirets fins. Le rail tourne EN BOUCLE en
+   permanence (auto-spin lent) pour le cote vivant — independant du scroll
+   qui pilote les nœuds. */
+.hub__wheel::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  /* 40 tirets en conic-gradient */
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(var(--accent-rgb), 0.18) 0deg 0.5deg,
+      transparent 0.5deg 9deg
+    );
+  mask: radial-gradient(
+    circle at center,
+    transparent calc(var(--wheel-radius) - 12px),
+    black calc(var(--wheel-radius) - 12px) calc(var(--wheel-radius) - 2px),
+    transparent calc(var(--wheel-radius) - 2px)
+  );
+  -webkit-mask: radial-gradient(
+    circle at center,
+    transparent calc(var(--wheel-radius) - 12px),
+    black calc(var(--wheel-radius) - 12px) calc(var(--wheel-radius) - 2px),
+    transparent calc(var(--wheel-radius) - 2px)
+  );
+  pointer-events: none;
+  animation: hub-rail-spin 32s linear infinite;
+}
+
+/* Arc lumineux qui circule autour du rail — c'est lui qui rend l'auto-spin
+   visible (les graduations seules sont symétriques donc imperceptibles). */
+.hub__wheel::after {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    rgba(var(--accent-rgb), 0.5) 320deg,
+    rgba(var(--accent-rgb), 0.9) 350deg,
+    rgba(var(--accent-rgb), 0.5) 360deg
+  );
+  mask: radial-gradient(
+    circle at center,
+    transparent calc(var(--wheel-radius) - 3px),
+    black calc(var(--wheel-radius) - 3px) calc(var(--wheel-radius) - 1px),
+    transparent calc(var(--wheel-radius) - 1px)
+  );
+  -webkit-mask: radial-gradient(
+    circle at center,
+    transparent calc(var(--wheel-radius) - 3px),
+    black calc(var(--wheel-radius) - 3px) calc(var(--wheel-radius) - 1px),
+    transparent calc(var(--wheel-radius) - 1px)
+  );
+  pointer-events: none;
+  animation: hub-rail-spin 18s linear infinite reverse;
+  filter: blur(1px);
+  transition: background 1s var(--ease-out);
+}
+
+@keyframes hub-rail-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* SEULS les nœuds tournent. Le rail (cercle + graduations) reste fixe. */
+.hub__wheel-rotate {
+  position: absolute; inset: 0;
+  --rotation: 0deg;
+  transform: rotate(var(--rotation));
+  transition: transform var(--wheel-anim-duration) var(--wheel-anim-ease);
+  will-change: transform;
+}
+
+/* Marqueur du slot : pointe en HAUT du cercle (au sommet visible) puisque le
+   nœud actif est maintenant au sommet, pas en bas. */
+.hub__marker {
+  position: absolute;
+  left: 50%; top: calc(50% - var(--wheel-radius) - 24px);
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 16px solid var(--accent);
+  filter: drop-shadow(0 0 12px rgba(var(--accent-rgb), 0.7));
+  z-index: 5;
+  transition: border-bottom-color 1s var(--ease-smooth);
+}
+
+/* Nœuds : positionnes par CSS via custom property --node-angle (degres) */
+.hub__node {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: var(--node-size); height: var(--node-size);
+  /* Translate vers le rayon puis on contre-rotate le contenu pour qu'il reste droit */
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--node-angle))
+    translateY(calc(-1 * var(--wheel-radius)))
+    rotate(calc(-1 * var(--node-angle)));
+  display: grid; place-items: center;
+  cursor: pointer;
+  user-select: none;
+  /* Contre-rotation de la rotation du parent */
+  --parent-rotation: 0deg;
+}
+
+/* Le contenu du nœud : pastille glyph + nom abrege */
+.hub__node-inner {
+  display: grid; place-items: center;
+  width: 100%; height: 100%;
+  background: var(--bg-elev);
+  border: 1px solid rgba(var(--node-rgb, 245, 242, 255), 0.18);
+  border-radius: 50%;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 0.5rem;
+  transition: all 0.4s var(--ease-smooth);
+  position: relative;
+}
+
+.hub__node-glyph {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--text-dim);
+  margin-bottom: 0.15rem;
+  transition: all 0.4s var(--ease-smooth);
+}
+
+.hub__node-label {
+  display: block;
+  font-size: 0.6rem;
+  opacity: 0.8;
+  line-height: 1.1;
+}
+
+/* Nœud actif : agrandi, halo accent, glyph couleur. Transition matchee
+   sur la duree de rotation pour que le scale-up arrive en meme temps que
+   le nœud rejoint le sommet. */
+.hub__node.is-active .hub__node-inner {
+  transform: scale(1.32);
+  border-color: rgba(var(--node-rgb), 1);
+  box-shadow:
+    0 0 0 4px rgba(var(--node-rgb), 0.12),
+    0 0 40px rgba(var(--node-rgb), 0.5),
+    inset 0 0 24px rgba(var(--node-rgb), 0.1);
+  color: var(--text);
+  background: linear-gradient(
+    160deg,
+    var(--bg-elev) 0%,
+    rgba(var(--node-rgb), 0.06) 100%
+  );
+}
+
+.hub__node.is-active .hub__node-glyph {
+  color: rgb(var(--node-rgb));
+  text-shadow: 0 0 20px rgba(var(--node-rgb), 0.8);
+  transform: scale(1.1);
+}
+
+.hub__node:hover .hub__node-inner {
+  border-color: rgba(var(--node-rgb), 0.6);
+  color: var(--text);
+}
+
+/* Match l'easing global du wheel pour que le scale du nœud actif glisse
+   avec la rotation, pas en stop-motion. */
+.hub__node-inner,
+.hub__node-glyph {
+  transition: all var(--wheel-anim-duration) var(--wheel-anim-ease);
+}
+
+/* Slot actif : centre HAUT de l'ecran (puisque le nœud actif est au sommet
+   du cercle, et le cercle remplit le bas). Bien aere, titre XXL respire. */
+.hub__slot {
+  position: absolute;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: min(720px, 92vw);
+  pointer-events: auto;
+}
+
+.hub__slot-kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+  transition: color 0.6s var(--ease-smooth);
+}
+
+.hub__slot-kicker::before,
+.hub__slot-kicker::after {
+  content: "";
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.hub__slot-num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.hub__slot-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5.5vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin: 0.2rem 0 0.5rem;
+  color: var(--text);
+  text-transform: uppercase;
+  /* Le glitch est anime en JS sur changement d'index. min-height evite le
+     reflow vertical pendant le typewriter. */
+  min-height: 1.1em;
+}
+
+.hub__slot-tagline {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin: 0 0 1.5rem;
+  font-style: italic;
+}
+
+.hub__slot-cta {
+  display: inline-flex; align-items: center; gap: 0.8rem;
+  padding: 0.85rem 1.6rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.hub__slot-cta::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease-smooth);
+  z-index: -1;
+}
+
+.hub__slot-cta:hover {
+  color: var(--bg);
+}
+
+.hub__slot-cta:hover::before {
+  transform: scaleX(1);
+}
+
+.hub__slot-cta:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* ==========================================================================
+   5. Rubriques (pages stubs)
+   ========================================================================== */
+
+.rubrique {
+  position: relative;
+  width: 100%; max-width: 760px;
+  padding: 80px 24px 40px;
+  text-align: center;
+}
+
+.rubrique__back {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  border-radius: 2px;
+  margin-bottom: 3rem;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.rubrique__back:hover {
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: var(--accent);
+}
+
+.rubrique__head {
+  margin-bottom: 3rem;
+}
+
+.rubrique__num {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  letter-spacing: 0.18em;
+  margin-bottom: 0.6rem;
+}
+
+.rubrique__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.8rem;
+  color: var(--text);
+}
+
+.rubrique__tagline {
+  color: var(--text-dim);
+  font-style: italic;
+  margin: 0;
+}
+
+.rubrique__body {
+  background: var(--bg-elev);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
+  border-radius: 4px;
+  padding: 2.5rem 2rem;
+  text-align: left;
+}
+
+.rubrique__placeholder {
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin: 0 0 1.5rem;
+}
+
+.rubrique__placeholder strong {
+  color: var(--accent);
+}
+
+.rubrique__cta {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  padding: 0.8rem 1.4rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.rubrique__cta:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ==========================================================================
+   5a-bis. Rubrique PROJETS — character select fighting game
+   ========================================================================== */
+
+.char-select {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-3xl) var(--space-lg) var(--space-lg);
+  gap: var(--space-lg);
+}
+
+.char-select__back {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  z-index: 4;
+  display: inline-flex; align-items: center; gap: var(--space-sm);
+  padding: 0.6rem 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s var(--ease-out);
+}
+
+.char-select__back:hover {
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: var(--accent);
+}
+
+.char-select__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+  margin-top: var(--space-lg);
+}
+
+.char-select__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transition: color 0.5s var(--ease-out);
+}
+
+.char-select__heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--text);
+}
+
+.char-select__counter {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.12em;
+}
+
+/* === Zone principale : portrait + fiche === */
+
+.char-select__main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+  min-height: 0;
+}
+
+.char-select__portrait-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.char-select__portrait {
+  position: relative;
+  width: min(380px, 38vw);
+  aspect-ratio: 3 / 4;
+  background: var(--bg-elev);
+  border: 1px solid rgba(var(--accent-rgb), 0.45);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 4px rgba(var(--accent-rgb), 0.08),
+    0 0 60px rgba(var(--accent-rgb), 0.25);
+  transition: border-color 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+
+.char-select__portrait-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.char-select__portrait-glyph {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 14vw, 11rem);
+  color: rgba(var(--accent-rgb), 0.85);
+  text-shadow: 0 0 60px rgba(var(--accent-rgb), 0.5);
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(var(--accent-rgb), 0.12), transparent 70%);
+  transition: color 0.5s var(--ease-out);
+}
+
+/* Ligne de scan qui balaye le portrait — touche arcade */
+.char-select__portrait-scan {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(var(--accent-rgb), 0.10) 48%,
+    rgba(var(--accent-rgb), 0.18) 50%,
+    rgba(var(--accent-rgb), 0.10) 52%,
+    transparent 100%
+  );
+  background-size: 100% 220%;
+  animation: cs-scanline 3.4s linear infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+@keyframes cs-scanline {
+  from { background-position: 0 -120%; }
+  to   { background-position: 0 120%; }
+}
+
+.char-select__name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: var(--space-sm) 0 0;
+  color: var(--text);
+  line-height: 1;
+  min-height: 1.1em;
+  text-align: center;
+}
+
+.char-select__role {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+  transition: color 0.5s var(--ease-out);
+}
+
+/* === Fiche stats === */
+
+.char-select__sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  background: var(--bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Barre accent en haut de la fiche, comme la tj-result-card DYG */
+.char-select__sheet::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 20px var(--accent);
+  transition: background 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out);
+}
+
+.char-select__stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.char-select__stat--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.char-select__stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.char-select__problem {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.char-select__stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.char-select__chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  border-radius: 9999px;
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.08);
+  transition: all 0.5s var(--ease-out);
+}
+
+.char-select__duration {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.char-select__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 0.9rem 1.4rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s var(--ease-out);
+  z-index: 0;
+}
+
+.char-select__cta::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  z-index: -1;
+}
+
+.char-select__cta:hover { color: var(--bg); }
+.char-select__cta:hover::before { transform: scaleX(1); }
+
+/* === Roster en bas : grille type DBZ Budokai === */
+
+.char-select__roster {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 76px));
+  justify-content: center;
+  gap: 6px;
+  /* Cadre de grille arcade : fond + bordure */
+  padding: 10px;
+  background: rgba(17, 17, 19, 0.7);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  width: fit-content;
+  margin: 0 auto;
+  backdrop-filter: blur(8px);
+}
+
+.char-select__tile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg-elev);
+  background-size: cover;
+  background-position: center top;
+  border: 1px solid rgba(var(--tile-rgb), 0.35);
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-out);
+  display: grid;
+  place-items: center;
+  filter: grayscale(0.5) brightness(0.8);
+}
+
+/* Slot verrouille "?" : remplit la grille comme les persos a debloquer */
+.char-select__tile--locked {
+  cursor: default;
+  pointer-events: none;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 6px,
+      rgba(255, 255, 255, 0.02) 6px 12px
+    ),
+    var(--bg-elev);
+  filter: none;
+}
+
+.char-select__tile--locked .char-select__tile-glyph {
+  color: var(--text-faint);
+  font-size: 1.4rem;
+}
+
+.char-select__tile.has-img::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(9, 9, 11, 0.7), transparent 60%);
+}
+
+.char-select__tile-glyph {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: rgba(var(--tile-rgb), 0.9);
+  z-index: 1;
+}
+
+.char-select__tile-num {
+  position: absolute;
+  bottom: 4px; right: 7px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  z-index: 2;
+}
+
+.char-select__tile:hover {
+  filter: grayscale(0) brightness(1);
+  border-color: rgba(var(--tile-rgb), 0.7);
+  transform: translateY(-3px);
+}
+
+.char-select__tile.is-active {
+  filter: grayscale(0) brightness(1.05);
+  border-color: rgb(var(--tile-rgb));
+  box-shadow:
+    0 0 0 3px rgba(var(--tile-rgb), 0.18),
+    0 0 26px rgba(var(--tile-rgb), 0.45);
+  transform: scale(1.12);
+  z-index: 1;
+}
+
+/* Curseur de selection clignotant sur la tuile active — pur arcade */
+.char-select__tile.is-active::before {
+  content: "";
+  position: absolute; inset: 0;
+  border: 2px solid rgb(var(--tile-rgb));
+  border-radius: 4px;
+  animation: cs-cursor-blink 0.9s steps(2, start) infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+@keyframes cs-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+/* === Manifestation : le projet "pop" en grand au select === */
+
+.char-select__portrait-zone.is-manifesting .char-select__portrait {
+  animation: cs-manifest 0.55s var(--ease-out) both;
+}
+
+.char-select__portrait-zone.is-manifesting .char-select__name {
+  animation: cs-name-slam 0.45s var(--ease-aggressive) 0.08s both;
+}
+
+.char-select__portrait-zone.is-manifesting .char-select__role {
+  animation: cs-fade-up 0.4s var(--ease-out) 0.18s both;
+}
+
+/* Flash accent au moment de la manifestation */
+.char-select__portrait::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: rgba(var(--accent-rgb), 0.55);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.char-select__portrait-zone.is-manifesting .char-select__portrait::after {
+  animation: cs-flash 0.5s var(--ease-out) both;
+}
+
+@keyframes cs-manifest {
+  0%   { transform: scale(0.78) translateY(26px); opacity: 0; filter: blur(10px) brightness(2); }
+  55%  { transform: scale(1.04) translateY(-4px); opacity: 1; filter: blur(0) brightness(1.25); }
+  100% { transform: scale(1) translateY(0); filter: blur(0) brightness(1); }
+}
+
+@keyframes cs-name-slam {
+  0%   { transform: scale(1.6); opacity: 0; letter-spacing: 0.3em; }
+  60%  { transform: scale(0.96); opacity: 1; }
+  100% { transform: scale(1); letter-spacing: 0.06em; }
+}
+
+@keyframes cs-fade-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes cs-flash {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* La fiche stats re-pop aussi, plus discret */
+.char-select__sheet.is-manifesting {
+  animation: cs-fade-up 0.4s var(--ease-out) 0.15s both;
+}
+
+.char-select__hint {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .char-select__main {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+  .char-select__portrait { width: min(260px, 60vw); }
+  .char-select__header { flex-direction: column; gap: var(--space-xs); align-items: center; }
+  .char-select__roster { grid-template-columns: repeat(5, minmax(0, 60px)); }
+  .char-select__hint { display: none; }
+}
+
+/* ==========================================================================
+   5b. Rubrique APPRENTISSAGE — copie fidele du hero DYG (tj-hero)
+   ========================================================================== */
+
+.tj-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.tj-hero__back {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  z-index: 4;
+  display: inline-flex; align-items: center; gap: var(--space-sm);
+  padding: 0.6rem 1rem;
+  color: var(--dyg-primary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(232, 98, 10, 0.3);
+  border-radius: var(--radius-sm);
+  transition: all 0.3s var(--ease-out);
+}
+
+.tj-hero__back:hover {
+  background: rgba(232, 98, 10, 0.1);
+  border-color: var(--dyg-primary);
+}
+
+.tj-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 30%, var(--bg) 80%),
+    linear-gradient(to top, var(--bg) 0%, transparent 40%);
+}
+
+.tj-hero__center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-lg);
+  max-width: 600px;
+  width: 100%;
+}
+
+.tj-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 18vw, 10rem);
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 0.15em;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  animation: tj-hero-fade-up 0.6s var(--ease-out) 0.1s both;
+}
+
+/* Petit "alpha" cursive a droite du titre, comme dans DYG */
+.tj-hero__alpha {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Caveat", cursive, system-ui;
+  font-size: 9px;
+  font-weight: 300;
+  color: #EF4444;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.tj-hero__alpha > span {
+  display: inline-block;
+  animation: tj-alpha-wave 1.8s ease-in-out infinite;
+}
+
+.tj-hero__alpha > span:nth-child(1) { animation-delay: 0s; }
+.tj-hero__alpha > span:nth-child(2) { animation-delay: 0.12s; }
+.tj-hero__alpha > span:nth-child(3) { animation-delay: 0.24s; }
+.tj-hero__alpha > span:nth-child(4) { animation-delay: 0.36s; }
+.tj-hero__alpha > span:nth-child(5) { animation-delay: 0.48s; }
+
+@keyframes tj-alpha-wave {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-1.5px) rotate(1.5deg); }
+}
+
+.tj-hero__subtitle {
+  font-size: 1.25rem;
+  color: var(--text);
+  line-height: 1.4;
+  max-width: 480px;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  animation: tj-hero-fade-up 0.6s var(--ease-out) 0.2s both;
+}
+
+.tj-hero__desc {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  max-width: 480px;
+  text-align: center;
+  margin: 0;
+  animation: tj-hero-fade-up 0.6s var(--ease-out) 0.3s both;
+}
+
+.tj-hero__scan {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  animation: tj-hero-fade-up 0.6s var(--ease-out) 0.35s both;
+}
+
+.tj-hero__scan-row {
+  display: flex;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 480px;
+}
+
+.tj-hero__input {
+  flex: 1;
+  padding: 14px var(--space-lg);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  color: var(--text);
+  background: var(--bg-elev);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 52px;
+}
+
+.tj-hero__input::placeholder {
+  color: var(--text-faint);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+}
+
+.tj-hero__input:focus {
+  border-color: var(--dyg-primary);
+  box-shadow:
+    0 0 0 4px rgba(232, 98, 10, 0.15),
+    0 0 40px rgba(232, 98, 10, 0.15);
+}
+
+/* btn-primary porte de DYG (outline + barre qui s'allonge au hover) */
+.tj-hero__scan-btn {
+  align-items: center;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  outline: 0;
+  border: 1px solid var(--dyg-primary);
+  padding: 14px var(--space-lg);
+  min-width: 140px;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s var(--ease-out);
+}
+
+.tj-hero__scan-btn::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: var(--dyg-primary);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease-out);
+  z-index: -1;
+}
+
+.tj-hero__scan-btn:hover::before { transform: scaleX(1); }
+.tj-hero__scan-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tj-hero__error {
+  font-size: 0.8125rem;
+  color: #EF4444;
+  margin: 0;
+}
+
+.tj-hero__free-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+  padding: 4px 12px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 9999px;
+  position: relative;
+}
+
+.tj-hero__free-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  animation: tj-free-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tj-free-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.tj-hero__progress {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.tj-hero__bar {
+  height: 5px;
+  background: var(--bg-elev);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.tj-hero__bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--dyg-primary), var(--dyg-accent-yellow));
+  border-radius: 3px;
+  transition: width 0.4s var(--ease-out);
+}
+
+.tj-hero__step {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin: 0;
+}
+
+@keyframes tj-hero-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   6. Transitions router
+   ========================================================================== */
+
+.app-root {
+  transition: opacity 0.3s var(--ease-smooth), filter 0.3s var(--ease-smooth);
+}
+
+.app-root.is-leaving {
+  opacity: 0;
+  filter: blur(8px);
+}
+
+.app-root.is-entering {
+  opacity: 0;
+  filter: blur(8px);
+  animation: enter 0.4s var(--ease-smooth) forwards;
+}
+
+@keyframes enter {
+  to { opacity: 1; filter: blur(0); }
+}
+
+/* ==========================================================================
+   7. Hint clavier
+   ========================================================================== */
+
+.kbd-hint {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: rgba(7, 6, 10, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  animation: hint-fade 8s ease forwards;
+  pointer-events: none;
+}
+
+.kbd-hint.is-hidden {
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-smooth);
+}
+
+@keyframes hint-fade {
+  0%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.kbd {
+  display: inline-grid; place-items: center;
+  min-width: 1.6rem; height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(var(--accent-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-rgb), 0.3);
+  border-radius: 2px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.kbd-sep {
+  color: var(--text-faint);
+  margin: 0 0.2rem;
+}
+
+/* ==========================================================================
+   8. Responsive
+   ========================================================================== */
+
+@media (max-width: 720px) {
+  :root {
+    --wheel-size: min(140vmin, 600px);
+    --wheel-radius: calc(var(--wheel-size) / 2);
+    --node-size: 72px;
+  }
+
+  .brand__sub { display: none; }
+
+  .hub__slot { top: 8vh; }
+  .hub__slot-title { font-size: clamp(1.8rem, 9vw, 2.6rem); }
+  .hub__slot-tagline { font-size: 0.85rem; padding: 0 1rem; }
+
+  /* Le bouton entrer reste touch-friendly */
+  .hub__slot-cta { padding: 1rem 1.4rem; }
+
+  /* Hint discret en bas pour ne pas masquer le cercle */
+  .kbd-hint { font-size: 0.6rem; gap: 0.3rem; padding: 0.4rem 0.7rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

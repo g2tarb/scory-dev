@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // On entre toujours en HAUT du portfolio (pas de restauration de scroll).
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      window.scrollTo(0, 0);
+      addEventListener('load', () => window.scrollTo(0, 0));
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#07060a" />
+    <meta name="color-scheme" content="dark" />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="description" content="SCORY — Developpeur web freelance specialise en creation de sites sur mesure, SaaS et experiences immersives. Portfolio interactif Three.js. Devis gratuit en ligne. Paris, France." />
+    <meta name="keywords" content="developpeur freelance, creation site internet, site sur mesure, SaaS, Three.js, portfolio, design web, Paris, France, GSAP, WebGL, experience immersive, devis gratuit, fullstack, javascript, react, node.js" />
+    <meta name="author" content="Scory" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta property="og:title" content="SCORY — Developpeur Freelance | Sites Sur Mesure & Experiences Immersives" />
+    <meta property="og:description" content="Creation de sites web sur mesure, SaaS et experiences immersives Three.js. 5+ projets livres, 100% satisfaction. Devis gratuit en ligne." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SCORY" />
+    <meta property="og:image" content="https://scory.dev/univers/image/mediascory.webp" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SCORY — Portfolio interactif concu comme un musee digital" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SCORY — Developpeur Freelance | Sites Sur Mesure" />
+    <meta name="twitter:description" content="Creation de sites web sur mesure, SaaS et experiences immersives. Devis gratuit en ligne." />
+    <meta name="twitter:image" content="https://scory.dev/univers/image/mediascory.webp" />
+    <meta name="twitter:image:alt" content="SCORY — Portfolio musee digital" />
+    <link rel="canonical" href="https://scory.dev/univers/" />
+    <link rel="alternate" hreflang="fr" href="https://scory.dev/univers/" />
+    <link rel="alternate" hreflang="en" href="https://scory.dev/univers/?lang=en" />
+    <link rel="alternate" hreflang="x-default" href="https://scory.dev/univers/" />
+    <meta property="og:url" content="https://scory.dev/univers/" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="geo.region" content="FR" />
+    <meta name="geo.placename" content="Paris" />
+    <title>SCORY — Developpeur Freelance | Creation Sites Sur Mesure, SaaS & Experiences Immersives</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2307060a' width='32' height='32' rx='6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' fill='%23c9a962' font-family='serif' font-size='20' font-weight='600'%3ES%3C/text%3E%3C/svg%3E" />
+    <link rel="dns-prefetch" href="https://unpkg.com" />
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="modulepreload" href="https://unpkg.com/gsap@3.12.5/index.js" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:opsz,wght@9..40,400;9..40,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Syne:wght@700&family=Playfair+Display:wght@700&family=IBM+Plex+Sans:wght@600&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=DM+Sans:opsz,wght@9..40,400;9..40,600&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Syne:wght@700&family=Playfair+Display:wght@700&family=IBM+Plex+Sans:wght@600&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet" />
+    </noscript>
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="prefetch" href="./mentions-legales.html" />
+    <link rel="stylesheet" href="./defaut.css" />
+    <style>
+      /* Critical CSS — inline pour FCP rapide */
+      *,*::before,*::after{box-sizing:border-box}
+      html{overflow-x:clip;-webkit-font-smoothing:antialiased}
+      body{margin:0;min-height:100%;background:#07060a;color:rgba(245,242,255,.92);font-family:'DM Sans',system-ui,sans-serif;overflow-x:clip}
+      .loader{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;background:#07060a}
+      .loader.is-hidden{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease,visibility .6s ease}
+      .loader__content{display:flex;flex-direction:column;align-items:center;gap:.8rem}
+      .loader__word{display:flex;gap:.15em}
+      .loader__letter{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,8vw,4.5rem);font-weight:600;letter-spacing:.08em;color:#c9a962;opacity:0;animation:li .5s ease forwards}
+      .loader__letter:nth-child(2){animation-delay:.08s}
+      .loader__letter:nth-child(3){animation-delay:.16s}
+      .loader__letter:nth-child(4){animation-delay:.24s}
+      .loader__letter:nth-child(5){animation-delay:.32s}
+      @keyframes li{0%{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+      .loader__tagline{margin:0;opacity:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(.8rem,2.2vw,1.1rem);color:rgba(245,242,255,.45);animation:ti .8s ease .6s forwards}
+      @keyframes ti{0%{opacity:0;transform:translateY(8px);letter-spacing:.2em}to{opacity:1;transform:translateY(0);letter-spacing:.08em}}
+      .loader~main,.loader~.scroll-hint,.loader~.stats-section,.loader~.process-section,.loader~.about-section,.loader~section,.loader~footer{opacity:0}
+      .loader.is-hidden~main,.loader.is-hidden~.scroll-hint,.loader.is-hidden~.stats-section,.loader.is-hidden~.process-section,.loader.is-hidden~.about-section,.loader.is-hidden~section,.loader.is-hidden~footer{opacity:1;transition:opacity .4s ease}
+      .seo-content{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;padding:0;margin:-1px}
+    </style>
+    <link rel="stylesheet" href="./styles.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="./styles.css" /></noscript>
+    <!--
+      SECURITY: Subresource Integrity (SRI) for CDN scripts
+      ======================================================
+      Import maps do not support "integrity" attributes natively (as of 2026).
+      SRI is designed for <script src="..."> tags, not import maps.
+
+      Mitigation strategy:
+      1. The Service Worker (sw.js) caches CDN responses and serves from cache,
+         reducing exposure to CDN tampering after first load.
+      2. CSP restricts script sources to specific CDN origins only.
+      3. All CDN URLs are pinned to exact versions (no @latest or ranges).
+
+      TODO: When Import Map Integrity lands in browsers (proposal stage),
+      add integrity fields here:
+        "three": { "url": "...", "integrity": "sha384-..." }
+
+      For non-import-map <script> tags, SRI would look like:
+        <script src="https://unpkg.com/gsap@3.12.5/index.js"
+                integrity="sha384-{HASH}"
+                crossorigin="anonymous"></script>
+
+      To generate hashes: curl -s URL | openssl dgst -sha384 -binary | openssl base64 -A
+    -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "gsap": "https://unpkg.com/gsap@3.12.5/index.js",
+          "lenis": "https://unpkg.com/lenis@1.1.18/dist/lenis.mjs"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Curseur custom -->
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+    <!-- Toggle langue -->
+    <button id="lang-toggle" class="lang-toggle" aria-label="Switch language">FR</button>
+
+    <!-- Toggle eco — interrupteur oval -->
+    <div id="eco-toggle" class="eco-switch" aria-label="Mode performance">
+      <div class="eco-switch__track">
+        <div class="eco-switch__knob">
+          <span class="eco-switch__symbol">I</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eco mode message -->
+    <div id="eco-message" class="eco-message"></div>
+
+    <!-- Son ambiant -->
+    <button id="sound-toggle" class="sound-toggle" aria-label="Activer le son ambiant" aria-pressed="false">
+      <svg class="sound-icon sound-icon--off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      <svg class="sound-icon sound-icon--on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    </button>
+
+    <!-- Loader -->
+    <div id="loader" class="loader" aria-hidden="true">
+      <div class="loader__content">
+        <div class="loader__word">
+          <span class="loader__letter">S</span>
+          <span class="loader__letter">C</span>
+          <span class="loader__letter">O</span>
+          <span class="loader__letter">R</span>
+          <span class="loader__letter">Y</span>
+        </div>
+        <p class="loader__tagline" id="loader-tagline" data-i18n="loader.tagline">La seule limite est votre imagination</p>
+      </div>
+    </div>
+
+    <noscript>
+      <div style="padding:3rem;text-align:center;color:#c9a962;font-family:'Cormorant Garamond',serif;font-size:1.3rem;max-width:600px;margin:0 auto;line-height:1.6;">
+        <h1 style="font-size:2.5rem;margin-bottom:1rem;letter-spacing:.08em;">SCORY</h1>
+        <p style="margin-bottom:1rem;">Developpeur web freelance — sites sur mesure &amp; experiences immersives</p>
+        <p style="color:rgba(245,242,255,.6);font-size:1rem;">
+          Ce portfolio interactif utilise JavaScript et WebGL pour une experience immersive.
+          Activez JavaScript dans votre navigateur pour y acceder.
+        </p>
+        <hr style="border:none;border-top:1px solid rgba(201,169,98,.3);margin:1.5rem auto;width:120px;">
+        <p style="color:rgba(245,242,255,.6);font-size:1rem;">
+          This interactive portfolio uses JavaScript and WebGL for an immersive experience.
+          Please enable JavaScript in your browser to access it.
+        </p>
+        <p style="margin-top:1.5rem;font-size:.95rem;">
+          <a href="mailto:contact@scory.dev" style="color:#c9a962;text-decoration:underline;">contact@scory.dev</a>
+        </p>
+      </div>
+    </noscript>
+    <a class="skip-link" href="#museum-stage" data-i18n="skip">Aller au musee</a>
+
+    <main id="museum-stage" aria-label="Scene principale SCORY">
+      <div id="neural-host" class="neural-host" aria-hidden="true"></div>
+      <div id="project-bg-host" class="project-bg-host" aria-hidden="true"></div>
+      <canvas id="particle-canvas" class="particle-canvas" aria-hidden="true"></canvas>
+      <div class="stage-vignette" aria-hidden="true"></div>
+
+      <div class="floating-brand">
+        <h1 class="floating-title glitch-text" data-text="SCORY">SCORY</h1>
+        <p class="floating-sub glitch-text" data-i18n="brand.sub" data-text="Developpeur freelance — sites sur mesure & experiences immersives">Developpeur freelance — sites sur mesure & experiences immersives</p>
+      </div>
+
+      <!-- Carrousel -->
+      <div
+        id="project-carousel"
+        class="project-carousel"
+        role="region"
+        aria-roledescription="carrousel"
+        aria-label="Projets sur disques"
+        tabindex="0"
+      >
+        <div class="project-track" id="project-track">
+          <article class="project-disc card-glass disc--meta" data-index="0" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.0.title">Portfolio Scory</span>
+              <span class="disc-meta" data-i18n="disc.0.meta">Musee digital</span>
+            </div>
+          </article>
+          <article class="project-disc card-glass" data-index="1" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.1.title">4dayvelopment</span>
+              <span class="disc-meta" data-i18n="disc.1.meta">Agence web</span>
+            </div>
+          </article>
+          <article class="project-disc card-glass" data-index="2" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.2.title">Clara Martinez</span>
+              <span class="disc-meta" data-i18n="disc.2.meta">Coaching premium</span>
+            </div>
+          </article>
+          <article class="project-disc card-glass" data-index="3" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.3.title">JIMMY</span>
+              <span class="disc-meta" data-i18n="disc.3.meta">Roman horreur dark</span>
+            </div>
+          </article>
+          <article class="project-disc card-glass" data-index="4" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.4.title">DYG</span>
+              <span class="disc-meta" data-i18n="disc.4.meta">Do Your Game</span>
+            </div>
+          </article>
+          <article class="project-disc card-glass" data-index="5" tabindex="-1">
+            <div class="disc-groove" aria-hidden="true"></div>
+            <div class="disc-label">
+              <span class="disc-title" data-i18n="disc.5.title">SecurEats</span>
+              <span class="disc-meta" data-i18n="disc.5.meta">App + Site</span>
+            </div>
+          </article>
+        </div>
+
+        <!-- Fleches -->
+        <button class="nav-arrow nav-arrow--left" id="arrow-left" aria-label="Projet precedent">
+          <span class="nav-arrow__glow" aria-hidden="true"></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="nav-arrow nav-arrow--right" id="arrow-right" aria-label="Projet suivant">
+          <span class="nav-arrow__glow" aria-hidden="true"></span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+        <!-- Hint mobile: swipe + tap — au-dessus du disque -->
+        <div class="disc-hint" id="disc-hint" aria-hidden="true">
+          <div class="disc-hint__row disc-hint__swipe">
+            <span class="disc-hint__chevron disc-hint__chevron--l">&lsaquo;</span>
+            <span class="disc-hint__label">swipez</span>
+            <span class="disc-hint__chevron disc-hint__chevron--r">&rsaquo;</span>
+          </div>
+          <div class="disc-hint__row disc-hint__tap">
+            <span class="disc-hint__dot"></span>
+            <span class="disc-hint__label">appuyez pour decouvrir</span>
+          </div>
+        </div>
+        <div class="nav-dots" id="nav-dots" role="tablist" aria-label="Navigation projets"></div>
+      </div>
+
+      <!-- Cartel -->
+      <aside class="museum-label glass-panel" id="museum-label" aria-live="polite">
+        <p class="label-kicker" data-i18n="cartel.kicker">Cartel</p>
+        <p class="label-num" id="label-num">01</p>
+        <h2 class="label-title" id="label-title">Portfolio Scory</h2>
+        <p class="label-desc" id="label-desc">Ce musee digital — le portfolio que vous explorez en ce moment.</p>
+        <div class="label-stack" id="label-stack"></div>
+      </aside>
+
+      <!-- Panneau details (clic disque) -->
+      <div id="detail-panel" class="detail-panel glass-panel" aria-hidden="true">
+        <button class="detail-panel__close" id="detail-close" aria-label="Fermer">&times;</button>
+        <div class="detail-panel__icon">🔍</div>
+        <h3 class="detail-panel__title" id="detail-title"></h3>
+        <p class="detail-panel__text" id="detail-text"></p>
+        <div class="detail-panel__stack" id="detail-stack"></div>
+        <div class="detail-panel__cta-wrap" id="detail-cta-wrap"></div>
+        <p class="detail-panel__hint" data-i18n="detail.hint">Cliquez en dehors pour fermer</p>
+      </div>
+    </main>
+
+    <!-- Fond ambient post-hero -->
+    <div class="ambient-bg" id="ambient-bg" aria-hidden="true"></div>
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint" aria-hidden="true">
+      <p class="scroll-hint__text" data-i18n="scroll.text">Estimez votre projet</p>
+      <svg class="scroll-hint__arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+
+    <!-- Stats — inline, pas de cards -->
+    <section class="stats-section" aria-label="Chiffres cles">
+      <div class="stats-inline">
+        <div class="stat-item" data-target="100" data-suffix="%">
+          <span class="stat-number">0</span>
+          <span class="stat-label" data-i18n="stat.custom">Sur mesure</span>
+        </div>
+        <span class="stat-separator" aria-hidden="true">/</span>
+        <div class="stat-item" data-target="100" data-suffix="%">
+          <span class="stat-number">0</span>
+          <span class="stat-label" data-i18n="stat.satisfaction">Satisfaction</span>
+        </div>
+        <span class="stat-separator" aria-hidden="true">/</span>
+        <div class="stat-item" data-target="0" data-suffix="" data-text="Zero">
+          <span class="stat-number">Zero</span>
+          <span class="stat-label" data-i18n="stat.template">Template</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services — uniquement du sur mesure premium -->
+    <section class="services-section reveal" aria-label="Services">
+      <div class="service-row">
+        <div class="service-left">
+          <h3 class="service-name" data-i18n="service.1.name">Site vitrine premium</h3>
+          <p class="service-desc" data-i18n="service.1.desc">Design sur mesure, responsive, animations, SEO. Votre image, sublimee.</p>
+        </div>
+        <span class="service-price" data-i18n="service.1.price">Premium</span>
+      </div>
+      <div class="service-divider" aria-hidden="true"></div>
+      <div class="service-row">
+        <div class="service-left">
+          <h3 class="service-name" data-i18n="service.2.name">Plateforme SaaS sur mesure</h3>
+          <p class="service-desc" data-i18n="service.2.desc">Full-stack, dashboard, auth, API. De l'idee au produit, cle en main.</p>
+        </div>
+        <span class="service-price" data-i18n="service.2.price">Sur mesure</span>
+      </div>
+      <div class="service-divider" aria-hidden="true"></div>
+      <div class="service-row">
+        <div class="service-left">
+          <h3 class="service-name" data-i18n="service.3.name">Experience immersive</h3>
+          <p class="service-desc" data-i18n="service.3.desc">Three.js, shaders GLSL, WebGL. Des experiences que vos visiteurs n'oublieront pas.</p>
+        </div>
+        <span class="service-price" data-i18n="service.3.price">Exclusif</span>
+      </div>
+    </section>
+
+    <!-- Processus -->
+    <section class="process-section reveal" aria-label="Mon processus">
+      <h2 class="section-title gradient-text" data-i18n="process.title">Mon processus</h2>
+      <div class="process-timeline">
+        <svg class="process-line" aria-hidden="true" preserveAspectRatio="none"><line class="process-line__track" x1="0" y1="50%" x2="100%" y2="50%"/><line class="process-line__fill" id="process-line-fill" x1="0" y1="50%" x2="100%" y2="50%"/></svg>
+        <div class="process-grid">
+          <div class="process-card glass-panel">
+            <span class="process-dot" aria-hidden="true"></span>
+            <span class="process-step">01</span>
+            <span class="process-icon">📞</span>
+            <h3 class="process-name" data-i18n="process.1.name">Contact</h3>
+            <p class="process-desc" data-i18n="process.1.desc">Echange sur votre vision, vos objectifs et vos ambitions. Reponse sous 24h.</p>
+          </div>
+          <div class="process-card glass-panel">
+            <span class="process-dot" aria-hidden="true"></span>
+            <span class="process-step">02</span>
+            <span class="process-icon">🎨</span>
+            <h3 class="process-name" data-i18n="process.2.name">Maquette</h3>
+            <p class="process-desc" data-i18n="process.2.desc">Direction artistique sur mesure, wireframes et prototypes interactifs valides avec vous.</p>
+          </div>
+          <div class="process-card glass-panel">
+            <span class="process-dot" aria-hidden="true"></span>
+            <span class="process-step">03</span>
+            <span class="process-icon">⚡</span>
+            <h3 class="process-name" data-i18n="process.3.name">Developpement</h3>
+            <p class="process-desc" data-i18n="process.3.desc">Code artisanal, animations GSAP, Three.js, responsive pixel-perfect. Zero template.</p>
+          </div>
+          <div class="process-card glass-panel">
+            <span class="process-dot" aria-hidden="true"></span>
+            <span class="process-step">04</span>
+            <span class="process-icon">🚀</span>
+            <h3 class="process-name" data-i18n="process.4.name">Livraison</h3>
+            <p class="process-desc" data-i18n="process.4.desc">Deploiement, formation et support inclus. Votre site en ligne, pret a performer.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section" aria-label="A propos de Scory">
+      <div class="about-container glass-panel">
+        <div class="about-visual" aria-hidden="true">
+          <canvas id="about-avatar" class="about-avatar" width="120" height="120"></canvas>
+        </div>
+        <h2 class="section-title gradient-text" data-i18n="about.title">Qui suis-je ?</h2>
+        <p class="about-mission" data-i18n="about.mission">Je concois des experiences web immersives qui transforment votre vision en realite digitale.</p>
+        <p class="about-philosophy" data-i18n="about.philosophy">Chaque projet est une oeuvre sur mesure. Design premium, code artisanal. Pas de templates. Pas de compromis. Juste votre univers, sublime.</p>
+        <div class="about-values">
+          <div class="about-value"><span class="about-value-icon">✦</span> <span data-i18n="about.v1">Design sur mesure</span></div>
+          <div class="about-value"><span class="about-value-icon">✦</span> <span data-i18n="about.v2">Code artisanal</span></div>
+          <div class="about-value"><span class="about-value-icon">✦</span> <span data-i18n="about.v3">Immersif & interactif</span></div>
+          <div class="about-value"><span class="about-value-icon">✦</span> <span data-i18n="about.v4">Support 24h/24</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chatbot prospect — avatar disque rotatif + titre glitch -->
+    <section id="chatbot-section" class="chatbot-section reveal" aria-label="Bot prospect">
+      <div class="chatbot-container">
+        <div class="chatbot-progress" id="chatbot-progress" aria-hidden="true"></div>
+        <header class="chatbot-header">
+          <div class="chatbot-disc" aria-hidden="true">
+            <div class="chatbot-disc__groove"></div>
+            <div class="chatbot-disc__center"></div>
+          </div>
+          <div class="chatbot-header__text">
+            <span class="chatbot-name" data-text="Scory bot" data-i18n="chat.name">Scory bot</span>
+            <span class="chatbot-status">
+              <span class="chatbot-status__dot"></span>
+              <span id="chatbot-status-text" data-i18n="chat.status">En ligne</span>
+            </span>
+          </div>
+        </header>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <div class="chatbot-pills" id="chatbot-pills"></div>
+        <footer class="chatbot-footer">
+          <span data-i18n="chat.footer">5 questions, 30 secondes. Sans engagement.</span>
+        </footer>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact-section reveal" aria-label="Contact">
+      <h2 class="section-title gradient-text" data-i18n="contact.title">Me contacter</h2>
+      <div class="contact-grid">
+        <a href="mailto:contact@scory.dev" class="contact-card glass-panel" aria-label="Envoyer un email a contact@scory.dev">
+          <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <span class="contact-label">contact@scory.dev</span>
+        </a>
+        <a href="https://www.linkedin.com/in/erwin-yana-a9002b379/" target="_blank" rel="noopener noreferrer" class="contact-card glass-panel" aria-label="Voir le profil LinkedIn">
+          <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <span class="contact-label">LinkedIn</span>
+        </a>
+        <a href="https://github.com/g2tarb" target="_blank" rel="noopener noreferrer" class="contact-card glass-panel" aria-label="Voir le profil GitHub">
+          <svg class="contact-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <span class="contact-label">GitHub</span>
+        </a>
+      </div>
+      <button type="button" id="open-booking" class="cta-rdv detail-panel__cta">
+        <span data-i18n="contact.rdv">Prendre rendez-vous</span>
+        <span class="detail-panel__cta-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+      </button>
+    </section>
+
+    <!-- Booking modal -->
+    <div id="booking-overlay" class="booking-overlay" aria-hidden="true">
+      <div class="booking-modal glass-panel" id="booking-modal">
+        <button class="booking-close" id="booking-close" aria-label="Fermer">&times;</button>
+        <h2 class="booking-title gradient-text" data-i18n="booking.title">Prendre rendez-vous</h2>
+
+        <!-- Etape 1 : calendrier -->
+        <div class="booking-step" id="booking-step-cal">
+          <div class="booking-cal">
+            <div class="booking-cal__nav">
+              <button class="booking-cal__arrow" id="cal-prev" aria-label="Mois precedent"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <span class="booking-cal__month" id="cal-month"></span>
+              <button class="booking-cal__arrow" id="cal-next" aria-label="Mois suivant"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg></button>
+            </div>
+            <div class="booking-cal__weekdays">
+              <span data-i18n="cal.mon">Lun</span><span data-i18n="cal.tue">Mar</span><span data-i18n="cal.wed">Mer</span><span data-i18n="cal.thu">Jeu</span><span data-i18n="cal.fri">Ven</span><span data-i18n="cal.sat">Sam</span><span data-i18n="cal.sun">Dim</span>
+            </div>
+            <div class="booking-cal__grid" id="cal-grid"></div>
+          </div>
+        </div>
+
+        <!-- Etape 2 : creneaux -->
+        <div class="booking-step booking-step--hidden" id="booking-step-time">
+          <p class="booking-date-chosen" id="booking-date-chosen"></p>
+          <div class="booking-slots" id="booking-slots"></div>
+          <button class="booking-back" id="booking-back-cal" data-i18n="booking.back.date">← Changer de date</button>
+        </div>
+
+        <!-- Etape 3 : formulaire -->
+        <div class="booking-step booking-step--hidden" id="booking-step-form">
+          <p class="booking-date-chosen" id="booking-summary"></p>
+          <input type="text" class="booking-input" id="booking-name" data-i18n="booking.name" data-i18n-attr="placeholder" placeholder="Votre nom" required />
+          <input type="email" class="booking-input" id="booking-email" data-i18n="booking.email" data-i18n-attr="placeholder" placeholder="Votre email" required />
+          <textarea class="booking-input booking-textarea" id="booking-msg" data-i18n="booking.msg" data-i18n-attr="placeholder" placeholder="Un mot sur votre projet (optionnel)" rows="3"></textarea>
+          <button class="booking-submit detail-panel__cta" id="booking-submit" data-i18n="booking.submit">Confirmer le rendez-vous</button>
+          <button class="booking-back" id="booking-back-time" data-i18n="booking.back.time">← Changer l'heure</button>
+        </div>
+
+        <!-- Etape 4 : confirmation -->
+        <div class="booking-step booking-step--hidden" id="booking-step-done">
+          <div class="booking-done-icon">✓</div>
+          <p class="booking-done-text" data-i18n="booking.done">Demande envoyee ! Un email pre-rempli s'est ouvert dans votre messagerie. Scory vous recontacte sous 24h.</p>
+          <p class="booking-done-detail" id="booking-done-detail"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA flottant -->
+    <button class="floating-cta" id="floating-cta" type="button" aria-label="Discuter de mon projet">
+      <span data-i18n="cta.floating">Discutons</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+
+    <footer class="museum-footer reveal">
+      <p class="gradient-text museum-signature" data-i18n="footer.signature">
+        Votre vision, mon code. Sans limites.
+      </p>
+      <p class="footer-copy">&copy; 2026 <span data-i18n="footer.copy">Scory — Scory Yana. Tous droits reserves.</span></p>
+      <a href="./mentions-legales.html" class="footer-legal" data-i18n="footer.legal">Mentions legales</a>
+    </footer>
+
+    <!-- Easter egg overlay (hidden) -->
+    <div id="easter-egg" class="easter-egg-overlay" aria-hidden="true">
+      <p class="easter-egg-text" data-i18n="easter.text">🎉 Bravo ! Vous avez trouve le secret de Scory.</p>
+    </div>
+
+    <script type="application/ld+json">
+    [{
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://scory.dev/univers/",
+      "name": "SCORY",
+      "alternateName": "Scory — Developpeur Web Freelance",
+      "description": "Developpeur web freelance specialise en creation de sites sur mesure, SaaS et experiences immersives Three.js.",
+      "inLanguage": ["fr", "en"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://scory.dev/univers/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "SCORY",
+      "url": "https://scory.dev/univers/",
+      "email": "contact@scory.dev",
+      "description": "Creation de sites web sur mesure, applications SaaS et experiences immersives WebGL/Three.js. Devis gratuit en ligne.",
+      "areaServed": {"@type": "Country", "name": "France"},
+      "serviceType": ["Creation de sites web", "Developpement SaaS", "Design UX/UI", "Experiences immersives WebGL", "Automatisations n8n"],
+      "priceRange": "$$",
+      "address": {"@type": "PostalAddress", "addressLocality": "Paris", "addressCountry": "FR"},
+      "sameAs": ["https://github.com/g2tarb"],
+      "knowsAbout": ["JavaScript", "Three.js", "GSAP", "Node.js", "PostgreSQL", "WebGL", "GLSL", "n8n", "Vanilla JS", "React"],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Services web",
+        "itemListElement": [
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Site vitrine sur mesure", "description": "Design et developpement de sites vitrines haut de gamme"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Application SaaS", "description": "Developpement d'applications SaaS full-stack"}},
+          {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Experience immersive WebGL", "description": "Creation d'experiences interactives Three.js et WebGL"}}
+        ]
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Projets realises",
+      "numberOfItems": 5,
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "item": {"@type": "WebSite", "name": "Portfolio Scory", "url": "https://scory.dev/univers/", "description": "Portfolio interactif concu comme un musee digital avec Three.js, GSAP et shaders GLSL."}},
+        {"@type": "ListItem", "position": 2, "item": {"@type": "WebSite", "name": "4dayvelopment", "url": "https://4dayvelopment.fr/", "description": "Agence web — ecosystemes digitaux complets sur mesure. 5+ projets livres."}},
+        {"@type": "ListItem", "position": 3, "item": {"@type": "WebSite", "name": "Clara Martinez", "url": "https://clara-martinez-project.vercel.app/", "description": "Site vitrine coaching premium avec aurora borealis interactive et glassmorphism."}},
+        {"@type": "ListItem", "position": 4, "item": {"@type": "WebApplication", "name": "DYG", "url": "https://dyg-olfu.onrender.com", "applicationCategory": "DeveloperApplication", "description": "Do Your Game — plateforme de progression pour autodidactes game dev. Scan GitHub, scoring 8 piliers, 8 archetypes RPG, projets collaboratifs."}},
+        {"@type": "ListItem", "position": 5, "item": {"@type": "MobileApplication", "name": "SecurEats", "url": "https://secure-eats.vercel.app/", "applicationCategory": "FoodDeliveryApplication", "description": "Ecosysteme fast-food 2-en-1 : PWA de livraison ultra-securisee par QR code chiffre + site vitrine. 100% vanilla JS, iOS et Android sans framework."}}
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://scory.dev/univers/"},
+        {"@type": "ListItem", "position": 2, "name": "Projets", "item": "https://scory.dev/univers/#projets"},
+        {"@type": "ListItem", "position": 3, "name": "Contact", "item": "https://scory.dev/univers/#contact"}
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "Quels types de sites web creez-vous ?", "acceptedAnswer": {"@type": "Answer", "text": "Sites vitrines sur mesure, landing pages, e-commerce, applications SaaS, portfolios creatifs, blogs et applications mobiles. Design haut de gamme avec animations Three.js, GSAP et WebGL."}},
+        {"@type": "Question", "name": "Travaillez-vous uniquement sur du sur mesure ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui, exclusivement. Chaque projet est unique et concu sur mesure : design premium, code artisanal, zero template. Tout commence par un echange pour cerner votre ambition et le perimetre."}},
+        {"@type": "Question", "name": "Quel est le delai de livraison ?", "acceptedAnswer": {"@type": "Answer", "text": "De 1 semaine pour une landing page a 2-3 mois pour un projet SaaS complet. Nous proposons aussi des livraisons en urgence."}}
+      ]
+    }]
+    </script>
+    <!-- SEO: contenu statique crawlable (masque visuellement, indexe par les moteurs) -->
+    <div class="seo-content" aria-hidden="true">
+      <h2>Developpeur Web Freelance — Creation de Sites Sur Mesure</h2>
+      <p>SCORY, c'est Scory Yana — developpeur web freelance base a Paris, specialise dans la creation de sites internet sur mesure, le developpement d'applications SaaS et la conception d'experiences immersives WebGL. J'utilise les technologies les plus avancees : Three.js, GSAP, Node.js, PostgreSQL, vanilla JavaScript.</p>
+
+      <h2>Mes Services</h2>
+      <ul>
+        <li>Creation de sites vitrines haut de gamme</li>
+        <li>Developpement d'applications SaaS full-stack</li>
+        <li>Experiences immersives Three.js et WebGL</li>
+        <li>Landing pages optimisees conversion</li>
+        <li>E-commerce sur mesure</li>
+        <li>Automatisations et workflows n8n</li>
+        <li>Design UX/UI dark luxury et glassmorphism</li>
+        <li>SEO technique et optimisation performance</li>
+      </ul>
+
+      <h2>Projets Realises</h2>
+      <article>
+        <h3>Portfolio Scory — Musee Digital Interactif</h3>
+        <p>Portfolio concu comme un musee interactif : fond neural Three.js procedural, reflets eau via shader GLSL, carrousel a disques vinyle avec transitions particules, themes dynamiques par projet. 100% vanilla JS, zero framework. Technologies : Three.js, GLSL, GSAP, Web Audio API.</p>
+      </article>
+      <article>
+        <h3>4dayvelopment — Agence Web Ecosystemes Digitaux</h3>
+        <p>4Dayvelopment concoit des ecosystemes digitaux complets : branding, site sur mesure, automations n8n, funnel de conversion. Design dark luxury avec curseur magnetique, animations Three.js, mode sombre/clair. 5+ projets livres, 100% satisfaction. Technologies : Node.js, Express, Three.js, GSAP, n8n, Zod.</p>
+        <a href="https://4dayvelopment.fr/">Visiter 4dayvelopment</a>
+      </article>
+      <article>
+        <h3>Clara Martinez — Coaching Premium Paris</h3>
+        <p>Site vitrine haut de gamme pour Clara Martinez, coach business a Paris. Methodologie Clarity en 12 semaines. Design dark luxe avec aurora borealis interactive en Canvas, glassmorphism, bento grid, curseur magnetique. Technologies : HTML5, Canvas API, Vanilla JS.</p>
+        <a href="https://clara-martinez-project.vercel.app/">Visiter Clara Martinez</a>
+      </article>
+      <article>
+        <h3>DYG — Do Your Game, Plateforme de Progression Devs</h3>
+        <p>DYG est une ecole informelle en 3 poles pour developpeurs autodidactes orientes game dev : scan GitHub, scoring sur 8 piliers (code, velocity, craft, collaboration, versatility, creativity, autonomy, ia), 8 archetypes RPG dont Synth l'IA-native, formation d'equipes complementaires, projets collaboratifs avec contributions trackees. Le profil DYG devient un portfolio vivant partageable pour les autodidactes visant 42, Epitech ou HETIC. Technologies : Fastify 5, PostgreSQL, Three.js, Vanilla JS, Docker, JWT.</p>
+        <a href="https://dyg-olfu.onrender.com">Visiter DYG</a>
+      </article>
+      <article>
+        <h3>SecurEats — PWA de Livraison Fast-Food Securisee par QR Code</h3>
+        <p>SecurEats est une PWA 100% vanilla JS pour la livraison fast-food, ultra-securisee par QR code chiffre. Passation de commande entre restaurant, livreur et client avec verification cryptographique — zero confusion possible sur l'article, le menu ou la commande. iOS et Android sans framework, zero dependance, installable en un tap. Technologies : Vanilla JS, PWA, Service Worker, QR Code, Web Crypto, CSP.</p>
+      </article>
+
+      <h2>Pourquoi Choisir SCORY ?</h2>
+      <ul>
+        <li>5+ projets livres avec 100% de satisfaction client</li>
+        <li>Expertise Three.js, WebGL et animations immersives</li>
+        <li>Design dark luxury et glassmorphism</li>
+        <li>Developpement 100% vanilla JS — zero dependance framework</li>
+        <li>Devis gratuit et instantane via 4dayvelopment.fr</li>
+        <li>Support et maintenance apres livraison</li>
+      </ul>
+
+      <h2>Contact</h2>
+      <p>Email : contact@scory.dev | GitHub : <a href="https://github.com/g2tarb">github.com/g2tarb</a></p>
+      <p>Base a Paris, France. Je travaille avec des clients dans toute la France et a l'international.</p>
+    </div>
+
+    <!-- Panneau overscroll haut (pull to refresh) -->
+    <div id="overscroll-top" class="overscroll-top" aria-hidden="true">
+      <div class="overscroll-top__content">
+        <p class="overscroll-top__text"><span class="overscroll-top__spinner"></span>Rechargement...</p>
+      </div>
+    </div>
+
+    <!-- Panneau overscroll bas — elastique progressif -->
+    <div id="overscroll-panel" class="overscroll-panel" aria-hidden="true">
+      <div class="overscroll-panel__content">
+        <div class="overscroll-panel__progress" id="overscroll-progress"></div>
+        <div class="overscroll-panel__stage" id="os-stage-1">
+          <div class="overscroll-panel__emoji">&#128064;</div>
+          <p class="overscroll-panel__text">Hey, ou allez-vous comme ca ?</p>
+        </div>
+        <div class="overscroll-panel__stage" id="os-stage-2" style="display:none">
+          <p class="overscroll-panel__text">&#128587; Ah vous insistez...</p>
+          <p class="overscroll-panel__sub">Il n'y a plus rien en dessous, promis !</p>
+        </div>
+        <div class="overscroll-panel__stage" id="os-stage-3" style="display:none">
+          <p class="overscroll-panel__text" style="font-size:1.4rem">NOOOOOOOOON</p>
+        </div>
+        <div class="overscroll-panel__stage" id="os-stage-win" style="display:none">
+          <div class="overscroll-panel__emoji">&#127881;</div>
+          <p class="overscroll-panel__text">Felicitations !</p>
+          <p class="overscroll-panel__sub">Vous venez de gagner <strong style="color:var(--accent-gold)">5% de discount</strong> sur votre prochain projet.</p>
+          <button class="overscroll-panel__cta" id="overscroll-cta">
+            Utiliser mon code : SCROLL5
+          </button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./return-portal.js"></script>
+    <script type="module" src="./retro-tv.js"></script>
+    <script type="module">import { initFxLayer } from './fx-layer.js'; initFxLayer();</script>
+    <script>
+      // Lazy-load blood cursor only when needed (avoids Three.js double-import)
+      window._loadBloodCursor = function() {
+        if (window._bloodCursorLoaded) return;
+        window._bloodCursorLoaded = true;
+        if (!window.THREE) {
+          const s = document.createElement("script");
+          s.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js";
+          s.onload = () => {
+            const b = document.createElement("script");
+            b.src = "./blood-cursor-jimmy.js";
+            document.body.appendChild(b);
+          };
+          document.head.appendChild(s);
+        } else {
+          const b = document.createElement("script");
+          b.src = "./blood-cursor-jimmy.js";
+          document.body.appendChild(b);
+        }
+      };
+    </script>
+  </body>
+</html>

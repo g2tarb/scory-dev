@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0c0c0e" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Baloo+2:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Scory — Développeur web freelance | Sites, web apps & SaaS sur mesure</title>
+    <meta
+      name="description"
+      content="Scory, développeur web freelance. On transforme les idées en sites, web apps et SaaS qui cartonnent. Du design au déploiement."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content="Scory — Développeur web freelance" />
+    <meta property="og:description" content="Sites, web apps et SaaS sur mesure, du design au déploiement." />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfessionalService",
+        "name": "Scory — Développeur web freelance",
+        "description": "Création de sites, web apps et SaaS sur mesure.",
+        "url": "https://scory.dev/",
+        "areaServed": "FR",
+        "founder": { "@type": "Person", "name": "Scory", "jobTitle": "Développeur web full-stack" }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- SEO (invisible, crawlable) -->
+    <div class="visually-hidden">
+      <h1>Scory — Développeur web freelance : sites, web apps et SaaS sur mesure</h1>
+      <p>
+        Développeur web full-stack freelance. Je conçois des sites vitrines, des sites
+        e-commerce et des applications web (SaaS) sur mesure, du design au déploiement.
+        Réalisations : DYG, NAKAMA, SecurEats, 4Dayvelopment.
+      </p>
+    </div>
+
+    <div id="loader"><span class="loader-mark">scory.dev</span></div>
+
+    <!-- Fond de constellations (révélé au scroll, dès la 2e section) -->
+    <canvas id="bgFx" aria-hidden="true"></canvas>
+
+    <!-- Curseur custom (desktop) -->
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" aria-hidden="true"></div>
+
+    <!-- ===================== VITRINE (sobre & pro) ===================== -->
+    <header class="topbar" data-topbar>
+      <a class="brand" href="#top">scory<span class="brand-dot">.dev</span></a>
+      <nav class="topnav">
+        <a href="#services">Services</a>
+        <a href="#work">Réalisations</a>
+        <a href="#process">Process</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <button type="button" class="topcta js-rdv">Prendre RDV</button>
+    </header>
+
+    <main id="vitrine">
+      <!-- HERO -->
+      <section class="hero section" id="top">
+        <canvas id="heroFx" aria-hidden="true"></canvas>
+        <p class="eyebrow reveal">Développeur web freelance</p>
+        <h1 class="hero-title reveal">
+          On transforme les idées en<br />
+          <span class="rotator" data-words="sites,web apps,SaaS,e-commerces">sites</span><br />
+          qui cartonnent.
+        </h1>
+        <p class="lead reveal">
+          Sites, web apps et SaaS sur mesure — du design au déploiement.
+          Code soigné, livré vite, pensé pour convertir.
+        </p>
+        <div class="actions reveal">
+          <button type="button" class="btn btn-glow js-rdv">Estimer mon projet</button>
+          <a class="btn btn-link js-portal" href="/univers/index.html">Entrer dans mon univers <span>→</span></a>
+        </div>
+        <p class="micro reveal">Disponible · Réponse sous 24 h · 100 % sur mesure</p>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="section" id="services">
+        <p class="eyebrow reveal">Services</p>
+        <h2 class="h2 reveal">Ce que je crée</h2>
+        <div class="cards">
+          <article class="card reveal">
+            <h3>Site vitrine</h3>
+            <p>Présentez votre activité avec un site rapide, soigné et optimisé SEO.</p>
+            <p class="price">à partir de 1 500 €</p>
+          </article>
+          <article class="card reveal">
+            <h3>E-commerce</h3>
+            <p>Vendez en ligne : catalogue, paiement sécurisé, gestion des commandes.</p>
+            <p class="price">à partir de 3 500 €</p>
+          </article>
+          <article class="card reveal">
+            <h3>Web app / SaaS</h3>
+            <p>Comptes, tableau de bord, base de données, facturation.</p>
+            <p class="price">sur devis</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- RÉALISATIONS -->
+      <section class="section" id="work">
+        <p class="eyebrow reveal">Réalisations</p>
+        <h2 class="h2 reveal">Quelques projets</h2>
+        <ul class="work">
+          <li class="work-row reveal" data-img="/projects/dyg.webp">
+            <span class="work-name">DYG</span>
+            <span class="work-desc">Plateforme pour autodidactes</span>
+            <span class="work-stack">Vanilla JS · Fastify · PostgreSQL</span>
+          </li>
+          <li class="work-row reveal" data-img="/projects/nakama.webp">
+            <span class="work-name">NAKAMA</span>
+            <span class="work-desc">Marketplace de coaching sportif</span>
+            <span class="work-stack">Next.js · Tailwind</span>
+          </li>
+          <li class="work-row reveal" data-img="/projects/secureats.webp">
+            <span class="work-name">SecurEats</span>
+            <span class="work-desc">Livraison fast-food sécurisée (PWA)</span>
+            <span class="work-stack">PWA · QR · Sécurité</span>
+          </li>
+          <li class="work-row reveal">
+            <span class="work-name">4Dayvelopment</span>
+            <span class="work-desc">Projet web sur mesure</span>
+            <span class="work-stack">Web app</span>
+          </li>
+        </ul>
+        <a class="btn btn-link js-portal reveal" href="/univers/index.html">Voir tout dans mon univers <span>→</span></a>
+        <div class="work-preview" aria-hidden="true"><img alt="" /></div>
+      </section>
+
+      <!-- PROCESS -->
+      <section class="section" id="process">
+        <p class="eyebrow reveal">Process</p>
+        <h2 class="h2 reveal">Comment on travaille</h2>
+        <ol class="steps">
+          <li class="step reveal"><span class="step-n">01</span><span class="step-t">Cadrage</span><span class="step-d">On définit le besoin et le périmètre.</span></li>
+          <li class="step reveal"><span class="step-n">02</span><span class="step-t">Maquette</span><span class="step-d">Design validé avant la moindre ligne de code.</span></li>
+          <li class="step reveal"><span class="step-n">03</span><span class="step-t">Développement</span><span class="step-d">Construction itérative, soignée, performante.</span></li>
+          <li class="step reveal"><span class="step-n">04</span><span class="step-t">Livraison</span><span class="step-d">Mise en ligne, suivi et accompagnement.</span></li>
+        </ol>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section" id="faq">
+        <p class="eyebrow reveal">FAQ</p>
+        <h2 class="h2 reveal">Questions fréquentes</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Travaillez-vous uniquement sur du sur-mesure ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Oui, exclusivement. Pas de template, pas de page recyclée — chaque projet est conçu et codé à la main, pensé pour votre image et vos objectifs.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Quels sont les délais ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Un site vitrine prend généralement 2 à 4 semaines, une web app davantage. On fixe un calendrier clair dès le cadrage, et je m'y tiens.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Comment se déroule un projet ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Quatre étapes : cadrage, maquette validée, développement itératif, puis mise en ligne. Vous validez à chaque étape — aucune surprise à l'arrivée.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Gérez-vous l'hébergement et la maintenance ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Oui. Déploiement, nom de domaine, sauvegardes et suivi peuvent être pris en charge — vous n'avez rien à gérer techniquement.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Le site sera-t-il rapide et bien référencé ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Performance, SEO et accessibilité sont intégrés dès le départ, pas ajoutés après coup. Code léger, chargement rapide, pensé pour convertir.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" aria-expanded="false">
+              <span>Puis-je voir des réalisations ?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="faq-a"><div><p>Bien sûr — <a class="faq-link js-portal" href="/univers/index.html">entrez dans mon univers</a> pour explorer le portfolio créatif en détail.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section contact" id="contact">
+        <h2 class="h2 big reveal">On construit le vôtre ?</h2>
+        <p class="lead reveal">Parlons de votre projet — réponse sous 24 h.</p>
+        <div class="actions reveal">
+          <button type="button" class="btn btn-glow js-rdv">Prendre rendez-vous</button>
+          <a class="btn btn-link" href="mailto:contact@scory.dev">Écrire un email <span>→</span></a>
+        </div>
+      </section>
+
+      <!-- PORTAIL vers l'univers immersif -->
+      <section class="universe-portal" id="portal">
+        <p class="eyebrow reveal">Mon univers</p>
+        <button type="button" class="portal-orb js-portal" aria-label="Entrer dans mon univers — scory.dev">
+          <span class="portal-orb__ring" aria-hidden="true"></span>
+          <span class="portal-orb__ring portal-orb__ring--2" aria-hidden="true"></span>
+          <span class="portal-orb__core">
+            <span class="portal-orb__label">Entrer</span>
+            <span class="portal-orb__arrow" aria-hidden="true">↗</span>
+          </span>
+        </button>
+        <p class="micro reveal">Le portfolio créatif de scory.dev</p>
+      </section>
+
+      <footer class="footer">
+        <span>© Scory — scory.dev</span>
+        <a class="footer-mail" href="mailto:contact@scory.dev">contact@scory.dev</a>
+      </footer>
+    </main>
+
+    <!-- Overlay de transition (portail vers /univers) — plongée dans l'univers -->
+    <div class="portal-fx" aria-hidden="true">
+      <div class="portal-warp">
+        <span class="warp-swirl"></span>
+        <span class="warp-ring" style="animation-delay:.1s"></span>
+        <span class="warp-ring glacier" style="animation-delay:.7s"></span>
+        <svg class="warp-textring" style="animation-delay:0s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp1" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp1">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring glacier" style="animation-delay:.2s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp2" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp2">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring" style="animation-delay:.4s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp3" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp3">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring glacier" style="animation-delay:.6s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp4" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp4">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring" style="animation-delay:.8s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp5" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp5">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring glacier" style="animation-delay:1s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp6" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp6">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring" style="animation-delay:1.2s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp7" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp7">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <svg class="warp-textring glacier" style="animation-delay:1.4s" viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="wp8" fill="none" d="M8,100 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+          <text><textPath href="#wp8">PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM PREMIUM </textPath></text>
+        </svg>
+        <span class="warp-core"></span>
+      </div>
+      <span class="warp-flash" aria-hidden="true"></span>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
