@@ -1442,8 +1442,9 @@ async function main() {
     }
   }
 
-  /* ---------- Auto-open detail panel apres 3s sur le premier disque ---------- */
-  if (!reduced && startIndex === SCORY_INDEX) {
+  /* ---------- Auto-open detail panel apres 3s sur le premier disque (desktop uniquement) ---------- */
+  const _autoOpenOk = !window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
+  if (!reduced && _autoOpenOk && startIndex === SCORY_INDEX) {
     setTimeout(() => {
       if (!detailVisible && activeIndex === SCORY_INDEX && !animating) {
         openDetail();
