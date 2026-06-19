@@ -73,6 +73,8 @@ const LINES = [
 
 export function initFxLayer() {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Mobile : on ne charge pas le calque lourd (visage + particules + bulle) — ça surcharge le petit écran.
+  if (window.matchMedia('(max-width: 820px), (pointer: coarse)').matches) return;
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden', 'true');
   Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100%', height: '100%', zIndex: '40', pointerEvents: 'none', mixBlendMode: 'screen' });

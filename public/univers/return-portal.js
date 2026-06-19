@@ -57,6 +57,7 @@ const css = /* css */ `
 @keyframes rp-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
 @keyframes rp-flash{0%{transform:scale(0);opacity:0}72%{transform:scale(.4);opacity:0}86%{opacity:.9}100%{transform:scale(120);opacity:1}}
 @media (prefers-reduced-motion:reduce){.rp-creative::before,.rp-creative::after,.rp-swirl,.rp-textring,.rp-core,.rp-flash{animation:none}}
+@media (max-width:760px){ .rp-creative,.rp-sub{display:none} .rp-brand{padding:6px 8px} .rp-mark{padding:0} .rp-dev{font-size:18px} }
 `;
 const style = document.createElement('style');
 style.textContent = css;
