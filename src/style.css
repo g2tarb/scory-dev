@@ -553,3 +553,52 @@ body.site-error::after {
 .opt { font: inherit; font-size: 14px; padding: 11px 18px; border-radius: 10px; cursor: pointer; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
 .opt.cta { background: var(--accent); border-color: var(--accent); color: #1a1306; font-weight: 600; }
 .opt.ghost { background: transparent; }
+
+/* ===================== Mode app-like (mobile) ===================== */
+:root { --tabbar-h: 60px; }
+
+.tabbar { display: none; }
+
+@media (max-width: 860px) {
+  /* Safe-areas (notch / home indicator) */
+  .topbar { padding-top: calc(14px + env(safe-area-inset-top)); }
+  .topbar.scrolled { padding-top: calc(10px + env(safe-area-inset-top)); }
+  .topcta { display: none; } /* le RDV est dans la barre d'onglets */
+  #vitrine { padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 8px); }
+
+  /* Barre d'onglets fixe en bas, façon appli native */
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    display: flex; align-items: stretch;
+    height: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(12, 12, 14, 0.85);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-top: 1px solid var(--border);
+  }
+  .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    background: none; border: none; cursor: pointer; text-decoration: none;
+    color: var(--text-dim); font: inherit; font-size: 10px; line-height: 1;
+    min-height: 44px; padding: 8px 2px;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s var(--ease), transform 0.15s var(--ease);
+  }
+  .tab svg { width: 23px; height: 23px; display: block; }
+  .tab span { font-weight: 500; }
+  .tab.is-active { color: var(--accent); }
+  .tab.is-active svg { filter: drop-shadow(0 0 6px rgba(201, 169, 98, 0.55)); }
+  .tab--cta { color: var(--accent); }
+  .tab:active { transform: scale(0.9); }
+
+  /* Cibles tactiles confortables */
+  .btn, .faq-q, .topcta, .work-row .work-name { min-height: 44px; }
+  .actions { gap: 12px; }
+  .topnav { display: none; }
+}
+
+@media (max-width: 600px) {
+  .section { padding: clamp(58px, 9vh, 96px) var(--pad); }
+  .hero { min-height: 92svh; }
+}

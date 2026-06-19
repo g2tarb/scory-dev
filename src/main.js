@@ -84,6 +84,25 @@ window.requestAnimationFrame(() => loader && loader.classList.add('is-hidden'));
   onScroll();
 })();
 
+/* ---------- Barre d'onglets mobile : onglet actif = section visible ---------- */
+(function tabbar() {
+  const tabs = [...document.querySelectorAll('.tab[data-sec]')];
+  if (!tabs.length) return;
+  const sections = tabs
+    .map((t) => document.getElementById(t.dataset.sec))
+    .filter(Boolean);
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.sec === e.target.id));
+      });
+    },
+    { rootMargin: '-45% 0px -45% 0px', threshold: 0 }, // section au centre du viewport = active
+  );
+  sections.forEach((s) => io.observe(s));
+})();
+
 /* ---------- Boutons magnétiques (discret) ---------- */
 if (!reduced && window.matchMedia('(hover: hover)').matches) {
   document.querySelectorAll('.btn, .topcta').forEach((btn) => {

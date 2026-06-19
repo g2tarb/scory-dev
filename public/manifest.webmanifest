@@ -1,0 +1,14 @@
+{
+  "name": "Scory — Développeur web freelance",
+  "short_name": "scory.dev",
+  "description": "Sites, web apps et SaaS sur mesure, du design au déploiement.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0c0c0e",
+  "theme_color": "#0c0c0e",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

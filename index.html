@@ -3,8 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0c0c0e" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="scory.dev" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -232,6 +237,30 @@
         <a class="footer-mail" href="mailto:contact@scory.dev">contact@scory.dev</a>
       </footer>
     </main>
+
+    <!-- Barre d'onglets (mobile, app-like) -->
+    <nav class="tabbar" data-tabbar aria-label="Navigation">
+      <a class="tab" href="#top" data-sec="top">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Accueil</span>
+      </a>
+      <a class="tab" href="#services" data-sec="services">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v5H4zM13 14h7v5h-7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <span>Services</span>
+      </a>
+      <a class="tab" href="#work" data-sec="work">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v12H3zM8 7V5h8v2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Projets</span>
+      </a>
+      <a class="tab" href="#faq" data-sec="faq">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M9.6 9.5a2.4 2.4 0 1 1 3 2.3c-.6.2-1 .8-1 1.5M12 17h.01" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span>FAQ</span>
+      </a>
+      <button class="tab tab--cta js-rdv" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 9h18M8 3v4M16 3v4M10.5 14.5l1 1 2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>RDV</span>
+      </button>
+    </nav>
 
     <!-- Overlay de transition (portail vers /univers) — plongée dans l'univers -->
     <div class="portal-fx" aria-hidden="true">
