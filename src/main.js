@@ -168,6 +168,36 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
+/* ---------- Assembleur de site → "ça mérite un RDV" ---------- */
+(function builder() {
+  const root = document.querySelector('.builder');
+  if (!root) return;
+  const sel = (group) =>
+    [...root.querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
+
+  root.querySelectorAll('.chip').forEach((c) =>
+    c.addEventListener('click', () => c.classList.toggle('is-on')),
+  );
+
+  const result = root.querySelector('.builder-result');
+  const recap = root.querySelector('.builder-result__recap');
+  root.querySelector('.builder-go')?.addEventListener('click', () => {
+    const blocs = sel('base');
+    const options = sel('options');
+    const all = [...blocs, ...options];
+    recap.textContent =
+      `${blocs.length} bloc${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
+      (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
+    result.hidden = false;
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // Le RDV emporte la config choisie.
+  root.querySelector('.js-rdv-builder')?.addEventListener('click', () =>
+    booking.open({ blocs: sel('base'), options: sel('options') }),
+  );
+})();
+
 /* ---------- Portail → /univers (vrai portfolio immersif) ---------- */
 (function portal() {
   const fx = document.querySelector('.portal-fx');
