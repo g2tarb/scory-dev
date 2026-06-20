@@ -26,16 +26,32 @@ const SPHERE = (() => {
 
 const LINES = [
   "Psst… c'est Scory qui m'a codé. Un dev de génie, je confirme.",
+  "Tip : aie en tête ton objectif principal — vendre, rassurer, recruter ?",
   "Il m'a laissé seul ici… alors je fais le commercial : signe avec lui.",
+  "Tip : 2-3 sites que t'aimes, et on cadre le style en 2 minutes.",
   "Conseil d'IA : prends le RDV pendant que j'ai l'air sympa.",
-  "Son code est aussi propre que mon orbe en binaire.",
+  "Tip : ta deadline idéale ? Ça aide à prioriser.",
   "T'hésites ? Je suis fait de 0 et de 1, et même moi je suis convaincu.",
+  "Tip : ton public cible, c'est l'info qui change tout.",
   "Un site sur mesure, jamais un template. Crois l'IA.",
+  "Tip : du contenu déjà prêt (textes, logo, photos) ? Ça accélère.",
   "Donne ton prénom là-haut. Je mords pas, je suis une sphère.",
-  "Scory change les idées en sites qui cartonnent. Moi, l'ennui en lumière.",
-  "Tu trouveras pas plus motivé que ce mec. Ni que moi.",
-  "Parle-moi, ou clique sur « Lance ta demande ». Au choix.",
+  "Tip : une page vitrine ou une web app ? Dis-le, Scory adapte.",
 ];
+
+// Palette qui défile (la sphère change de couleur en continu).
+const PALETTE = [
+  [158, 200, 255], // glacier
+  [201, 169, 98],  // or
+  [169, 139, 255], // violet
+  [107, 224, 216], // cyan
+  [255, 139, 208], // rose
+];
+function curColor(t) {
+  const f = (t / 5) % PALETTE.length; // 5 s par couleur
+  const i = Math.floor(f), frac = f - i, a = PALETTE[i], b = PALETTE[(i + 1) % PALETTE.length];
+  return `${Math.round(lerp(a[0], b[0], frac))},${Math.round(lerp(a[1], b[1], frac))},${Math.round(lerp(a[2], b[2], frac))}`;
+}
 
 export function initFxLayer() {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -83,8 +99,9 @@ export function initFxLayer() {
 
   // Particules.
   let seed = 11;
-  const rndChar = () => ((seed = (seed * 16807) & 0x7fffffff) & 1 ? '1' : '0');
-  const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+  const step = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff);
+  const rnd = () => step() / 0x7fffffff;
+  const rndChar = () => (((step() >>> 14) & 1) ? '1' : '0'); // vrai mix 0/1 (bit haut)
   const NP = 50;
   const parts = Array.from({ length: NP }, () => ({ x: rnd() * W, y: rnd() * H, vx: (rnd() - .5) * .25, vy: (rnd() - .5) * .25 }));
   const mouse = { x: -1e3, y: -1e3 };
@@ -104,6 +121,7 @@ export function initFxLayer() {
   function frame(now) {
     requestAnimationFrame(frame);
     const t = now / 1000;
+    const C = curColor(t); // couleur courante (cycle)
     const sy = scrollY || 0;
     const fade = clamp((sy - H * 0.7) / (H * 0.5), 0, 1);
     ctx.clearRect(0, 0, W, H);
@@ -140,8 +158,8 @@ export function initFxLayer() {
       for (let i = rings.length - 1; i >= 0; i--) {
         const rg = rings[i]; rg.r += (1 / 60) * 0.9; rg.a -= (1 / 60) * 0.6;
         if (rg.a <= 0) { rings.splice(i, 1); continue; }
-        ctx.globalAlpha = rg.a * fa; ctx.strokeStyle = 'rgba(158,200,255,1)'; ctx.lineWidth = 1.2;
-        ctx.shadowColor = 'rgba(158,200,255,0.6)'; ctx.shadowBlur = 6;
+        ctx.globalAlpha = rg.a * fa; ctx.strokeStyle = `rgba(${C},1)`; ctx.lineWidth = 1.2;
+        ctx.shadowColor = `rgba(${C},0.6)`; ctx.shadowBlur = 6;
         ctx.beginPath(); ctx.arc(cx, cy, rg.r * baseScale, 0, TAU); ctx.stroke();
       }
       ctx.shadowBlur = 0;
@@ -161,7 +179,7 @@ export function initFxLayer() {
       const persp = FOCAL / (FOCAL - zz);
       const sx = cx + xz * baseScale * persp, syy = cy - yz * baseScale * persp;
       const depth = clamp((zz + 1.1) / 2.1, 0.12, 1);
-      const col = i % 9 === 0 ? '201,169,98' : '158,200,255'; // quelques chiffres or
+      const col = i % 9 === 0 ? '255,255,255' : C; // couleur cyclée + quelques éclats blancs
       const size = clamp(baseScale * 0.1 * persp, 6, 14);
       const tw = reduced ? 0.85 : 0.55 + 0.3 * Math.sin(t * 5 + i) + voice * 0.2;
       const a = clamp((0.55 + voice * 0.35) * depth * tw * fa, 0, 1);
@@ -172,7 +190,7 @@ export function initFxLayer() {
     }
     // Cœur lumineux qui pulse avec la voix.
     ctx.globalAlpha = clamp((0.5 + voice * 0.5) * fa, 0, 1);
-    ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(170,210,255,0.9)'; ctx.shadowBlur = 18 + voice * 26;
+    ctx.fillStyle = '#fff'; ctx.shadowColor = `rgba(${C},0.9)`; ctx.shadowBlur = 18 + voice * 26;
     ctx.beginPath(); ctx.arc(cx, cy, 3 + voice * 4, 0, TAU); ctx.fill();
     ctx.globalAlpha = 1; ctx.shadowBlur = 0;
 
