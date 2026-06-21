@@ -203,83 +203,88 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
-/* ---------- Assembleur de site → maquette générée à l'instant ---------- */
-(function builder() {
-  const root = document.querySelector('.builder');
-  if (!root) return;
-  const sel = (group) =>
-    [...root.querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
+/* ---------- Assembleurs (site & app) → maquette + estimation à l'instant ---------- */
+(function builders() {
+  document.querySelectorAll('.builder').forEach((root) => {
+    const kind = root.dataset.kind || 'site'; // 'site' | 'app'
+    const unit = kind === 'app' ? 'écran' : 'bloc';
+    const sel = (group) =>
+      [...root.querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
 
-  const result = root.querySelector('.builder-result');
-  const recap = root.querySelector('.builder-result__recap');
-  const mock = root.querySelector('[data-mock]');
-  let shown = false;
-  let raf = 0;
+    const result = root.querySelector('.builder-result');
+    const recap = root.querySelector('.builder-result__recap');
+    const mock = root.querySelector('[data-mock]');
+    let shown = false;
+    let raf = 0;
 
-  /* ----- Estimation de prix live (fourchette basse → haute) ----- */
-  const lowEl = root.querySelector('.estim-low');
-  const highEl = root.querySelector('.estim-high');
-  const band = root.querySelector('.estim-band');
-  const shown2 = { low: 0, high: 0 }; // valeurs actuellement affichées (pour le tween)
+    /* ----- Estimation de prix live (fourchette basse → haute) ----- */
+    const lowEl = root.querySelector('.estim-low');
+    const highEl = root.querySelector('.estim-high');
+    const band = root.querySelector('.estim-band');
+    const max = MAX_SCALE[kind] || MAX_SCALE.site;
+    const cur = { low: 0, high: 0 };
 
-  const tween = (el, key, to) => {
-    const from = shown2[key];
-    if (from === to) { el.textContent = eur(to); return; }
-    const dur = 450;
-    const t0 = performance.now();
-    const step = (t) => {
-      const k = Math.min(1, (t - t0) / dur);
-      const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
-      el.textContent = eur(from + (to - from) * e);
-      if (k < 1) window.requestAnimationFrame(step);
-      else shown2[key] = to;
+    const tween = (el, key, to) => {
+      if (!el) return;
+      const from = cur[key];
+      if (from === to) { el.textContent = eur(to); return; }
+      const t0 = performance.now();
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / 450);
+        const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
+        el.textContent = eur(from + (to - from) * e);
+        if (k < 1) window.requestAnimationFrame(step);
+        else cur[key] = to;
+      };
+      window.requestAnimationFrame(step);
     };
-    window.requestAnimationFrame(step);
-  };
 
-  const updateEstimate = () => {
-    const [lo, hi] = estimate([...sel('base'), ...sel('options')]);
-    tween(lowEl, 'low', lo);
-    tween(highEl, 'high', hi);
-    if (band) {
-      band.style.left = `${Math.min(100, (lo / MAX_SCALE) * 100)}%`;
-      band.style.right = `${Math.max(0, 100 - (hi / MAX_SCALE) * 100)}%`;
-    }
-  };
+    const updateEstimate = () => {
+      const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
+      tween(lowEl, 'low', lo);
+      tween(highEl, 'high', hi);
+      if (band) {
+        band.style.left = `${Math.min(100, (lo / max) * 100)}%`;
+        band.style.right = `${Math.max(0, 100 - (hi / max) * 100)}%`;
+      }
+    };
 
-  const generate = (scroll) => {
-    const blocs = sel('base');
-    const options = sel('options');
-    const all = [...blocs, ...options];
-    recap.textContent =
-      `${blocs.length} bloc${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
-      (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
-    import('./mockup.js').then(({ renderMockup }) => renderMockup(mock, { blocs, options }));
-    result.hidden = false;
-    shown = true;
-    if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
+    const generate = (scroll) => {
+      const blocs = sel('base');
+      const options = sel('options');
+      const all = [...blocs, ...options];
+      if (recap) {
+        recap.textContent =
+          `${blocs.length} ${unit}${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
+          (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
+      }
+      import('./mockup.js').then((m) =>
+        (kind === 'app' ? m.renderAppMockup : m.renderMockup)(mock, { blocs, options }),
+      );
+      result.hidden = false;
+      shown = true;
+      if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
 
-  // Toggle d'un bloc/option → prix recalculé + maquette régénérée si affichée.
-  root.querySelectorAll('.chip').forEach((c) =>
-    c.addEventListener('click', () => {
-      c.classList.toggle('is-on');
-      updateEstimate();
-      if (!shown) return;
-      if (raf) window.cancelAnimationFrame(raf);
-      raf = window.requestAnimationFrame(() => generate(false));
-    }),
-  );
+    root.querySelectorAll('.chip').forEach((c) =>
+      c.addEventListener('click', () => {
+        c.classList.toggle('is-on');
+        updateEstimate();
+        if (!shown) return;
+        if (raf) window.cancelAnimationFrame(raf);
+        raf = window.requestAnimationFrame(() => generate(false));
+      }),
+    );
 
-  root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
+    root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
 
-  // Le RDV emporte la config choisie + la fourchette estimée.
-  root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
-    const [lo, hi] = estimate([...sel('base'), ...sel('options')]);
-    booking.open({ blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
+    root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
+      const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
+      booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
+    });
+
+    updateEstimate();
   });
-
-  updateEstimate(); // valeur initiale au chargement
 })();
 
 /* ---------- Portail → /univers (vrai portfolio immersif) ---------- */

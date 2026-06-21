@@ -50,8 +50,36 @@ const OPTION_TIPS = {
   cta: ['Bouton d’action', 'L’appel à l’action principal qui guide le visiteur vers l’objectif (devis, achat, RDV).'],
 };
 
+// Explications des écrans d'app.
+const APP_SCREEN_TIPS = {
+  Onboarding: ['Onboarding', 'Les premiers écrans qui présentent l’app et guident l’utilisateur jusqu’à sa première action.'],
+  Accueil: ['Accueil / Feed', 'L’écran principal : le fil de contenu ou le tableau de bord que l’utilisateur voit en premier.'],
+  Recherche: ['Recherche', 'Barre et filtres pour trouver rapidement un contenu, un produit ou une personne.'],
+  Profil: ['Profil', 'L’espace personnel de l’utilisateur : infos, historique, préférences.'],
+  Messagerie: ['Messagerie', 'Conversations en temps réel entre utilisateurs ou avec le support.'],
+  Notifications: ['Notifications', 'Le centre d’alertes : nouveautés, messages et rappels regroupés.'],
+  Paramètres: ['Paramètres', 'Réglages du compte : confidentialité, langue, préférences, déconnexion.'],
+};
+
+// Explications des options d'app.
+const APP_OPTION_TIPS = {
+  auth: ['Authentification', 'Inscription et connexion sécurisées (e-mail, Google, Apple) pour des comptes personnels.'],
+  pay: ['Paiement in-app', 'Achats et abonnements directement dans l’app (Stripe, in-app purchase).'],
+  push: ['Notifications push', 'Des alertes envoyées sur le téléphone même app fermée — pour faire revenir l’utilisateur.'],
+  offline: ['Mode hors-ligne', 'L’app reste utilisable sans connexion : les données se synchronisent au retour du réseau.'],
+  geo: ['Géolocalisation', 'Carte et position en temps réel : trouver à proximité, suivre un trajet, livrer.'],
+  ia: ['Agent IA', 'Un assistant intégré qui répond, recommande et automatise pour l’utilisateur.'],
+  multi: ['Multilingue', 'L’app s’adapte à la langue de l’utilisateur pour une audience internationale.'],
+  scan: ['Caméra / Scan', 'Photo, QR codes, scan de documents — directement depuis l’appareil.'],
+  tabs: ['Barre de navigation', 'La barre du bas : un onglet par écran principal pour passer de l’un à l’autre.'],
+};
+
 // Ordre de page canonique, indépendant de l'ordre de sélection.
 const ORDER = ['Accueil', 'Services', 'Réalisations', 'À propos', 'Témoignages', 'Blog', 'Contact'];
+const APP_ORDER = ['Accueil', 'Recherche', 'Messagerie', 'Notifications', 'Profil', 'Paramètres', 'Onboarding'];
+
+// Petite icône schématique (carré) pour les onglets.
+const tabIcon = () => el('i', 'app-tab-i');
 
 function buildSection(kind, has) {
   const s = el('div', 'mock-sec');
@@ -228,6 +256,103 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
   if (!reduced) {
     [...page.children].forEach((node, i) => {
       node.style.setProperty('--d', `${i * 55}ms`);
+      node.classList.add('mock-in');
+    });
+  }
+}
+
+/* ============ Maquette d'APPLICATION (cadre téléphone) ============ */
+export function renderAppMockup(host, { blocs = [], options = [] } = {}) {
+  const has = (name) => options.includes(name);
+  let screens = APP_ORDER.filter((b) => blocs.includes(b));
+  if (!screens.length) screens = ['Accueil'];
+  const primary = screens.includes('Accueil') ? 'Accueil' : screens[0];
+
+  host.innerHTML = '';
+  const screen = el('div', 'app-screen');
+  screen.append(el('span', 'app-notch'));
+
+  // Barre du haut : titre + (cadenas auth / langue) + avatar
+  const bar = tip(el('div', 'app-bar'), ...(APP_SCREEN_TIPS[primary] || APP_SCREEN_TIPS.Accueil));
+  bar.append(el('span', 'app-title'));
+  const barR = el('div', 'app-bar-r');
+  if (has('Authentification')) barR.append(tip(el('span', 'app-lock', '🔒'), ...APP_OPTION_TIPS.auth));
+  if (has('Multilingue')) barR.append(tip(el('span', 'app-lang', 'FR'), ...APP_OPTION_TIPS.multi));
+  barR.append(el('span', 'app-avatar'));
+  bar.append(barR);
+  screen.append(bar);
+
+  // Corps défilable
+  const body = el('div', 'app-body');
+
+  if (has('Notifications push')) {
+    const toast = tip(el('div', 'app-push'), ...APP_OPTION_TIPS.push);
+    toast.append(el('span', 'app-push-ic'));
+    const tx = el('div', 'app-col');
+    bars(tx, [60, 90]);
+    toast.append(tx);
+    body.append(toast);
+  }
+  if (screens.includes('Recherche')) body.append(tip(el('div', 'app-search'), ...APP_SCREEN_TIPS.Recherche));
+  if (has('Géolocalisation')) {
+    const map = tip(el('div', 'app-map'), ...APP_OPTION_TIPS.geo);
+    map.append(el('span', 'app-pin'));
+    body.append(map);
+  }
+
+  // Bannière (avec bouton « Payer » si Paiement in-app)
+  const banner = el('div', 'app-banner');
+  if (has('Paiement in-app')) banner.append(tip(el('span', 'app-pay', 'Payer'), ...APP_OPTION_TIPS.pay));
+  body.append(banner);
+
+  // Feed : lignes (avatar + texte) si Accueil, sinon cartes
+  if (screens.includes('Accueil')) {
+    for (let i = 0; i < 4; i++) {
+      const row = el('div', 'app-row');
+      row.append(el('span', 'app-row-av'));
+      const c = el('div', 'app-col');
+      bars(c, [80, 55]);
+      row.append(c);
+      body.append(row);
+    }
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const c = el('div', 'app-card');
+      bars(c, [70, 92]);
+      body.append(c);
+    }
+  }
+  screen.append(body);
+
+  // Barre d'onglets : un par écran (max 5), chacun explicable
+  const tabs = tip(el('div', 'app-tabs'), ...APP_OPTION_TIPS.tabs);
+  screens.slice(0, 5).forEach((s) => {
+    const t = tip(el('div', `app-tab${s === primary ? ' on' : ''}`), ...(APP_SCREEN_TIPS[s] || APP_SCREEN_TIPS.Accueil));
+    t.append(tabIcon(), el('span', 'app-tab-l'));
+    tabs.append(t);
+  });
+  screen.append(tabs);
+  host.append(screen);
+
+  // Surcouches flottantes
+  if (has('Caméra / Scan')) {
+    const fab = tip(el('div', 'app-fab'), ...APP_OPTION_TIPS.scan);
+    fab.append(el('span', 'app-fab-ic'));
+    host.append(fab);
+  }
+  if (has('Agent IA')) {
+    const ai = tip(el('div', 'app-ai'), ...APP_OPTION_TIPS.ia);
+    ai.append(el('span', 'app-ai-ic', 'IA'));
+    host.append(ai);
+  }
+  if (has('Mode hors-ligne')) host.append(tip(el('span', 'app-offline', '⤓ hors-ligne'), ...APP_OPTION_TIPS.offline));
+
+  bindTips(host);
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduced) {
+    [...body.children].forEach((node, i) => {
+      node.style.setProperty('--d', `${i * 50}ms`);
       node.classList.add('mock-in');
     });
   }

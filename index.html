@@ -179,7 +179,7 @@
         <p class="eyebrow reveal">Assembleur</p>
         <h2 class="h2 reveal">Composez votre site</h2>
         <p class="lead reveal">Choisissez vos blocs, ajoutez vos options. En deux minutes, vous composez votre site — on le chiffre ensemble.</p>
-        <div class="builder reveal">
+        <div class="builder reveal" data-kind="site">
           <div class="builder-group">
             <span class="builder-label">Blocs de base</span>
             <div class="chips" data-group="base">
@@ -224,6 +224,61 @@
             <p class="mock-hint"><span aria-hidden="true">☞</span> Survolez chaque élément de la maquette pour savoir ce que c'est et à quoi ça sert.</p>
             <h3 class="builder-result__title">Votre maquette est prête.</h3>
             <p class="builder-muted">Ça, c'est l'aperçu — généré à l'instant à partir de vos choix. La vraie version, codée, responsive et optimisée, ça mérite un vrai rendez-vous.</p>
+            <button class="btn btn-primary js-rdv-builder" type="button">La rendre réelle — prendre RDV</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CRÉATEUR D'APP (même principe, en téléphone) -->
+      <section class="section" id="builder-app">
+        <p class="eyebrow reveal">Créateur d'app</p>
+        <h2 class="h2 reveal">Composez votre application</h2>
+        <p class="lead reveal">Mêmes règles : choisissez vos écrans, ajoutez les fonctionnalités. La maquette de l'app se dessine à l'instant.</p>
+        <div class="builder reveal" data-kind="app">
+          <div class="builder-group">
+            <span class="builder-label">Écrans de base</span>
+            <div class="chips" data-group="base">
+              <button class="chip is-on" type="button">Onboarding</button>
+              <button class="chip is-on" type="button">Accueil</button>
+              <button class="chip" type="button">Recherche</button>
+              <button class="chip is-on" type="button">Profil</button>
+              <button class="chip" type="button">Messagerie</button>
+              <button class="chip" type="button">Notifications</button>
+              <button class="chip" type="button">Paramètres</button>
+            </div>
+          </div>
+          <div class="builder-group">
+            <span class="builder-label">Fonctionnalités</span>
+            <div class="chips" data-group="options">
+              <button class="chip is-on" type="button">Authentification</button>
+              <button class="chip" type="button">Paiement in-app</button>
+              <button class="chip" type="button">Notifications push</button>
+              <button class="chip" type="button">Mode hors-ligne</button>
+              <button class="chip" type="button">Géolocalisation</button>
+              <button class="chip" type="button">Agent IA</button>
+              <button class="chip" type="button">Multilingue</button>
+              <button class="chip" type="button">Caméra / Scan</button>
+            </div>
+          </div>
+          <div class="builder-estim" aria-live="polite">
+            <div class="estim-head">
+              <span class="estim-label">Estimation indicative</span>
+              <span class="estim-range">
+                <span class="estim-low">—</span>
+                <span class="estim-sep">–</span>
+                <span class="estim-high">—</span>
+              </span>
+            </div>
+            <div class="estim-track" aria-hidden="true"><span class="estim-band"></span></div>
+            <p class="estim-note">Fourchette automatique selon vos choix — le chiffrage exact se cale ensemble en 15 min.</p>
+          </div>
+          <button class="btn btn-glow builder-go" type="button">Générer ma maquette d'app <span>→</span></button>
+          <div class="builder-result" aria-live="polite" hidden>
+            <p class="builder-result__recap"></p>
+            <div class="mock-wrap mock-wrap--app"><div class="appmock" data-mock aria-label="Aperçu d'application généré"></div></div>
+            <p class="mock-hint"><span aria-hidden="true">☞</span> Survolez chaque élément de la maquette pour savoir ce que c'est et à quoi ça sert.</p>
+            <h3 class="builder-result__title">Votre app est prête.</h3>
+            <p class="builder-muted">Ça, c'est l'aperçu — généré à l'instant à partir de vos choix. La vraie application, native et publiée sur les stores, ça mérite un vrai rendez-vous.</p>
             <button class="btn btn-primary js-rdv-builder" type="button">La rendre réelle — prendre RDV</button>
           </div>
         </div>
