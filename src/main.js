@@ -4,6 +4,7 @@ import { initBooking } from './booking.js';
 import { initSmooth } from './smooth.js';
 import { slotText } from './slot.js';
 import { initScrollBrand } from './brand-slot.js';
+import { estimate, eur, MAX_SCALE } from './pricing.js';
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -215,6 +216,37 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
   let shown = false;
   let raf = 0;
 
+  /* ----- Estimation de prix live (fourchette basse → haute) ----- */
+  const lowEl = root.querySelector('.estim-low');
+  const highEl = root.querySelector('.estim-high');
+  const band = root.querySelector('.estim-band');
+  const shown2 = { low: 0, high: 0 }; // valeurs actuellement affichées (pour le tween)
+
+  const tween = (el, key, to) => {
+    const from = shown2[key];
+    if (from === to) { el.textContent = eur(to); return; }
+    const dur = 450;
+    const t0 = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
+      el.textContent = eur(from + (to - from) * e);
+      if (k < 1) window.requestAnimationFrame(step);
+      else shown2[key] = to;
+    };
+    window.requestAnimationFrame(step);
+  };
+
+  const updateEstimate = () => {
+    const [lo, hi] = estimate([...sel('base'), ...sel('options')]);
+    tween(lowEl, 'low', lo);
+    tween(highEl, 'high', hi);
+    if (band) {
+      band.style.left = `${Math.min(100, (lo / MAX_SCALE) * 100)}%`;
+      band.style.right = `${Math.max(0, 100 - (hi / MAX_SCALE) * 100)}%`;
+    }
+  };
+
   const generate = (scroll) => {
     const blocs = sel('base');
     const options = sel('options');
@@ -228,10 +260,11 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
     if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  // Toggle d'un bloc/option → régénération instantanée si la maquette est affichée.
+  // Toggle d'un bloc/option → prix recalculé + maquette régénérée si affichée.
   root.querySelectorAll('.chip').forEach((c) =>
     c.addEventListener('click', () => {
       c.classList.toggle('is-on');
+      updateEstimate();
       if (!shown) return;
       if (raf) window.cancelAnimationFrame(raf);
       raf = window.requestAnimationFrame(() => generate(false));
@@ -240,10 +273,13 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
 
   root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
 
-  // Le RDV emporte la config choisie.
-  root.querySelector('.js-rdv-builder')?.addEventListener('click', () =>
-    booking.open({ blocs: sel('base'), options: sel('options') }),
-  );
+  // Le RDV emporte la config choisie + la fourchette estimée.
+  root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
+    const [lo, hi] = estimate([...sel('base'), ...sel('options')]);
+    booking.open({ blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
+  });
+
+  updateEstimate(); // valeur initiale au chargement
 })();
 
 /* ---------- Portail → /univers (vrai portfolio immersif) ---------- */
