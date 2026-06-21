@@ -25,6 +25,7 @@ export function initBgConstellations(canvas) {
   const ctx = canvas.getContext('2d');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W = 1, H = 1;
+  let sy = window.scrollY || 0; // mis en cache (pas de lecture du layout par frame)
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio, 2);
@@ -34,7 +35,9 @@ export function initBgConstellations(canvas) {
     canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
+  const onScroll = () => { sy = window.scrollY || window.pageYOffset || 0; };
   window.addEventListener('resize', resize);
+  window.addEventListener('scroll', onScroll, { passive: true });
   resize();
 
   // Étoiles d'ambiance : positions fixes (déterministes), parallaxe douce.
@@ -78,7 +81,6 @@ export function initBgConstellations(canvas) {
   function frame(now) {
     raf = requestAnimationFrame(frame);
     const t = now / 1000;
-    const sy = window.scrollY || window.pageYOffset || 0;
     // Fondu : invisible sur le hero, plein à partir de ~1 écran scrollé.
     const fade = clamp((sy - H * 0.55) / (H * 0.55), 0, 1);
     ctx.clearRect(0, 0, W, H);
@@ -115,5 +117,11 @@ export function initBgConstellations(canvas) {
   }
   raf = requestAnimationFrame(frame);
 
-  return { dispose() { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); } };
+  return {
+    dispose() {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
+    },
+  };
 }

@@ -36,11 +36,15 @@ export function initConstellation(canvas) {
   const ctx = canvas.getContext('2d');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W = 1, H = 1, box = 1, ox = 0, oy = 0;
+  // Géométrie mise en cache (évite de lire le layout à chaque frame → pas de reflow forcé).
+  let vh = window.innerHeight || 1;
+  let sy = window.scrollY || 0;
 
   function resize() {
     const dpr = Math.min(window.devicePixelRatio, 2);
     W = canvas.clientWidth || 1;
     H = canvas.clientHeight || 1;
+    vh = window.innerHeight || 1;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -48,7 +52,9 @@ export function initConstellation(canvas) {
     ox = (W - box) / 2;
     oy = (H - box) / 2;
   }
+  const onScroll = () => { sy = window.scrollY || 0; };
   window.addEventListener('resize', resize);
+  window.addEventListener('scroll', onScroll, { passive: true });
   resize();
 
   const PX = (s) => ox + s.x * box;
@@ -88,7 +94,7 @@ export function initConstellation(canvas) {
   let t0 = 0, raf = 0;
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    if ((window.scrollY || 0) > window.innerHeight * 1.05) return; // hero hors écran : on gèle le dessin
+    if (sy > vh * 1.05) return; // hero hors écran : on gèle le dessin
     if (!t0) t0 = now;
     const t = (now - t0) / 1000;
     const cycle = reduced ? REVEAL + HOLD : t % LOOP;
@@ -128,6 +134,10 @@ export function initConstellation(canvas) {
   raf = requestAnimationFrame(frame);
 
   return {
-    dispose() { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); },
+    dispose() {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      window.removeEventListener('scroll', onScroll);
+    },
   };
 }

@@ -361,16 +361,18 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
   document.querySelectorAll('.js-portal').forEach((a) => a.addEventListener('click', go));
 })();
 
-/* ---------- Constellation du Capricorne (droite du hero) ---------- */
-(function heroFx() {
-  const canvas = document.getElementById('heroFx');
-  if (!canvas) return;
-  import('./constellation.js').then(({ initConstellation }) => initConstellation(canvas)).catch(() => {});
-})();
+/* ---------- Décorations canvas : chargées APRÈS le rendu critique ----------
+   (libère le thread principal pendant FCP/LCP — animations purement décoratives) */
+const whenIdle = (fn) => {
+  const run = () =>
+    'requestIdleCallback' in window ? window.requestIdleCallback(fn, { timeout: 1800 }) : window.setTimeout(fn, 200);
+  if (document.readyState === 'complete') run();
+  else window.addEventListener('load', run, { once: true });
+};
 
-/* ---------- Fond de constellations révélé au scroll (dès la 2e section) ---------- */
-(function bgFx() {
-  const canvas = document.getElementById('bgFx');
-  if (!canvas) return;
-  import('./bg-constellations.js').then(({ initBgConstellations }) => initBgConstellations(canvas)).catch(() => {});
-})();
+whenIdle(() => {
+  const hero = document.getElementById('heroFx');
+  if (hero) import('./constellation.js').then(({ initConstellation }) => initConstellation(hero)).catch(() => {});
+  const bg = document.getElementById('bgFx');
+  if (bg) import('./bg-constellations.js').then(({ initBgConstellations }) => initBgConstellations(bg)).catch(() => {});
+});
