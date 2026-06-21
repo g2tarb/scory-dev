@@ -53,7 +53,8 @@ function curColor(t) {
 
 export function initFxLayer() {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (window.matchMedia('(max-width: 820px), (pointer: coarse)').matches) return; // pas sur mobile
+  // Mobile : version réduite (plus petite, allégée) au lieu de couper.
+  const small = window.matchMedia('(max-width: 820px), (pointer: coarse)').matches;
 
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden', 'true');
@@ -74,7 +75,8 @@ export function initFxLayer() {
     .ai-bubble.on{opacity:1;transform:translate(-50%,0) scale(1);}
     .ai-bubble::after{content:'';position:absolute;left:26px;bottom:-7px;width:12px;height:12px;background:rgba(9,16,24,.84);
       border-right:1px solid rgba(170,205,255,.45);border-bottom:1px solid rgba(170,205,255,.45);transform:rotate(45deg);}
-    .ai-cur{display:inline-block;color:#aacdff;animation:ai-blink 1s steps(2) infinite;}@keyframes ai-blink{50%{opacity:0}}`;
+    .ai-cur{display:inline-block;color:#aacdff;animation:ai-blink 1s steps(2) infinite;}@keyframes ai-blink{50%{opacity:0}}
+    @media (max-width:820px){.ai-bubble{max-width:168px;font-size:11px;padding:8px 11px;border-radius:11px;}.ai-bubble::after{left:18px;}}`;
   document.head.appendChild(style);
   const bubble = document.createElement('div'); bubble.className = 'ai-bubble'; bubble.setAttribute('aria-hidden', 'true');
   const btext = document.createElement('span'); const cur = document.createElement('span'); cur.className = 'ai-cur'; cur.textContent = '▍';
@@ -100,7 +102,7 @@ export function initFxLayer() {
   const step = () => (seed = (seed * 1103515245 + 12345) & 0x7fffffff);
   const rnd = () => step() / 0x7fffffff;
   const rndChar = () => (((step() >>> 14) & 1) ? '1' : '0'); // vrai mix 0/1 (bit haut)
-  const NP = 50;
+  const NP = small ? 22 : 50;
   const parts = Array.from({ length: NP }, () => ({ x: rnd() * W, y: rnd() * H, vx: (rnd() - .5) * .25, vy: (rnd() - .5) * .25 }));
   const mouse = { x: -1e3, y: -1e3 };
   addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
@@ -146,7 +148,7 @@ export function initFxLayer() {
     if (tvDoc) { const ys = tvDoc.cy - sy; tvC = { x: tvDoc.cx - (scrollX || 0), y: ys }; tvScale = tvDoc.h * 0.32; k = clamp(1 - Math.abs(ys - H / 2) / (H * 0.55), 0, 1); }
     const cx = lerp(W * 0.5, tvC ? tvC.x : W * 0.5, k) + (reduced ? 0 : Math.sin(t * 0.7) * 4);
     const cy = lerp(H * 0.34, tvC ? tvC.y : H * 0.34, k);
-    const baseScale = lerp(Math.min(W, H) * 0.18, tvScale, k) * (1 + voice * 0.05);
+    const baseScale = lerp(Math.min(W, H) * (small ? 0.12 : 0.18), tvScale, k) * (1 + voice * 0.05);
     const fa = fade * lerp(0.85, 1, k);
 
     // Ondes vocales (émises quand elle parle).
@@ -166,7 +168,7 @@ export function initFxLayer() {
     // Sphère de binaire qui tourne + vibre.
     const ay = reduced ? 0.3 : t * 0.22, ax = reduced ? 0.06 : Math.sin(t * 0.18) * 0.18;
     const cay = Math.cos(ay), say = Math.sin(ay), cax = Math.cos(ax), sax = Math.sin(ax);
-    for (let i = 0; i < SPHERE.length; i++) {
+    for (let i = 0; i < SPHERE.length; i += small ? 2 : 1) {
       const [ux, uy, uz] = SPHERE[i];
       // déformation "vocale" : ondulation radiale qui suit le niveau de voix.
       const ripple = reduced ? 0 : (voice * 0.13 * Math.sin(uy * 8 + t * 16 + ux * 4) + Math.sin(t * 1.4 + i) * 0.012);
@@ -182,7 +184,7 @@ export function initFxLayer() {
       const tw = reduced ? 0.85 : 0.55 + 0.3 * Math.sin(t * 5 + i) + voice * 0.2;
       const a = clamp((0.55 + voice * 0.35) * depth * tw * fa, 0, 1);
       if (a < 0.03) continue;
-      ctx.globalAlpha = a; ctx.fillStyle = `rgb(${col})`; ctx.shadowColor = `rgba(${col},0.7)`; ctx.shadowBlur = size * 0.5;
+      ctx.globalAlpha = a; ctx.fillStyle = `rgb(${col})`; ctx.shadowColor = `rgba(${col},0.7)`; ctx.shadowBlur = small ? 0 : size * 0.5;
       ctx.font = `${size}px 'JetBrains Mono', ui-monospace, monospace`;
       ctx.fillText(rndChar(), sx, syy);
     }
@@ -196,7 +198,8 @@ export function initFxLayer() {
     if (fade > 0.4) {
       if (!started) { started = true; bubble.classList.add('on'); showLine(); }
       bubble.style.display = '';
-      bubble.style.left = clamp(cx + baseScale * 0.95, 150, W - 150) + 'px';
+      const bm = small ? 90 : 150; // marge horizontale (bulle plus étroite sur mobile)
+      bubble.style.left = clamp(cx + baseScale * 0.95, bm, W - bm) + 'px';
       bubble.style.top = clamp(cy - baseScale * 1.0, 16, H - 130) + 'px';
     } else bubble.style.display = 'none';
   }
