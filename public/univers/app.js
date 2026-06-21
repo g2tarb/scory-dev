@@ -247,14 +247,14 @@ async function main() {
 
           const AI_LINES = {
             fr: [
-              "Bienvenue. D'abord la navigation : les fleches ‹ › ou un swipe font tourner les disques, cliquez un disque pour l'ouvrir.",
+              "Bienvenue. La navigation : les fleches ‹ › ou un swipe font tourner les disques, un clic ouvre un projet. Regardez, je vous montre.",
               "Je suis l'IA de Scory, votre guide. Je reste avec vous tout le long de la visite.",
               "Chaque disque autour de moi est un projet reel. Faites-les defiler, je vous raconte chacun.",
               "Scory, c'est un developpeur web freelance base a Paris. Full-stack, du design au deploiement.",
               "Zero template, tout est code a la main. Quand vous voulez, on estime votre projet en bas.",
             ],
             en: [
-              "Welcome. First, navigation: the ‹ › arrows or a swipe spin the discs, click a disc to open it.",
+              "Welcome. Navigation: the ‹ › arrows or a swipe spin the discs, a click opens a project. Watch, I'll show you.",
               "I'm Scory's AI, your guide. I'll stay with you throughout the whole visit.",
               "Each disc around me is a real project. Scroll through them, I'll walk you through each one.",
               "Scory is a freelance web developer based in Paris. Full-stack, from design to deployment.",
@@ -263,7 +263,30 @@ async function main() {
           };
 
           let typeTimer = null;
+          let demoTimer = null;
           let lineIdx = 0;
+          let demoPlayed = false;
+
+          // Demo de navigation : l'IA fait defiler tous les disques en rafale
+          // (memes animations que la nav manuelle : spin + changement de fond), puis revient sur Scory.
+          function runNavDemo() {
+            if (demoPlayed) return;
+            demoPlayed = true;
+            const n = discs().length;
+            if (n < 2) { lineIdx++; typeLine(); return; }
+            const seq = [];
+            for (let j = 1; j < n; j++) seq.push(j); // parcourt 1..n-1
+            seq.push(0); // retour sur le disque Scory
+            let k = 0;
+            const stepDemo = () => {
+              if (k >= seq.length) { demoTimer = null; return; } // showProjectBg(0) relancera l'IA
+              if (animating) { demoTimer = setTimeout(stepDemo, 80); return; } // attendre la fin de l'anim en cours
+              goTo(seq[k++]);
+              demoTimer = setTimeout(stepDemo, 780);
+            };
+            stepDemo();
+          }
+
           function typeLine() {
             const lines = AI_LINES[getLang() === "en" ? "en" : "fr"];
             const line = lines[lineIdx % lines.length];
@@ -274,7 +297,11 @@ async function main() {
               if (i < line.length) { i++; typeTimer = setTimeout(step, 30); }
               else {
                 ai.classList.remove("is-speaking"); // ondes au repos entre 2 phrases
-                typeTimer = setTimeout(() => { lineIdx++; typeLine(); }, 3600);
+                if (lineIdx === 0 && !demoPlayed) {
+                  typeTimer = setTimeout(runNavDemo, 900); // apres la phrase de nav : demo en rafale
+                } else {
+                  typeTimer = setTimeout(() => { lineIdx++; typeLine(); }, 3600);
+                }
               }
             };
             step();
@@ -283,9 +310,11 @@ async function main() {
           projectBgs[0] = {
             canvas: ai,
             orb: null,
-            start() { if (typeTimer) clearTimeout(typeTimer); lineIdx = 0; typeLine(); },
+            // Apres la demo, l'IA reprend a la 2e phrase (le guide, pas la nav).
+            start() { if (typeTimer) clearTimeout(typeTimer); lineIdx = demoPlayed ? 1 : 0; typeLine(); },
             stop() {
               if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+              // demoTimer volontairement non coupe : la demo se termine seule et revient sur Scory.
               ai.classList.remove("is-speaking");
             },
           };
