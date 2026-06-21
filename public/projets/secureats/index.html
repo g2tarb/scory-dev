@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0c0e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Baloo+2:wght@700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet" /></noscript>
+    <link rel="stylesheet" href="/projets/case.css" />
+
+    <title>SecurEats, PWA de commande fast-food — étude de cas | Scory</title>
+    <meta name="description" content="SecurEats : une PWA de commande fast-food (livraison, click & collect, sur place) où les infos restent sur le téléphone, sans compte obligatoire. 100% vanilla JS, installable. Étude de cas par Scory, développeur web freelance à Paris." />
+    <link rel="canonical" href="https://scory.dev/projets/secureats/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:url" content="https://scory.dev/projets/secureats/" />
+    <meta property="og:title" content="SecurEats, PWA de commande fast-food — étude de cas" />
+    <meta property="og:description" content="Commander en livraison, click & collect ou sur place, sans compte obligatoire, les infos restent sur le téléphone. 100% vanilla JS, installable." />
+    <meta property="og:image" content="https://scory.dev/projects/secureats.webp" />
+    <meta property="og:image:width" content="1440" />
+    <meta property="og:image:height" content="900" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://scory.dev/projects/secureats.webp" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SecurEats",
+        "url": "https://secure-eats.vercel.app/",
+        "applicationCategory": "FoodDeliveryApplication",
+        "operatingSystem": "Web (PWA, iOS & Android)",
+        "description": "PWA de commande fast-food : livraison, click & collect ou sur place. Sans compte obligatoire, les données restent sur l'appareil. 100% vanilla JS, installable.",
+        "author": { "@type": "Person", "name": "Scory", "url": "https://scory.dev/" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://scory.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Réalisations", "item": "https://scory.dev/#work" },
+          { "@type": "ListItem", "position": 3, "name": "SecurEats", "item": "https://scory.dev/projets/secureats/" }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="case-top">
+      <a class="case-brand" href="/">scory<span>.dev</span></a>
+      <a class="case-back" href="/#work">← Toutes les réalisations</a>
+    </header>
+
+    <main>
+      <section class="case-hero wrap">
+        <p class="case-eyebrow">Étude de cas · PWA commande &amp; livraison</p>
+        <h1 class="case-title">SecurEats, commander sans laisser ses données</h1>
+        <p class="case-lead">Une PWA de commande fast-food — livraison, click &amp; collect ou sur place — où l'utilisateur commande sans compte obligatoire et garde ses infos sur son téléphone. Installable en un tap, iOS comme Android, sans framework.</p>
+        <ul class="case-meta">
+          <li><b>Type</b><span>PWA · commande &amp; livraison</span></li>
+          <li><b>Mon rôle</b><span>Conception &amp; développement</span></li>
+          <li><b>Stack</b><span>Vanilla JS · PWA · Service Worker</span></li>
+        </ul>
+      </section>
+
+      <figure class="wrap" style="margin:18px auto 0">
+        <img src="/projects/secureats.webp" width="1440" height="900" alt="Accueil de SecurEats : best-sellers en cartes (burgers, nuggets, milkshake) et trois modes de commande, livraison, click & collect, sur place." style="border:1px solid var(--border);border-radius:14px" loading="lazy" />
+      </figure>
+
+      <div class="case-body wrap">
+        <section class="case-section">
+          <h2 class="case-h2">L'idée</h2>
+          <p>Commander un fast-food en ligne demande souvent un compte, des données qui partent on ne sait où, et une app à installer. SecurEats inverse la logique&nbsp;: <strong>pas de compte obligatoire</strong>, les infos <strong>restent sur le téléphone</strong>, et l'expérience est celle d'une app native — sans passer par un store.</p>
+        </section>
+
+        <section class="case-section">
+          <h2 class="case-h2">Ce que j'ai construit</h2>
+          <ul class="case-list">
+            <li>Trois modes de commande&nbsp;: <strong>livraison</strong>, <strong>click &amp; collect</strong> et <strong>sur place</strong>.</li>
+            <li>Un catalogue produits soigné (best-sellers, prix, ajout au panier) avec une vraie direction artistique food.</li>
+            <li>Une <strong>PWA installable</strong> en un tap, iOS et Android, avec Service Worker pour la fluidité et le hors-ligne.</li>
+            <li>Une approche <strong>privacy-first</strong>&nbsp;: minimum de données, pas de compte imposé, paiement au livreur possible.</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <h2 class="case-h2">Côté technique</h2>
+          <p><strong>100% vanilla JavaScript</strong>, zéro dépendance framework&nbsp;: l'app reste légère, rapide et maîtrisée de bout en bout. <strong>Service Worker</strong> pour l'installation et le hors-ligne, et une attention particulière à la sécurité et à la confidentialité des échanges de commande.</p>
+          <ul class="case-tags">
+            <li>Vanilla JS</li><li>PWA</li><li>Service Worker</li><li>Web Crypto</li><li>QR Code</li><li>CSP</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <div class="case-actions">
+            <a class="case-btn case-btn--primary" href="https://secure-eats.vercel.app/" target="_blank" rel="noopener">Ouvrir SecurEats ↗</a>
+            <a class="case-btn case-btn--ghost" href="/#builder">Estimer un projet similaire</a>
+          </div>
+        </section>
+      </div>
+
+      <section class="case-cta">
+        <h2>Une app ou une PWA à créer&nbsp;?</h2>
+        <p>De la première maquette aux stores, je conçois et code sur mesure. Parlons-en.</p>
+        <div class="case-actions">
+          <a class="case-btn case-btn--primary" href="/#builder">Composer mon app</a>
+          <a class="case-btn case-btn--ghost" href="mailto:contact@scory.dev">Écrire un email</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="case-foot">
+      <span>© Scory · scory.dev</span>
+      <a href="/">Retour à l'accueil</a>
+    </footer>
+  </body>
+</html>

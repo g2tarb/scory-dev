@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0c0e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Baloo+2:wght@700;800&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet" /></noscript>
+    <link rel="stylesheet" href="/projets/case.css" />
+
+    <title>DYG, scanner de profil GitHub — étude de cas | Scory</title>
+    <meta name="description" content="DYG : un outil web qui scanne un profil GitHub et renvoie un score sur 8 axes, un archétype de développeur et des conseils concrets. Sans compte, gratuit. Étude de cas par Scory, développeur web freelance à Paris." />
+    <link rel="canonical" href="https://scory.dev/projets/dyg/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:url" content="https://scory.dev/projets/dyg/" />
+    <meta property="og:title" content="DYG, scanner de profil GitHub — étude de cas" />
+    <meta property="og:description" content="Scanner un profil GitHub et obtenir un score sur 8 axes, un archétype de dev et des conseils concrets. Sans compte, gratuit." />
+    <meta property="og:image" content="https://scory.dev/projects/dyg.webp" />
+    <meta property="og:image:width" content="1440" />
+    <meta property="og:image:height" content="900" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://scory.dev/projects/dyg.webp" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "DYG",
+        "url": "https://dyg-olfu.onrender.com",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "description": "Outil qui analyse un profil GitHub et renvoie un score sur 8 axes, un archétype de développeur et des conseils concrets. Sans inscription.",
+        "author": { "@type": "Person", "name": "Scory", "url": "https://scory.dev/" }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://scory.dev/" },
+          { "@type": "ListItem", "position": 2, "name": "Réalisations", "item": "https://scory.dev/#work" },
+          { "@type": "ListItem", "position": 3, "name": "DYG", "item": "https://scory.dev/projets/dyg/" }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="case-top">
+      <a class="case-brand" href="/">scory<span>.dev</span></a>
+      <a class="case-back" href="/#work">← Toutes les réalisations</a>
+    </header>
+
+    <main>
+      <section class="case-hero wrap">
+        <p class="case-eyebrow">Étude de cas · Outil pour développeurs</p>
+        <h1 class="case-title">DYG — quel dev es-tu&nbsp;?</h1>
+        <p class="case-lead">Un outil web qui scanne un profil GitHub et renvoie, en quelques secondes, un score sur 8 axes, un archétype de développeur et des conseils concrets pour progresser. Sans inscription, gratuit.</p>
+        <ul class="case-meta">
+          <li><b>Type</b><span>Web app · outil gratuit</span></li>
+          <li><b>Mon rôle</b><span>Conception &amp; développement full-stack</span></li>
+          <li><b>Stack</b><span>Vanilla JS · Fastify · PostgreSQL</span></li>
+        </ul>
+      </section>
+
+      <figure class="wrap" style="margin:18px auto 0">
+        <img src="/projects/dyg.webp" width="1440" height="900" alt="Page d'accueil de DYG : champ de saisie d'un nom d'utilisateur GitHub et bouton Scan, sur fond sombre constellé." style="border:1px solid var(--border);border-radius:14px" loading="lazy" />
+      </figure>
+
+      <div class="case-body wrap">
+        <section class="case-section">
+          <h2 class="case-h2">Le point de départ</h2>
+          <p>Un développeur a un profil GitHub, mais difficile d'en tirer une lecture claire&nbsp;: où suis-je fort, où je pèche, à quoi ressemble vraiment mon travail vu de l'extérieur&nbsp;? DYG répond à ça sans friction&nbsp;: on entre un pseudo GitHub, et on obtient une analyse immédiate, lisible, actionnable.</p>
+        </section>
+
+        <section class="case-section">
+          <h2 class="case-h2">Ce que j'ai construit</h2>
+          <ul class="case-list">
+            <li>Une analyse d'un profil public GitHub renvoyant un <strong>score sur 8 axes</strong> et un <strong>archétype de développeur</strong>.</li>
+            <li>Des <strong>conseils concrets</strong> pour corriger les points faibles, pas juste un chiffre.</li>
+            <li>Un parcours <strong>sans inscription</strong>&nbsp;: on entre un pseudo, on a le résultat. Zéro compte, zéro mail.</li>
+            <li>Une interface sombre et soignée, animée, pensée pour donner envie de partager son score.</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <h2 class="case-h2">Côté technique</h2>
+          <p>Front en <strong>vanilla JavaScript</strong> (zéro framework, chargement léger), back en <strong>Fastify</strong> qui interroge l'API GitHub, calcule le scoring multi-axes et le persiste en <strong>PostgreSQL</strong>. L'enjeu&nbsp;: rester rapide et fluide malgré les appels externes, et rendre un résultat instantané côté utilisateur.</p>
+          <ul class="case-tags">
+            <li>Vanilla JS</li><li>Fastify</li><li>PostgreSQL</li><li>API GitHub</li><li>Node.js</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <div class="case-actions">
+            <a class="case-btn case-btn--primary" href="https://dyg-olfu.onrender.com" target="_blank" rel="noopener">Tester DYG en ligne ↗</a>
+            <a class="case-btn case-btn--ghost" href="/#builder">Estimer un projet similaire</a>
+          </div>
+        </section>
+      </div>
+
+      <section class="case-cta">
+        <h2>Une idée d'outil comme celui-ci&nbsp;?</h2>
+        <p>Du concept au déploiement, je conçois et code sur mesure. Parlons-en.</p>
+        <div class="case-actions">
+          <a class="case-btn case-btn--primary" href="/#builder">Composer mon projet</a>
+          <a class="case-btn case-btn--ghost" href="mailto:contact@scory.dev">Écrire un email</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="case-foot">
+      <span>© Scory · scory.dev</span>
+      <a href="/">Retour à l'accueil</a>
+    </footer>
+  </body>
+</html>
