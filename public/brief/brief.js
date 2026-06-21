@@ -5,14 +5,8 @@
 import { initFxLayer } from '../univers/fx-layer.js';
 
 const TOTAL = 6;
-const TYPES = [
-  { v: 'Site vitrine', i: '🖥️' }, { v: 'E-commerce', i: '🛒' }, { v: 'Web app / SaaS', i: '⚙️' },
-  { v: 'Application mobile', i: '📱' }, { v: 'Refonte', i: '🔁' }, { v: 'Autre', i: '✨' },
-];
-const GOALS = [
-  { v: 'Vendre en ligne', i: '💸' }, { v: 'Générer des leads', i: '🎯' }, { v: 'Image de marque', i: '👑' },
-  { v: 'Recruter', i: '🤝' }, { v: 'Me lancer', i: '🚀' }, { v: 'Autre', i: '✨' },
-];
+const TYPES = ['Site vitrine', 'E-commerce', 'Web app / SaaS', 'Application mobile', 'Refonte', 'Autre'];
+const GOALS = ['Vendre en ligne', 'Générer des leads', 'Image de marque', 'Recruter', 'Me lancer', 'Autre'];
 const FEATURES = ['Prise de RDV', 'Paiement en ligne', 'Espace membre', 'Blog', 'Multilingue', 'Agent IA', 'Animations 3D', 'SEO avancé', 'Tableau de bord', 'Notifications'];
 const BUDGETS = ['Moins de 2 000 €', '2 à 5 000 €', '5 à 10 000 €', 'Plus de 10 000 €', 'À définir'];
 const TIMELINES = ['Au plus vite', 'Sous 1 mois', '2 à 3 mois', 'Pas pressé'];
@@ -134,27 +128,27 @@ function render() {
   stage.innerHTML = '';
   const wrap = el('div', 'brief-step');
   if (step === 1) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'On démarre'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '01 · Projet'));
     wrap.appendChild(el('h2', 'brief-q', 'Quel type de projet ?'));
     wrap.appendChild(choiceGrid(TYPES, false, (v) => state.projectType === v, (v) => { state.projectType = v; autoNext(); }));
   } else if (step === 2) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'Le pourquoi'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '02 · Objectif'));
     wrap.appendChild(el('h2', 'brief-q', 'Ton objectif principal ?'));
     wrap.appendChild(choiceGrid(GOALS, false, (v) => state.goal === v, (v) => { state.goal = v; autoNext(); }));
   } else if (step === 3) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'Le concret'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '03 · Fonctions'));
     wrap.appendChild(el('h2', 'brief-q', 'Des fonctionnalités en tête ?'));
     wrap.appendChild(el('p', 'brief-hint', 'Plusieurs choix possibles, ou aucun.'));
     wrap.appendChild(choiceGrid(FEATURES, true, (v) => state.features.includes(v), (v) => toggle(state.features, v)));
   } else if (step === 4) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'Le cadre'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '04 · Cadre'));
     wrap.appendChild(el('h2', 'brief-q', 'Budget & délai ?'));
     wrap.appendChild(el('span', 'brief-sub', 'Budget indicatif'));
     wrap.appendChild(choiceGrid(BUDGETS, false, (v) => state.budget === v, (v) => { state.budget = v; markSingle(); }));
     wrap.appendChild(el('span', 'brief-sub', 'Pour quand ?'));
     wrap.appendChild(choiceGrid(TIMELINES, false, (v) => state.timeline === v, (v) => { state.timeline = v; markSingle(); }));
   } else if (step === 5) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'La vibe'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '05 · Style'));
     wrap.appendChild(el('h2', 'brief-q', 'Quelle ambiance ?'));
     wrap.appendChild(el('p', 'brief-hint', 'Le ou les styles qui te parlent.'));
     wrap.appendChild(choiceGrid(STYLES, true, (v) => state.style.includes(v), (v) => toggle(state.style, v)));
@@ -164,7 +158,7 @@ function render() {
     ta.addEventListener('input', () => { state.refs = ta.value; });
     wrap.appendChild(ta);
   } else if (step === 6) {
-    wrap.appendChild(el('p', 'brief-eyebrow', 'On se rencontre'));
+    wrap.appendChild(el('p', 'brief-eyebrow', '06 · Contact'));
     wrap.appendChild(el('h2', 'brief-q', 'On reste en contact ?'));
     wrap.appendChild(field('Votre nom *', 'name', 'text', 'Prénom Nom'));
     wrap.appendChild(field('Votre email *', 'email', 'email', 'vous@exemple.com'));
