@@ -224,4 +224,4 @@ future reference if a backend is added.
 ---
 
 *Last updated: 2026-04-12*
-*Contact: contact@scory.fr*
+*Contact: contact@scory.dev*
