@@ -1,5 +1,5 @@
 /**
- * SCORY — chatbot.js
+ * SCORY · chatbot.js
  * Mini-bot prospect : 5 questions multi-choix + capture contact.
  * Pas de calcul de devis. Resultat envoye par mailto a contact@scory.dev
  * pour relance manuelle.
@@ -115,7 +115,7 @@ export function initChatbot({ isValidEmail }) {
       submitBtn.textContent = tx().submitting;
 
       // Construit un mailto pre-rempli vers contact@scory.dev
-      const subject = `Lead portfolio Scory — ${name}`;
+      const subject = `Lead portfolio Scory · ${name}`;
       const lines = [
         `${tx().summaryHeader}:`,
         ...flow().map((q) => `• ${q.id}: ${answers[q.id] || "-"}`),

@@ -67,13 +67,13 @@ document.head.appendChild(style);
 const brand = document.createElement('button');
 brand.className = 'rp-brand';
 brand.type = 'button';
-brand.setAttribute('aria-label', 'Revenir au site — scory.dev');
+brand.setAttribute('aria-label', 'Revenir au site · scory.dev');
 brand.innerHTML =
   '<span class="rp-mark">' +
     '<span class="rp-dev">scory<span class="rp-dot">.dev</span></span>' +
     '<span class="rp-creative" data-text="CREATIVE">CREATIVE</span>' +
   '</span>' +
-  '<span class="rp-sub">Développeur freelance — sites sur mesure &amp; expériences immersives</span>';
+  '<span class="rp-sub">Développeur freelance · sites sur mesure &amp; expériences immersives</span>';
 document.body.appendChild(brand);
 
 // Tunnel dimensionnel « CORPO ».

@@ -1,5 +1,5 @@
 /**
- * SCORY — booking.js
+ * SCORY · booking.js
  * Systeme de prise de RDV in-app : calendrier, creneaux, formulaire, mailto.
  * Necessite que le chatbot soit complete avant de pouvoir prendre RDV.
  */
@@ -190,7 +190,7 @@ export function initBooking({ trapFocus, isValidEmail, contactEmail, getChatComp
 
     const dateStr = formatDate(selectedDate);
     const showDone = () => {
-      document.getElementById("booking-done-detail").textContent = `${dateStr} a ${selectedSlot} — ${name} (${email})`;
+      document.getElementById("booking-done-detail").textContent = `${dateStr} a ${selectedSlot} · ${name} (${email})`;
       showStep(stepDone);
       document.getElementById("booking-name").value = "";
       document.getElementById("booking-email").value = "";
@@ -207,7 +207,7 @@ export function initBooking({ trapFocus, isValidEmail, contactEmail, getChatComp
       });
       if (r.ok) viaApi = true;
       else if (r.status === 409) { // créneau déjà pris → on renvoie au choix
-        alert(lang() === "en" ? "This slot was just taken — please pick another." : "Ce créneau vient d'être pris — choisis-en un autre.");
+        alert(lang() === "en" ? "This slot was just taken · please pick another." : "Ce créneau vient d'être pris · choisis-en un autre.");
         goToSlots();
         return;
       }
@@ -217,7 +217,7 @@ export function initBooking({ trapFocus, isValidEmail, contactEmail, getChatComp
 
     // 2) Repli : email pré-rempli (toujours fonctionnel sans backend).
     if (!viaApi) {
-      const subject = encodeURIComponent(`Demande de RDV — ${dateStr} a ${selectedSlot}`);
+      const subject = encodeURIComponent(`Demande de RDV · ${dateStr} a ${selectedSlot}`);
       const body = encodeURIComponent(
         `Bonjour Scory,\n\nJe souhaite prendre rendez-vous :\n\nDate : ${dateStr}\nHeure : ${selectedSlot}\nNom : ${name}\nEmail : ${email}\n${msg ? `Message : ${msg}\n` : ""}\nMerci !`,
       );

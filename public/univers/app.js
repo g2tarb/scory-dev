@@ -639,7 +639,7 @@ async function main() {
         const titleEl = disc.querySelector(".disc-title");
         const metaEl = disc.querySelector(".disc-meta");
         if (titleEl) titleEl.textContent = p.title;
-        if (metaEl) metaEl.textContent = p.desc.split("—")[0].trim().substring(0, 30);
+        if (metaEl) metaEl.textContent = p.desc.split("·")[0].trim().substring(0, 30);
       });
       // Rafraichir les dots
       buildDots();
@@ -648,8 +648,8 @@ async function main() {
       // Titre de page
       const project = projects[activeIndex];
       document.title = activeIndex === SCORY_INDEX
-        ? (newLang === "fr" ? "SCORY — Musee Digital" : "SCORY — Digital Museum")
-        : `${project?.title || ""} — SCORY`;
+        ? (newLang === "fr" ? "SCORY · Musee Digital" : "SCORY · Digital Museum")
+        : `${project?.title || ""} · SCORY`;
     });
   }
 
@@ -690,8 +690,8 @@ async function main() {
     // Titre de page dynamique + hash routing
     const project = PROJECTS()[index];
     document.title = index === SCORY_INDEX
-      ? "SCORY — Developpeur Freelance"
-      : `${project?.title || ""} — SCORY`;
+      ? "SCORY · Developpeur Freelance"
+      : `${project?.title || ""} · SCORY`;
     const slug = project?.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-$/, "") || "";
     const hash = index === SCORY_INDEX ? "" : slug;
     if (window.location.hash.slice(1) !== hash) {

@@ -1,5 +1,5 @@
 /**
- * SCORY — i18n.js
+ * SCORY · i18n.js
  * Systeme de traduction FR/EN.
  */
 
@@ -10,10 +10,10 @@ export const TRANSLATIONS = {
     en: "The only limit is your imagination",
   },
   // Floating brand
-  "brand.sub": { fr: "Developpeur freelance — sites sur mesure & experiences immersives", en: "Freelance developer — bespoke websites & immersive experiences" },
+  "brand.sub": { fr: "Developpeur freelance · sites sur mesure & experiences immersives", en: "Freelance developer · bespoke websites & immersive experiences" },
   // Discs
   "disc.0.title": { fr: "Portfolio Scory", en: "Scory Portfolio" },
-  "disc.0.meta": { fr: "Creative Dev — Paris", en: "Creative Dev — Paris" },
+  "disc.0.meta": { fr: "Creative Dev · Paris", en: "Creative Dev · Paris" },
   "disc.1.title": { fr: "4dayvelopment", en: "4dayvelopment" },
   "disc.1.meta": { fr: "Agence web", en: "Web agency" },
   "disc.2.title": { fr: "Clara Martinez", en: "Clara Martinez" },
@@ -56,7 +56,7 @@ export const TRANSLATIONS = {
   "process.1.name": { fr: "Contact", en: "Contact" },
   "process.1.desc": { fr: "On echange sur votre vision, vos objectifs et vos ambitions. Reponse sous 24h.", en: "We discuss your vision, goals and ambitions. Reply within 24h." },
   "process.2.name": { fr: "Maquette", en: "Mockup" },
-  "process.2.desc": { fr: "Je cree la direction artistique, wireframes et prototypes interactifs — valides avec vous.", en: "I create the art direction, wireframes and interactive prototypes — validated with you." },
+  "process.2.desc": { fr: "Je cree la direction artistique, wireframes et prototypes interactifs · valides avec vous.", en: "I create the art direction, wireframes and interactive prototypes · validated with you." },
   "process.3.name": { fr: "Developpement", en: "Development" },
   "process.3.desc": { fr: "Code artisanal, animations GSAP, Three.js, responsive pixel-perfect. Zero template.", en: "Handcrafted code, GSAP animations, Three.js, pixel-perfect responsive. Zero templates." },
   "process.4.name": { fr: "Livraison", en: "Delivery" },
@@ -96,7 +96,7 @@ export const TRANSLATIONS = {
     fr: "Votre vision, mon code. Sans limites.",
     en: "Your vision, my code. No limits.",
   },
-  "footer.copy": { fr: "Scory — Scory Yana. Tous droits reserves.", en: "Scory — Scory Yana. All rights reserved." },
+  "footer.copy": { fr: "Scory · Scory Yana. Tous droits reserves.", en: "Scory · Scory Yana. All rights reserved." },
   "footer.legal": { fr: "Mentions legales", en: "Legal notice" },
   // Skip link
   "skip": { fr: "Aller au musee", en: "Go to museum" },
@@ -123,7 +123,7 @@ export const JOURS = {
   en: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
 };
 
-/** Flux 5 questions du chatbot (FR + EN) — multi-choix uniquement */
+/** Flux 5 questions du chatbot (FR + EN) · multi-choix uniquement */
 export const CHAT_FLOW = {
   fr: [
     { id: "type", bot: "Tu veux quel type de projet ?",

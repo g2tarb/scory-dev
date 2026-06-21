@@ -1,5 +1,5 @@
 {
-  "name": "SCORY — Musee Digital",
+  "name": "SCORY · Musee Digital",
   "short_name": "SCORY",
   "description": "Portfolio interactif concu comme un musee digital immersif. Projets web, design et SaaS.",
   "start_url": "./",
@@ -29,7 +29,7 @@
       "sizes": "1200x630",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "SCORY — Musee Digital"
+      "label": "SCORY · Musee Digital"
     }
   ]
 }

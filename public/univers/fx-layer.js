@@ -1,5 +1,5 @@
 /**
- * Sphère IA en BINAIRE qui PARLE — fond du portfolio (desktop uniquement).
+ * Sphère IA en BINAIRE qui PARLE · fond du portfolio (desktop uniquement).
  *  - orbe de chiffres 0/1 qui tourne en 3D et respire ;
  *  - quand elle "parle" (bulle en train de taper) : elle vibre + émet des ondes
  *    vocales (visualiseur type assistant), cœur qui pulse ;
@@ -26,7 +26,7 @@ const SPHERE = (() => {
 
 const LINES = [
   "Psst… c'est Scory qui m'a codé. Un dev de génie, je confirme.",
-  "Tip : aie en tête ton objectif principal — vendre, rassurer, recruter ?",
+  "Tip : aie en tête ton objectif principal · vendre, rassurer, recruter ?",
   "Il m'a laissé seul ici… alors je fais le commercial : signe avec lui.",
   "Tip : 2-3 sites que t'aimes, et on cadre le style en 2 minutes.",
   "Conseil d'IA : prends le RDV pendant que j'ai l'air sympa.",
