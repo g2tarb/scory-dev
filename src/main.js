@@ -203,88 +203,143 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
-/* ---------- Assembleurs (site & app) → maquette + estimation à l'instant ---------- */
-(function builders() {
-  document.querySelectorAll('.builder').forEach((root) => {
-    const kind = root.dataset.kind || 'site'; // 'site' | 'app'
-    const unit = kind === 'app' ? 'écran' : 'bloc';
-    const sel = (group) =>
-      [...root.querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
+/* ---------- Assembleur 2-en-1 (site ⇄ app) → maquette + estimation ---------- */
+(function builder() {
+  const root = document.querySelector('.builder');
+  if (!root) return;
 
-    const result = root.querySelector('.builder-result');
-    const recap = root.querySelector('.builder-result__recap');
-    const mock = root.querySelector('[data-mock]');
-    let shown = false;
-    let raf = 0;
+  // Textes qui changent selon le type de projet.
+  const TEXT = {
+    site: {
+      lead: 'Choisissez vos blocs, ajoutez vos options. En deux minutes, vous composez votre site — on le chiffre ensemble.',
+      go: 'Générer ma maquette',
+      title: 'Votre maquette est prête.',
+      muted:
+        "Ça, c'est l'aperçu — généré à l'instant à partir de vos choix. La vraie version, codée, responsive et optimisée, ça mérite un vrai rendez-vous.",
+      unit: 'bloc',
+    },
+    app: {
+      lead: "Mêmes règles : choisissez vos écrans, ajoutez les fonctionnalités. La maquette de votre app se dessine à l'instant.",
+      go: "Générer ma maquette d'app",
+      title: 'Votre app est prête.',
+      muted:
+        "Ça, c'est l'aperçu — généré à l'instant. La vraie application, native et publiée sur les stores, ça mérite un vrai rendez-vous.",
+      unit: 'écran',
+    },
+  };
 
-    /* ----- Estimation de prix live (fourchette basse → haute) ----- */
-    const lowEl = root.querySelector('.estim-low');
-    const highEl = root.querySelector('.estim-high');
-    const band = root.querySelector('.estim-band');
+  const switchEl = document.querySelector('.kind-switch');
+  const leadEl = document.querySelector('[data-lead]');
+  const goLabel = root.querySelector('.go-label');
+  const result = root.querySelector('.builder-result');
+  const recap = root.querySelector('.builder-result__recap');
+  const titleEl = root.querySelector('[data-title]');
+  const mutedEl = root.querySelector('[data-muted]');
+  const mock = root.querySelector('[data-mock]');
+  const mockWrap = root.querySelector('.mock-wrap');
+  const lowEl = root.querySelector('.estim-low');
+  const highEl = root.querySelector('.estim-high');
+  const band = root.querySelector('.estim-band');
+
+  let kind = 'site';
+  let shown = false;
+  let raf = 0;
+  const cur = { low: 0, high: 0 };
+
+  // Chips du volet ACTIF uniquement.
+  const pane = () => root.querySelector(`.builder-pane[data-pane="${kind}"]`);
+  const sel = (group) =>
+    [...pane().querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
+
+  const tween = (el, key, to) => {
+    if (!el) return;
+    const from = cur[key];
+    if (from === to) { el.textContent = eur(to); return; }
+    const t0 = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / 450);
+      const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
+      el.textContent = eur(from + (to - from) * e);
+      if (k < 1) window.requestAnimationFrame(step);
+      else cur[key] = to;
+    };
+    window.requestAnimationFrame(step);
+  };
+
+  const updateEstimate = () => {
     const max = MAX_SCALE[kind] || MAX_SCALE.site;
-    const cur = { low: 0, high: 0 };
+    const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
+    tween(lowEl, 'low', lo);
+    tween(highEl, 'high', hi);
+    if (band) {
+      band.style.left = `${Math.min(100, (lo / max) * 100)}%`;
+      band.style.right = `${Math.max(0, 100 - (hi / max) * 100)}%`;
+    }
+  };
 
-    const tween = (el, key, to) => {
-      if (!el) return;
-      const from = cur[key];
-      if (from === to) { el.textContent = eur(to); return; }
-      const t0 = performance.now();
-      const step = (t) => {
-        const k = Math.min(1, (t - t0) / 450);
-        const e = 1 - Math.pow(1 - k, 3); // easeOutCubic
-        el.textContent = eur(from + (to - from) * e);
-        if (k < 1) window.requestAnimationFrame(step);
-        else cur[key] = to;
-      };
-      window.requestAnimationFrame(step);
-    };
-
-    const updateEstimate = () => {
-      const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
-      tween(lowEl, 'low', lo);
-      tween(highEl, 'high', hi);
-      if (band) {
-        band.style.left = `${Math.min(100, (lo / max) * 100)}%`;
-        band.style.right = `${Math.max(0, 100 - (hi / max) * 100)}%`;
-      }
-    };
-
-    const generate = (scroll) => {
-      const blocs = sel('base');
-      const options = sel('options');
-      const all = [...blocs, ...options];
-      if (recap) {
-        recap.textContent =
-          `${blocs.length} ${unit}${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
-          (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
-      }
-      import('./mockup.js').then((m) =>
-        (kind === 'app' ? m.renderAppMockup : m.renderMockup)(mock, { blocs, options }),
-      );
-      result.hidden = false;
-      shown = true;
-      if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    };
-
-    root.querySelectorAll('.chip').forEach((c) =>
-      c.addEventListener('click', () => {
-        c.classList.toggle('is-on');
-        updateEstimate();
-        if (!shown) return;
-        if (raf) window.cancelAnimationFrame(raf);
-        raf = window.requestAnimationFrame(() => generate(false));
-      }),
+  const generate = (scroll) => {
+    const blocs = sel('base');
+    const options = sel('options');
+    const all = [...blocs, ...options];
+    if (recap) {
+      const u = TEXT[kind].unit;
+      recap.textContent =
+        `${blocs.length} ${u}${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
+        (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
+    }
+    mock.className = kind === 'app' ? 'appmock' : 'mock';
+    mockWrap.classList.toggle('mock-wrap--app', kind === 'app');
+    import('./mockup.js').then((m) =>
+      (kind === 'app' ? m.renderAppMockup : m.renderMockup)(mock, { blocs, options }),
     );
+    result.hidden = false;
+    shown = true;
+    if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
-    root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
-
-    root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
-      const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
-      booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
+  // Bascule site ⇄ app.
+  const setKind = (next) => {
+    if (next === kind) return;
+    kind = next;
+    root.dataset.kind = kind;
+    switchEl.classList.toggle('is-app', kind === 'app');
+    switchEl.querySelectorAll('.kind-opt').forEach((o) => {
+      const on = o.dataset.set === kind;
+      o.classList.toggle('is-on', on);
+      o.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-
+    root.querySelectorAll('.builder-pane').forEach((p) => { p.hidden = p.dataset.pane !== kind; });
+    if (leadEl) leadEl.textContent = TEXT[kind].lead;
+    if (goLabel) goLabel.textContent = TEXT[kind].go;
+    if (titleEl) titleEl.textContent = TEXT[kind].title;
+    if (mutedEl) mutedEl.textContent = TEXT[kind].muted;
     updateEstimate();
+    if (shown) generate(false); // régénère l'aperçu dans le nouveau format
+  };
+
+  switchEl?.querySelectorAll('.kind-opt').forEach((o) =>
+    o.addEventListener('click', () => setKind(o.dataset.set)),
+  );
+
+  // Toggle d'un bloc/option (sur les deux volets ; seul l'actif compte).
+  root.querySelectorAll('.chip').forEach((c) =>
+    c.addEventListener('click', () => {
+      c.classList.toggle('is-on');
+      updateEstimate();
+      if (!shown) return;
+      if (raf) window.cancelAnimationFrame(raf);
+      raf = window.requestAnimationFrame(() => generate(false));
+    }),
+  );
+
+  root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
+
+  root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
+    const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
+    booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
   });
+
+  updateEstimate();
 })();
 
 /* ---------- Portail → /univers (vrai portfolio immersif) ---------- */

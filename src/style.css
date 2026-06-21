@@ -343,6 +343,31 @@ body.site-error::after {
   margin-top: 40px; padding: 28px; border: 1px solid var(--border); border-radius: 18px;
   background: var(--surface);
 }
+
+/* Interrupteur site ⇄ app (dans le titre) */
+.kind-switch {
+  display: inline-flex; position: relative; vertical-align: middle; top: -0.08em;
+  padding: 4px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface-2); font-size: clamp(14px, 2.2vw, 20px);
+  -webkit-tap-highlight-color: transparent;
+}
+.kind-knob {
+  position: absolute; top: 4px; left: 4px; bottom: 4px; width: calc(50% - 4px);
+  border-radius: 999px; background: linear-gradient(120deg, var(--accent), #d8ba74);
+  box-shadow: 0 4px 14px rgba(201, 169, 98, 0.35);
+  transition: transform 0.42s var(--ease);
+}
+.kind-switch.is-app .kind-knob { transform: translateX(100%); }
+.kind-opt {
+  flex: 1 0 auto; min-width: 58px; text-align: center;
+  position: relative; z-index: 1; font: inherit; font-weight: 700; line-height: 1; cursor: pointer;
+  border: none; background: none; color: var(--text-dim);
+  padding: 7px 16px; border-radius: 999px; transition: color 0.3s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.kind-opt:hover { color: var(--text); }
+.kind-opt.is-on, .kind-opt.is-on:hover { color: #1a1306; }
+@media (prefers-reduced-motion: reduce) { .kind-knob { transition: none; } }
 .builder-group { margin-bottom: 22px; }
 .builder-label {
   display: block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
