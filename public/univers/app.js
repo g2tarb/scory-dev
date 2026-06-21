@@ -247,18 +247,18 @@ async function main() {
 
           const AI_LINES = {
             fr: [
-              "Salut. C'est moi, l'IA de Scory. Il m'a laisse les cles de la visite.",
-              "Pour naviguer : les fleches ‹ › ou un swipe changent de disque. Cliquez un disque pour l'ouvrir.",
+              "Bienvenue. D'abord la navigation : les fleches ‹ › ou un swipe font tourner les disques, cliquez un disque pour l'ouvrir.",
+              "Je suis l'IA de Scory, votre guide. Je reste avec vous tout le long de la visite.",
+              "Chaque disque autour de moi est un projet reel. Faites-les defiler, je vous raconte chacun.",
               "Scory, c'est un developpeur web freelance base a Paris. Full-stack, du design au deploiement.",
-              "Zero template, tout est code a la main. Chaque disque autour de moi est un projet, avec son univers.",
-              "Et tout en bas, vous pouvez estimer votre projet en 30 secondes. Bonne visite.",
+              "Zero template, tout est code a la main. Quand vous voulez, on estime votre projet en bas.",
             ],
             en: [
-              "Hi. I'm Scory's AI, he left me in charge of the tour.",
-              "To navigate: the ‹ › arrows or a swipe change discs. Click a disc to open it.",
+              "Welcome. First, navigation: the ‹ › arrows or a swipe spin the discs, click a disc to open it.",
+              "I'm Scory's AI, your guide. I'll stay with you throughout the whole visit.",
+              "Each disc around me is a real project. Scroll through them, I'll walk you through each one.",
               "Scory is a freelance web developer based in Paris. Full-stack, from design to deployment.",
-              "Zero templates, everything hand-coded. Each disc around me is a project, with its own universe.",
-              "And right at the bottom, you can estimate your project in 30 seconds. Enjoy the tour.",
+              "Zero templates, everything hand-coded. Whenever you like, we estimate your project below.",
             ],
           };
 

@@ -25,18 +25,16 @@ const SPHERE = (() => {
 })();
 
 const LINES = [
-  "Psst… c'est Scory qui m'a codé. Un dev de génie, je confirme.",
-  "Tip : aie en tête ton objectif principal · vendre, rassurer, recruter ?",
-  "Il m'a laissé seul ici… alors je fais le commercial : signe avec lui.",
-  "Tip : 2-3 sites que t'aimes, et on cadre le style en 2 minutes.",
-  "Conseil d'IA : prends le RDV pendant que j'ai l'air sympa.",
-  "Tip : ta deadline idéale ? Ça aide à prioriser.",
-  "T'hésites ? Je suis fait de 0 et de 1, et même moi je suis convaincu.",
-  "Tip : ton public cible, c'est l'info qui change tout.",
-  "Un site sur mesure, jamais un template. Crois l'IA.",
-  "Tip : du contenu déjà prêt (textes, logo, photos) ? Ça accélère.",
-  "Donne ton prénom là-haut. Je mords pas, je suis une sphère.",
-  "Tip : une page vitrine ou une web app ? Dis-le, Scory adapte.",
+  "Je suis le guide IA de Scory, je reste avec vous tout le long de la visite.",
+  "Pour naviguer : les flèches ‹ › ou un swipe font tourner les disques.",
+  "Cliquez un disque pour ouvrir le projet et lire son histoire.",
+  "Chaque disque est un vrai projet livré par Scory. Faites-les défiler.",
+  "Scory : développeur web freelance à Paris, du design au déploiement.",
+  "Du sur-mesure, jamais un template. Je vous le garantis, et je suis une IA.",
+  "Repérez le projet le plus proche du vôtre, ça cadre vite les idées.",
+  "Quand vous voulez, lancez le bot en bas : 5 questions, 30 secondes.",
+  "Je peux estimer votre projet avec vous. Dites-moi ce que vous imaginez.",
+  "Continuez d'explorer, je vous guide au fur et à mesure.",
 ];
 
 // Palette qui défile (la sphère change de couleur en continu).
