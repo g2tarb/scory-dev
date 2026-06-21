@@ -24,17 +24,46 @@ const SPHERE = (() => {
   return pts;
 })();
 
-const LINES = [
-  "D'abord la navigation : les flèches ‹ › ou un swipe font tourner les disques.",
-  "Cliquez un disque pour ouvrir le projet et lire son histoire. Regardez.",
-  "Je suis le guide IA de Scory, je reste avec vous tout le long de la visite.",
-  "Chaque disque est un vrai projet livré par Scory. Faites-les défiler.",
-  "Scory : développeur web freelance à Paris, du design au déploiement.",
-  "Du sur-mesure, jamais un template. Je vous le garantis, et je suis une IA.",
-  "Repérez le projet le plus proche du vôtre, ça cadre vite les idées.",
-  "Quand vous voulez, lancez le bot en bas : 5 questions, 30 secondes.",
-  "Je peux estimer votre projet avec vous. Dites-moi ce que vous imaginez.",
-  "Continuez d'explorer, je vous guide au fur et à mesure.",
+// Le discours s'adapte au disque/projet affiché (index aligné sur le carousel).
+const LINE_SETS = [
+  // 0 — Scory / le musée : navigation + présentation
+  [
+    "D'abord la navigation : les flèches ‹ › ou un swipe font tourner les disques.",
+    "Cliquez un disque pour ouvrir le projet et lire son histoire. Regardez.",
+    "Je suis le guide IA de Scory, je reste avec vous tout le long de la visite.",
+    "Ici, c'est Scory : développeur web freelance à Paris, du design au déploiement.",
+    "Du sur-mesure, jamais un template. Faites tourner les disques, je vous raconte chacun.",
+  ],
+  // 1 — 4dayvelopment
+  [
+    "Là, 4dayvelopment : l'agence web sur-mesure de Scory, en dark luxury.",
+    "Branding, site, automations n8n, funnel : l'écosystème complet, livré vite.",
+    "Curseur magnétique, animations Three.js, mode sombre. Du premium, pas du template.",
+  ],
+  // 2 — Clara Martinez
+  [
+    "Clara Martinez : un site vitrine luxe pour une coach business à Paris.",
+    "Aurora borealis en Canvas, glassmorphism, bento grid, curseur magnétique.",
+    "Le visiteur sent tout de suite le haut de gamme. Direction artistique complète.",
+  ],
+  // 3 — JIMMY
+  [
+    "JIMMY : une expérience narrative dark et une arène de combat en temps réel.",
+    "Des combats générés par IA, permadeath, 12 000 lignes de TypeScript strict.",
+    "Curseur de sang en Three.js, zéro framework. Du lourd, livré en solo.",
+  ],
+  // 4 — DYG
+  [
+    "DYG, Do Your Game : une plateforme SaaS full-stack pour développeurs.",
+    "Scan GitHub, scoring sur 8 piliers, équipes en temps réel. Fastify, Postgres, Docker.",
+    "La preuve qu'au-delà des vitrines, Scory livre de vraies apps de production.",
+  ],
+  // 5 — SecurEats
+  [
+    "SecurEats : un écosystème fast-food 2-en-1, PWA installable + site vitrine.",
+    "Chaque commande chiffrée par QR code AES-256, zéro confusion possible.",
+    "100 % vanilla JS, service worker, crypto Web native maîtrisée.",
+  ],
 ];
 
 // Palette qui défile (la sphère change de couleur en continu).
@@ -82,9 +111,11 @@ export function initFxLayer() {
   const btext = document.createElement('span'); const cur = document.createElement('span'); cur.className = 'ai-cur'; cur.textContent = '▍';
   bubble.append(btext, cur); document.body.appendChild(bubble);
 
-  let li = 0, typeId = 0, started = false, talking = false;
+  let li = 0, curSet = 0, pendingSet = null, typeId = 0, pauseId = 0, started = false, talking = false;
   function showLine() {
-    const text = LINES[li]; let ci = 0; btext.textContent = '';
+    if (pendingSet !== null) { if (pendingSet !== curSet) { curSet = pendingSet; li = 0; } pendingSet = null; }
+    const lines = LINE_SETS[curSet] || LINE_SETS[0];
+    const text = lines[li % lines.length]; let ci = 0; btext.textContent = '';
     if (reduced) { btext.textContent = text; return; }
     talking = true;
     clearInterval(typeId);
@@ -92,10 +123,18 @@ export function initFxLayer() {
       btext.textContent = text.slice(0, ci++);
       if (ci > text.length) {
         clearInterval(typeId); talking = false;
-        setTimeout(() => { bubble.classList.remove('on'); setTimeout(() => { li = (li + 1) % LINES.length; bubble.classList.add('on'); showLine(); }, 480); }, 3400);
+        pauseId = setTimeout(() => { bubble.classList.remove('on'); pauseId = setTimeout(() => { li = (li + 1) % lines.length; bubble.classList.add('on'); showLine(); }, 480); }, 3400);
       }
     }, 26);
   }
+  // Le discours suit le projet affiché (signal émis par app.js).
+  addEventListener('scory:project', (e) => {
+    const idx = e && e.detail ? e.detail.index : null;
+    if (typeof idx !== 'number' || idx < 0 || idx >= LINE_SETS.length || idx === curSet) return;
+    pendingSet = idx;
+    // En pause entre deux phrases : on bascule tout de suite vers le nouveau projet.
+    if (started && !talking) { clearTimeout(pauseId); curSet = idx; pendingSet = null; li = 0; bubble.classList.add('on'); showLine(); }
+  }, { passive: true });
 
   // Particules.
   let seed = 11;

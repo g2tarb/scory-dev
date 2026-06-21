@@ -775,6 +775,8 @@ async function main() {
       d.removeAttribute("style");
       if (!isActive) d.style.display = "none";
     });
+    // Signale le projet actif à la sphère IA (fx-layer) → son discours s'adapte.
+    window.dispatchEvent(new CustomEvent("scory:project", { detail: { index: i } }));
   }
 
 
