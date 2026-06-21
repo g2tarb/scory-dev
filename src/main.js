@@ -88,14 +88,28 @@ window.requestAnimationFrame(() => loader && loader.classList.add('is-hidden'));
 (function tabbar() {
   const tabs = [...document.querySelectorAll('.tab[data-sec]')];
   if (!tabs.length) return;
+  // Liens de la nav desktop pointant vers une section (#xxx) → surlignage synchronisé.
+  const navLinks = [...document.querySelectorAll('.topnav a[href^="#"]')];
   const sections = tabs
     .map((t) => document.getElementById(t.dataset.sec))
     .filter(Boolean);
+  const setActive = (id) => {
+    tabs.forEach((t) => {
+      const on = t.dataset.sec === id;
+      t.classList.toggle('is-active', on);
+      if (on) t.setAttribute('aria-current', 'true');
+      else t.removeAttribute('aria-current');
+    });
+    navLinks.forEach((a) => {
+      if (a.getAttribute('href') === `#${id}`) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  };
   const io = new IntersectionObserver(
     (entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.sec === e.target.id));
+        setActive(e.target.id);
       });
     },
     { rootMargin: '-45% 0px -45% 0px', threshold: 0 }, // section au centre du viewport = active
@@ -105,14 +119,23 @@ window.requestAnimationFrame(() => loader && loader.classList.add('is-hidden'));
 
 /* ---------- Boutons magnétiques (discret) ---------- */
 if (!reduced && window.matchMedia('(hover: hover)').matches) {
+  const clamp = (v, m) => Math.max(-m, Math.min(m, v));
   document.querySelectorAll('.btn, .topcta').forEach((btn) => {
+    let raf = 0;
     btn.addEventListener('mousemove', (e) => {
-      const r = btn.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width / 2) * 0.25;
-      const y = (e.clientY - r.top - r.height / 2) * 0.35;
-      btn.style.transform = `translate(${x}px, ${y}px)`;
+      if (raf) return; // throttle : un seul calcul par frame
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        const r = btn.getBoundingClientRect();
+        const x = clamp((e.clientX - r.left - r.width / 2) * 0.25, 12);
+        const y = clamp((e.clientY - r.top - r.height / 2) * 0.35, 12);
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
     });
-    btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    btn.addEventListener('mouseleave', () => {
+      if (raf) { window.cancelAnimationFrame(raf); raf = 0; }
+      btn.style.transform = '';
+    });
   });
 }
 
@@ -150,9 +173,20 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 /* ---------- FAQ — accordéon (single-open, accessible) ---------- */
 (function faq() {
   const items = [...document.querySelectorAll('.faq-item')];
-  items.forEach((item) => {
+  items.forEach((item, i) => {
     const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
     if (!q) return;
+    // Liaison ARIA question ↔ réponse (lecteurs d'écran).
+    if (a) {
+      const qid = `faq-q-${i}`;
+      const aid = `faq-a-${i}`;
+      q.id = qid;
+      a.id = aid;
+      q.setAttribute('aria-controls', aid);
+      a.setAttribute('role', 'region');
+      a.setAttribute('aria-labelledby', qid);
+    }
     q.addEventListener('click', () => {
       const willOpen = !item.classList.contains('open');
       items.forEach((o) => {
@@ -168,29 +202,43 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
-/* ---------- Assembleur de site → "ça mérite un RDV" ---------- */
+/* ---------- Assembleur de site → maquette générée à l'instant ---------- */
 (function builder() {
   const root = document.querySelector('.builder');
   if (!root) return;
   const sel = (group) =>
     [...root.querySelectorAll(`.chips[data-group="${group}"] .chip.is-on`)].map((c) => c.textContent.trim());
 
-  root.querySelectorAll('.chip').forEach((c) =>
-    c.addEventListener('click', () => c.classList.toggle('is-on')),
-  );
-
   const result = root.querySelector('.builder-result');
   const recap = root.querySelector('.builder-result__recap');
-  root.querySelector('.builder-go')?.addEventListener('click', () => {
+  const mock = root.querySelector('[data-mock]');
+  let shown = false;
+  let raf = 0;
+
+  const generate = (scroll) => {
     const blocs = sel('base');
     const options = sel('options');
     const all = [...blocs, ...options];
     recap.textContent =
       `${blocs.length} bloc${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
       (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
+    import('./mockup.js').then(({ renderMockup }) => renderMockup(mock, { blocs, options }));
     result.hidden = false;
-    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
+    shown = true;
+    if (scroll) result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // Toggle d'un bloc/option → régénération instantanée si la maquette est affichée.
+  root.querySelectorAll('.chip').forEach((c) =>
+    c.addEventListener('click', () => {
+      c.classList.toggle('is-on');
+      if (!shown) return;
+      if (raf) window.cancelAnimationFrame(raf);
+      raf = window.requestAnimationFrame(() => generate(false));
+    }),
+  );
+
+  root.querySelector('.builder-go')?.addEventListener('click', () => generate(true));
 
   // Le RDV emporte la config choisie.
   root.querySelector('.js-rdv-builder')?.addEventListener('click', () =>
