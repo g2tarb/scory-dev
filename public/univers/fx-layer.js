@@ -123,9 +123,9 @@ export function initFxLayer() {
     const t = now / 1000;
     const C = curColor(t); // couleur courante (cycle)
     const sy = scrollY || 0;
-    const fade = clamp((sy - H * 0.7) / (H * 0.5), 0, 1);
+    // Visible dès le haut : c'est là que l'IA présente le site (plus de masquage au top).
+    const fade = 1;
     ctx.clearRect(0, 0, W, H);
-    if (fade <= 0.01) { bubble.style.display = 'none'; return; }
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
 
     // Particules + réseau (souris).
