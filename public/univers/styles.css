@@ -401,7 +401,7 @@ p.glitch-text::before, p.glitch-text::after { white-space: inherit; max-width: 1
     linear-gradient(160deg, rgba(30,6,10,0.82), rgba(10,4,6,0.6));
   border-color: rgba(196,30,58,0.24);
 }
-.project-disc[data-index="3"] .disc-title { font-family: 'Cinzel', 'Times New Roman', serif; font-weight: 700; }
+.project-disc[data-index="3"] .disc-title { font-family: 'Cinzel Decorative', 'Times New Roman', serif; font-weight: 700; }
 .project-disc[data-index="3"] .disc-meta { color: rgba(139,26,26,0.75); }
 .project-disc[data-index="3"] .disc-groove {
   background: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 5px, rgba(196,30,58,0.08) 5px, rgba(196,30,58,0.08) 6px);
@@ -416,7 +416,7 @@ p.glitch-text::before, p.glitch-text::after { white-space: inherit; max-width: 1
     linear-gradient(160deg, rgba(10,20,40,0.82), rgba(6,10,22,0.6));
   border-color: rgba(59,130,246,0.24);
 }
-.project-disc[data-index="4"] .disc-title { font-family: 'Bebas Neue', 'Cinzel', sans-serif; font-weight: 700; letter-spacing: 0.12em; }
+.project-disc[data-index="4"] .disc-title { font-family: 'Bebas Neue', 'Cinzel Decorative', sans-serif; font-weight: 700; letter-spacing: 0.12em; }
 .project-disc[data-index="4"] .disc-meta { color: rgba(168,85,247,0.7); }
 .project-disc[data-index="4"] .disc-groove {
   background: repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 5px, rgba(59,130,246,0.08) 5px, rgba(59,130,246,0.08) 6px);
@@ -1065,7 +1065,7 @@ html.lenis, html.lenis body { height: auto; }
 /* Nom avec effet glitch via pseudo-elements RGB shift */
 .chatbot-name {
   position: relative;
-  font-family: var(--font-display, 'Cinzel', serif);
+  font-family: var(--font-display, 'Cinzel Decorative', serif);
   font-size: 1.05rem; font-weight: 600;
   color: var(--accent-gold);
   letter-spacing: 0.06em;
