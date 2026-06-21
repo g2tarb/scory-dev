@@ -1093,6 +1093,24 @@ body.brief-open { overflow: hidden; }
 .brief-textarea { margin-top: 14px; min-height: 90px; resize: vertical; line-height: 1.5; }
 .brief-error { color: #ff8f8f; font-size: 13px; margin: 12px 0 0; min-height: 1.2em; }
 
+/* IA binaire conseillère — accompagne le prospect à chaque étape */
+.brief-ai {
+  display: flex; align-items: center; gap: 12px; margin-top: 20px; padding: 12px 14px;
+  border-radius: 13px; background: rgba(158, 200, 255, 0.05); border: 1px solid rgba(158, 200, 255, 0.16);
+}
+.brief-ai__orb {
+  flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #07060a;
+  background: radial-gradient(circle at 38% 34%, #cfe3ff, #6f8fff 55%, #c9a962);
+  box-shadow: 0 0 16px rgba(158, 200, 255, 0.4); animation: briefOrb 3s ease-in-out infinite;
+}
+.brief-ai.is-talking .brief-ai__orb { box-shadow: 0 0 24px rgba(158, 200, 255, 0.75); animation-duration: 1.1s; }
+@keyframes briefOrb { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.09); } }
+.brief-ai__msg { margin: 0; font-size: 13.5px; line-height: 1.45; color: #c4c4cc; }
+.brief-ai.is-talking .brief-ai__msg::after { content: '▍'; color: #9ec8ff; margin-left: 1px; animation: briefCaret 1s steps(1) infinite; }
+@keyframes briefCaret { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .brief-ai__orb { animation: none; } }
+
 .brief-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 26px; }
 .brief-next { margin-left: auto; }
 .brief-next:disabled { opacity: 0.45; cursor: not-allowed; }

@@ -1,6 +1,41 @@
 /* Wizard de brief projet — modale multi-étapes, fun et soignée.
    Collecte un brief riche, puis l'envoie au backend (POST /api/brief). */
 
+import { eur } from './pricing.js';
+
+// Options de l'assembleur → fonctionnalités du brief (intersection + équivalences).
+const FEATURE_MAP = {
+  'Prise de RDV': 'Prise de RDV',
+  'Paiement en ligne': 'Paiement en ligne',
+  'Paiement in-app': 'Paiement en ligne',
+  'Espace membre': 'Espace membre',
+  Authentification: 'Espace membre',
+  Multilingue: 'Multilingue',
+  'Agent IA': 'Agent IA',
+  'Animations 3D': 'Animations 3D',
+  'SEO avancé': 'SEO avancé',
+  'Notifications push': 'Notifications',
+};
+const budgetBucket = (lo, hi) => {
+  const mid = (lo + hi) / 2;
+  if (mid < 2000) return 'Moins de 2 000 €';
+  if (mid < 5000) return '2 à 5 000 €';
+  if (mid < 10000) return '5 à 10 000 €';
+  return 'Plus de 10 000 €';
+};
+
+// Conseils de l'IA binaire pour chaque étape (le pourquoi + le comment, en mode conseiller pro).
+const ADVICE = [
+  "Le type cadre tout le reste : une vitrine pour présenter, une web app si tes clients ont un compte. Hésites ? « Autre », on tranche ensemble.",
+  "L'objectif oriente chaque choix de design. Vendre, rassurer ou recruter, ce n'est pas le même site. Donne-moi le vrai but n°1.",
+  "Coche large : chaque fonction joue sur le devis et le délai. Mieux vaut tout poser maintenant, on élaguera ensuite.",
+  "Une fourchette honnête m'aide à caler le bon périmètre, sans gonfler ni rogner. Pas d'idée ? « À définir », c'est très bien.",
+  "Le style, c'est l'émotion. 2-3 mots-clés et un site que tu aimes en disent plus que dix paragraphes.",
+  "Promis, zéro spam : juste de quoi te recontacter sous 24 h avec une vraie réponse, pas un copier-coller.",
+];
+const ADVICE_PREFILL = "J'ai repris ta compo de l'assembleur : type et fonctions sont déjà cochés. Vérifie, ajuste, et complète le reste avec moi.";
+const ADVICE_DONE = "Reçu 5 sur 5. Je transmets ton brief à Scory, il revient vers toi très vite. Beau projet !";
+
 const TOTAL = 6;
 
 const TYPES = [
@@ -51,6 +86,10 @@ export function initBrief() {
         <span class="brief-stepnum"></span>
       </div>
       <div class="brief-stage" aria-live="polite"></div>
+      <div class="brief-ai">
+        <span class="brief-ai__orb" aria-hidden="true">01</span>
+        <p class="brief-ai__msg" aria-live="polite"></p>
+      </div>
       <div class="brief-nav">
         <button class="brief-back btn btn-link" type="button">← Retour</button>
         <button class="brief-next btn btn-glow" type="button"></button>
@@ -65,6 +104,39 @@ export function initBrief() {
   const backBtn = overlay.querySelector('.brief-back');
   const nextBtn = overlay.querySelector('.brief-next');
   const nav = overlay.querySelector('.brief-nav');
+  const aiStrip = overlay.querySelector('.brief-ai');
+  const aiMsg = overlay.querySelector('.brief-ai__msg');
+  const aiOrb = overlay.querySelector('.brief-ai__orb');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let prefilled = false;
+
+  /* ---------- IA binaire : conseillère qui accompagne chaque étape ---------- */
+  let adviseTimer = 0;
+  let binTimer = 0;
+  function setBinary(on) {
+    window.clearInterval(binTimer);
+    aiStrip.classList.toggle('is-talking', on);
+    if (on && !reduced) {
+      binTimer = window.setInterval(() => {
+        aiOrb.textContent = (Math.random() < 0.5 ? '0' : '1') + (Math.random() < 0.5 ? '0' : '1');
+      }, 110);
+    } else {
+      aiOrb.textContent = '01';
+    }
+  }
+  function advise(text) {
+    window.clearTimeout(adviseTimer);
+    aiMsg.textContent = '';
+    if (reduced) { aiMsg.textContent = text; return; }
+    let i = 0;
+    setBinary(true);
+    const tick = () => {
+      aiMsg.textContent = text.slice(0, i++);
+      if (i <= text.length) adviseTimer = window.setTimeout(tick, 18);
+      else setBinary(false);
+    };
+    tick();
+  }
 
   for (let i = 0; i < TOTAL; i++) dots.appendChild(el('span', 'brief-dot'));
 
@@ -144,6 +216,7 @@ export function initBrief() {
     requestAnimationFrame(() => wrap.classList.add('in'));
     syncChrome();
     focusFirst();
+    advise(step === 1 && prefilled ? ADVICE_PREFILL : ADVICE[step - 1]);
   }
 
   function field(label, key, type, ph) {
@@ -256,14 +329,29 @@ export function initBrief() {
     s.appendChild(close);
     stage.appendChild(s);
     requestAnimationFrame(() => s.classList.add('in'));
+    advise(ADVICE_DONE);
+  }
+
+  // Pré-remplissage depuis l'assembleur (type, fonctionnalités, budget estimé, récap).
+  function applyPrefill(p) {
+    state.projectType = p.kind === 'app' ? 'Application mobile' : 'Site vitrine';
+    state.features = [...new Set((p.options || []).map((o) => FEATURE_MAP[o]).filter(Boolean))];
+    if (typeof p.low === 'number' && typeof p.high === 'number') state.budget = budgetBucket(p.low, p.high);
+    const parts = [];
+    if (p.blocs?.length) parts.push(`${p.kind === 'app' ? 'Écrans' : 'Blocs'} : ${p.blocs.join(', ')}`);
+    if (p.options?.length) parts.push(`Options : ${p.options.join(', ')}`);
+    if (typeof p.low === 'number') parts.push(`Estimation indicative : ${eur(p.low)} à ${eur(p.high)}`);
+    state.message = `Composé via l'assembleur. ${parts.join(' · ')}`;
   }
 
   /* ---------- Ouverture / fermeture ---------- */
   let prevFocus = null;
   const api = {
-    open() {
+    open(prefill) {
       step = 1; sent = false;
+      prefilled = !!prefill;
       Object.assign(state, { projectType: '', goal: '', features: [], budget: '', timeline: '', style: [], refs: '', name: '', email: '', company: '', message: '' });
+      if (prefill) applyPrefill(prefill);
       overlay.hidden = false;
       prevFocus = document.activeElement;
       document.body.classList.add('brief-open');

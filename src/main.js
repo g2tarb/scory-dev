@@ -362,7 +362,7 @@ document.querySelectorAll('.js-estimate').forEach((b) =>
 
   root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
     const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
-    booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} à ${eur(hi)}`);
+    brief.open({ kind, blocs: sel('base'), options: sel('options'), low: lo, high: hi });
   });
 
   updateEstimate();
