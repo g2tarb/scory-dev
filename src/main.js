@@ -211,11 +211,11 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
   // Textes qui changent selon le type de projet.
   const TEXT = {
     site: {
-      lead: 'Choisissez vos blocs, ajoutez vos options. En deux minutes, vous composez votre site — on le chiffre ensemble.',
+      lead: 'Choisissez vos blocs, ajoutez vos options. En deux minutes, vous composez votre site, on le chiffre ensemble.',
       go: 'Générer ma maquette',
       title: 'Votre maquette est prête.',
       muted:
-        "Ça, c'est l'aperçu — généré à l'instant à partir de vos choix. La vraie version, codée, responsive et optimisée, ça mérite un vrai rendez-vous.",
+        "Ça, c'est l'aperçu, généré à l'instant à partir de vos choix. La vraie version, codée, responsive et optimisée, ça mérite un vrai rendez-vous.",
       unit: 'bloc',
     },
     app: {
@@ -223,7 +223,7 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
       go: "Générer ma maquette d'app",
       title: 'Votre app est prête.',
       muted:
-        "Ça, c'est l'aperçu — généré à l'instant. La vraie application, native et publiée sur les stores, ça mérite un vrai rendez-vous.",
+        "Ça, c'est l'aperçu, généré à l'instant. La vraie application, native et publiée sur les stores, ça mérite un vrai rendez-vous.",
       unit: 'écran',
     },
   };
@@ -285,7 +285,7 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
       const u = TEXT[kind].unit;
       recap.textContent =
         `${blocs.length} ${u}${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
-        (all.length ? ` — ${all.join(' · ')}` : ' — rien de sélectionné');
+        (all.length ? ` : ${all.join(' · ')}` : ' : rien de sélectionné');
     }
     mock.className = kind === 'app' ? 'appmock' : 'mock';
     mockWrap.classList.toggle('mock-wrap--app', kind === 'app');
@@ -336,7 +336,7 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
 
   root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
     const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
-    booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} – ${eur(hi)}`);
+    booking.open({ kind, blocs: sel('base'), options: sel('options') }, `${eur(lo)} à ${eur(hi)}`);
   });
 
   updateEstimate();

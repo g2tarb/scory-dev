@@ -28,7 +28,7 @@ const tip = (el, title, text) => {
 // Explications par section (ce que c'est + à quoi ça sert).
 const SECTION_TIPS = {
   Accueil: ['Section d’accueil', 'La première impression : accroche, promesse et bouton d’action qui captent le visiteur en 3 secondes.'],
-  Services: ['Vos services', 'Présente ce que vous proposez en cartes claires — bénéfices et tarifs — pour que le visiteur sache vite si c’est pour lui.'],
+  Services: ['Vos services', 'Présente ce que vous proposez en cartes claires : bénéfices et tarifs, pour que le visiteur sache vite si c’est pour lui.'],
   Réalisations: ['Réalisations', 'Vos projets en images. La preuve concrète de votre savoir-faire : ça rassure et ça convainc.'],
   'À propos': ['À propos', 'Votre histoire et votre visage. Crée la confiance et l’attachement à votre marque.'],
   Témoignages: ['Témoignages', 'La parole de vos clients. La preuve sociale qui lève les derniers doutes avant de vous contacter.'],
@@ -65,12 +65,12 @@ const APP_SCREEN_TIPS = {
 const APP_OPTION_TIPS = {
   auth: ['Authentification', 'Inscription et connexion sécurisées (e-mail, Google, Apple) pour des comptes personnels.'],
   pay: ['Paiement in-app', 'Achats et abonnements directement dans l’app (Stripe, in-app purchase).'],
-  push: ['Notifications push', 'Des alertes envoyées sur le téléphone même app fermée — pour faire revenir l’utilisateur.'],
+  push: ['Notifications push', 'Des alertes envoyées sur le téléphone même app fermée, pour faire revenir l’utilisateur.'],
   offline: ['Mode hors-ligne', 'L’app reste utilisable sans connexion : les données se synchronisent au retour du réseau.'],
   geo: ['Géolocalisation', 'Carte et position en temps réel : trouver à proximité, suivre un trajet, livrer.'],
   ia: ['Agent IA', 'Un assistant intégré qui répond, recommande et automatise pour l’utilisateur.'],
   multi: ['Multilingue', 'L’app s’adapte à la langue de l’utilisateur pour une audience internationale.'],
-  scan: ['Caméra / Scan', 'Photo, QR codes, scan de documents — directement depuis l’appareil.'],
+  scan: ['Caméra / Scan', 'Photo, QR codes, scan de documents, directement depuis l’appareil.'],
   tabs: ['Barre de navigation', 'La barre du bas : un onglet par écran principal pour passer de l’un à l’autre.'],
 };
 
