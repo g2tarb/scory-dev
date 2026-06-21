@@ -36,15 +36,15 @@ const LINE_SETS = [
   ],
   // 1 — 4dayvelopment
   [
-    "Là, 4dayvelopment : l'agence web sur-mesure de Scory, en dark luxury.",
-    "Branding, site, automations n8n, funnel : l'écosystème complet, livré vite.",
-    "Curseur magnétique, animations Three.js, mode sombre. Du premium, pas du template.",
+    "Là, 4dayvelopment : l'agence web de Scory, un site livré en 4 jours ou c'est gratuit.",
+    "Pour solopreneurs, coachs et artisans : performant, sur-mesure, pas de projet qui traîne.",
+    "Design dark à accents orange, animations Three.js, pensé pour convertir.",
   ],
   // 2 — Clara Martinez
   [
     "Clara Martinez : un site vitrine luxe pour une coach business à Paris.",
-    "Aurora borealis en Canvas, glassmorphism, bento grid, curseur magnétique.",
-    "Le visiteur sent tout de suite le haut de gamme. Direction artistique complète.",
+    "Sa promesse : passer de freelance débordé à entrepreneur structuré.",
+    "Dark luxe, aurora en Canvas, parcours soigné jusqu'à l'appel découverte.",
   ],
   // 3 — JIMMY
   [
