@@ -1017,3 +1017,96 @@ body.site-error::after {
   .section { padding: clamp(58px, 9vh, 96px) var(--pad); }
   .hero { min-height: 92svh; }
 }
+
+/* ============================ Wizard de brief ============================ */
+body.brief-open { overflow: hidden; }
+.brief-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center; padding: clamp(12px, 3vw, 28px);
+  background: rgba(6, 6, 8, 0.66); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.28s var(--ease);
+}
+.brief-overlay.is-open { opacity: 1; }
+.brief-modal {
+  position: relative; width: min(640px, 100%); max-height: 92svh; overflow-y: auto;
+  padding: clamp(22px, 4vw, 38px); border-radius: 22px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(158, 200, 255, 0.07), transparent 55%),
+    radial-gradient(120% 80% at 0% 100%, rgba(201, 169, 98, 0.08), transparent 55%),
+    var(--surface);
+  border: 1px solid var(--border); box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transform: translateY(14px) scale(0.985); opacity: 0;
+  transition: transform 0.34s var(--ease), opacity 0.34s var(--ease);
+}
+.brief-overlay.is-open .brief-modal { transform: none; opacity: 1; }
+.brief-close {
+  position: absolute; top: 12px; right: 14px; z-index: 2;
+  width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: var(--text-dim);
+  font-size: 22px; line-height: 1; transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.brief-close:hover { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
+
+.brief-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 2px 40px 22px 0; }
+.brief-dots { display: flex; gap: 8px; }
+.brief-dot { width: 26px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.12); transition: background 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.brief-dot.is-done { background: linear-gradient(90deg, var(--accent), var(--glacier)); }
+.brief-dot.is-cur { background: var(--glacier); box-shadow: 0 0 12px rgba(158, 200, 255, 0.55); }
+.brief-stepnum { font-family: var(--mono); font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+
+.brief-stage { min-height: 280px; }
+.brief-step, .brief-done { opacity: 0; transform: translateX(16px); transition: opacity 0.32s var(--ease), transform 0.32s var(--ease); }
+.brief-step.in, .brief-done.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .brief-step, .brief-done, .brief-modal, .brief-overlay { transition: none; } }
+
+.brief-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+.brief-q { font-size: clamp(22px, 3.4vw, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 18px; }
+.brief-hint { color: var(--text-dim); font-size: 14px; margin: -10px 0 16px; }
+.brief-sub { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); margin: 16px 0 10px; }
+.brief-sub:first-of-type { margin-top: 0; }
+
+.brief-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.brief-choice {
+  display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+  padding: 14px 16px; border-radius: 13px; border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.025); color: var(--text); font: inherit; font-size: 15px;
+  transition: transform 0.18s var(--ease), border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.brief-choice:hover { transform: translateY(-2px); border-color: rgba(201, 169, 98, 0.45); background: rgba(255, 255, 255, 0.05); }
+.brief-choice.is-on {
+  border-color: transparent; background: var(--accent-soft);
+  box-shadow: 0 0 0 1.5px var(--accent), 0 10px 26px rgba(201, 169, 98, 0.14);
+}
+.brief-choice__i { font-size: 20px; line-height: 1; flex: none; }
+.brief-choice.is-on .brief-choice__l { color: #fff; }
+.brief-choice__l { font-weight: 500; }
+
+.brief-field { display: block; margin-bottom: 12px; }
+.brief-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+.brief-input {
+  width: 100%; padding: 12px 14px; border-radius: 11px; font: inherit; font-size: 15px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); color: var(--text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.brief-input::placeholder { color: rgba(154, 154, 163, 0.7); }
+.brief-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.brief-textarea { margin-top: 14px; min-height: 90px; resize: vertical; line-height: 1.5; }
+.brief-error { color: #ff8f8f; font-size: 13px; margin: 12px 0 0; min-height: 1.2em; }
+
+.brief-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 26px; }
+.brief-next { margin-left: auto; }
+.brief-next:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.brief-done { text-align: center; padding: 10px 0; }
+.brief-muted { color: var(--text-dim); margin: 0 0 22px; }
+.brief-check { width: 76px; height: 76px; margin: 6px auto 18px; }
+.brief-check svg { width: 100%; height: 100%; }
+.brief-check circle { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 151; stroke-dashoffset: 151; animation: briefRing 0.6s var(--ease) forwards; }
+.brief-check path { stroke: var(--glacier); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: briefTick 0.4s 0.45s var(--ease) forwards; }
+@keyframes briefRing { to { stroke-dashoffset: 0; } }
+@keyframes briefTick { to { stroke-dashoffset: 0; } }
+
+@media (max-width: 460px) {
+  .brief-grid { grid-template-columns: 1fr 1fr; }
+  .brief-dot { width: 18px; }
+}

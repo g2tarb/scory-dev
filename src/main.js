@@ -1,6 +1,7 @@
 import './style.css';
 import { initCursor } from './cursor.js';
 import { initBooking } from './booking.js';
+import { initBrief } from './brief.js';
 import { initSmooth } from './smooth.js';
 import { slotText } from './slot.js';
 import { initScrollBrand } from './brand-slot.js';
@@ -206,6 +207,10 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 /* ---------- Prise de RDV maison ---------- */
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
+
+/* ---------- Wizard de brief projet ---------- */
+const brief = initBrief();
+document.querySelectorAll('.js-brief').forEach((b) => b.addEventListener('click', () => brief.open()));
 
 /* ---------- CTA « Estimer mon projet » → l'assembleur EST l'estimation ---------- */
 document.querySelectorAll('.js-estimate').forEach((b) =>

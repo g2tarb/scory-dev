@@ -239,6 +239,136 @@ app.post(
   },
 );
 
+/* ---------- Brief projet (wizard) ---------- */
+
+const BRIEFS_FILE = join(__dirname, 'data', 'briefs.json');
+
+async function readBriefs() {
+  try {
+    const parsed = JSON.parse(await readFile(BRIEFS_FILE, 'utf8'));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function writeBriefs(list) {
+  await mkdir(dirname(BRIEFS_FILE), { recursive: true });
+  const tmp = `${BRIEFS_FILE}.${process.pid}.tmp`;
+  await writeFile(tmp, JSON.stringify(list, null, 2));
+  await rename(tmp, BRIEFS_FILE);
+}
+
+const oneLine = (v, max) => clean(v, max) || '—';
+const cleanList = (arr, maxItems, maxLen) =>
+  Array.isArray(arr) ? arr.slice(0, maxItems).map((x) => clean(x, maxLen)).filter(Boolean) : [];
+
+async function sendBrief(b) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+  const admin = process.env.ADMIN_EMAIL;
+  const recap =
+    `Type        : ${b.projectType}\n` +
+    `Objectif    : ${b.goal}\n` +
+    `Fonctions   : ${b.features.length ? b.features.join(', ') : '—'}\n` +
+    `Budget      : ${b.budget}\n` +
+    `Délai       : ${b.timeline}\n` +
+    `Style       : ${b.style.length ? b.style.join(', ') : '—'}\n` +
+    `Inspirations: ${b.refs}\n\n` +
+    `Société     : ${b.company}\n` +
+    `Nom         : ${b.name}\n` +
+    `Email       : ${b.email}\n\n` +
+    `Message     : ${b.message}`;
+
+  if (!apiKey) {
+    console.log(`[EMAIL — mode dev] brief de ${maskEmail(b.email)} | ${b.projectType}`);
+    return { sent: false, dev: true };
+  }
+  const { Resend } = await import('resend');
+  const resend = new Resend(apiKey);
+  if (admin) {
+    await resend.emails.send({
+      from,
+      to: admin,
+      subject: `Nouveau brief — ${b.projectType} (${b.name})`,
+      text: recap,
+    });
+  }
+  await resend.emails.send({
+    from,
+    to: b.email,
+    subject: 'Bien reçu — votre brief est arrivé',
+    text:
+      `Bonjour ${b.name},\n\n` +
+      `Merci pour votre brief, je l'ai bien reçu. Je reviens vers vous sous 24 h ` +
+      `avec une première réponse et les prochaines étapes.\n\n` +
+      `À très vite,\nScory\nscory.dev`,
+  });
+  return { sent: true };
+}
+
+const briefSchema = {
+  body: {
+    type: 'object',
+    required: ['name', 'email'],
+    additionalProperties: false,
+    properties: {
+      projectType: { type: ['string', 'null'], maxLength: 40 },
+      goal: { type: ['string', 'null'], maxLength: 40 },
+      features: { type: ['array', 'null'], maxItems: 30, items: { type: 'string', maxLength: 40 } },
+      budget: { type: ['string', 'null'], maxLength: 40 },
+      timeline: { type: ['string', 'null'], maxLength: 40 },
+      style: { type: ['array', 'null'], maxItems: 20, items: { type: 'string', maxLength: 40 } },
+      refs: { type: ['string', 'null'], maxLength: 600 },
+      company: { type: ['string', 'null'], maxLength: 80 },
+      name: { type: 'string', minLength: 1, maxLength: 80 },
+      email: { type: 'string', minLength: 5, maxLength: 120 },
+      message: { type: ['string', 'null'], maxLength: 2000 },
+    },
+  },
+};
+
+app.post(
+  '/api/brief',
+  { schema: briefSchema, config: { rateLimit: { max: 4, timeWindow: '10 minutes' } } },
+  async (req, reply) => {
+    const b = {
+      projectType: oneLine(req.body.projectType, 40),
+      goal: oneLine(req.body.goal, 40),
+      features: cleanList(req.body.features, 30, 40),
+      budget: oneLine(req.body.budget, 40),
+      timeline: oneLine(req.body.timeline, 40),
+      style: cleanList(req.body.style, 20, 40),
+      refs: clean(req.body.refs, 600) || '—',
+      company: clean(req.body.company, 80) || '—',
+      name: clean(req.body.name, 80),
+      email: clean(req.body.email, 120).toLowerCase(),
+      message: clean(req.body.message, 2000) || '—',
+    };
+
+    if (!b.name || !isValidEmail(b.email)) {
+      return reply.code(400).send({ error: 'Nom ou email invalide.' });
+    }
+
+    await withLock(async () => {
+      const briefs = await readBriefs();
+      briefs.push({ id: `brief_${Date.now()}`, ...b, createdAt: new Date().toISOString() });
+      if (briefs.length > 1000) briefs.splice(0, briefs.length - 1000); // borne le fichier
+      await writeBriefs(briefs);
+    });
+
+    let email_status;
+    try {
+      email_status = await sendBrief(b);
+    } catch (err) {
+      app.log.error({ err }, 'Échec envoi email (brief enregistré)');
+      email_status = { sent: false, error: true };
+    }
+
+    return { ok: true, email: email_status };
+  },
+);
+
 const PORT = process.env.PORT || 8787;
 app
   .listen({ port: PORT, host: '0.0.0.0' })
