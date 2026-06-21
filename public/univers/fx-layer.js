@@ -80,7 +80,9 @@ function curColor(t) {
   return `${Math.round(lerp(a[0], b[0], frac))},${Math.round(lerp(a[1], b[1], frac))},${Math.round(lerp(a[2], b[2], frac))}`;
 }
 
-export function initFxLayer() {
+export function initFxLayer(opts = {}) {
+  // Mode "manuel" : pas de cycle auto, le discours est piloté par say() (ex. le formulaire de brief).
+  const manual = !!opts.manual;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Mobile : version réduite (plus petite, allégée) au lieu de couper.
   const small = window.matchMedia('(max-width: 820px), (pointer: coarse)').matches;
@@ -112,20 +114,30 @@ export function initFxLayer() {
   bubble.append(btext, cur); document.body.appendChild(bubble);
 
   let li = 0, curSet = 0, pendingSet = null, typeId = 0, pauseId = 0, started = false, talking = false;
-  function showLine() {
-    if (pendingSet !== null) { if (pendingSet !== curSet) { curSet = pendingSet; li = 0; } pendingSet = null; }
-    const lines = LINE_SETS[curSet] || LINE_SETS[0];
-    const text = lines[li % lines.length]; let ci = 0; btext.textContent = '';
-    if (reduced) { btext.textContent = text; return; }
+  // Cœur de la machine à écrire : tape `text` dans la bulle, puis appelle onDone().
+  function typeText(text, onDone) {
+    let ci = 0; btext.textContent = '';
+    bubble.classList.add('on');
+    if (reduced) { btext.textContent = text; if (onDone) onDone(); return; }
     talking = true;
     clearInterval(typeId);
     typeId = setInterval(() => {
       btext.textContent = text.slice(0, ci++);
-      if (ci > text.length) {
-        clearInterval(typeId); talking = false;
-        pauseId = setTimeout(() => { bubble.classList.remove('on'); pauseId = setTimeout(() => { li = (li + 1) % lines.length; bubble.classList.add('on'); showLine(); }, 480); }, 3400);
-      }
+      if (ci > text.length) { clearInterval(typeId); talking = false; if (onDone) onDone(); }
     }, 26);
+  }
+  function showLine() {
+    if (pendingSet !== null) { if (pendingSet !== curSet) { curSet = pendingSet; li = 0; } pendingSet = null; }
+    const lines = LINE_SETS[curSet] || LINE_SETS[0];
+    typeText(lines[li % lines.length], () => {
+      pauseId = setTimeout(() => { bubble.classList.remove('on'); pauseId = setTimeout(() => { li = (li + 1) % lines.length; showLine(); }, 480); }, 3400);
+    });
+  }
+  // API manuelle : afficher un message précis (le formulaire pilote le discours).
+  function say(text) {
+    started = true;
+    clearTimeout(pauseId); clearInterval(typeId);
+    typeText(String(text || ''));
   }
   // Le discours suit le projet affiché (signal émis par app.js).
   addEventListener('scory:project', (e) => {
@@ -235,7 +247,7 @@ export function initFxLayer() {
 
     // Bulle : suit la sphère.
     if (fade > 0.4) {
-      if (!started) { started = true; bubble.classList.add('on'); showLine(); }
+      if (!started) { started = true; bubble.classList.add('on'); if (!manual) showLine(); }
       bubble.style.display = '';
       const bm = small ? 90 : 150; // marge horizontale (bulle plus étroite sur mobile)
       bubble.style.left = clamp(cx + baseScale * 0.95, bm, W - bm) + 'px';
@@ -243,4 +255,5 @@ export function initFxLayer() {
     } else bubble.style.display = 'none';
   }
   requestAnimationFrame(frame);
+  return { say };
 }

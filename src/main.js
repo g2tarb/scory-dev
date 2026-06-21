@@ -1,7 +1,6 @@
 import './style.css';
 import { initCursor } from './cursor.js';
 import { initBooking } from './booking.js';
-import { initBrief } from './brief.js';
 import { initSmooth } from './smooth.js';
 import { slotText } from './slot.js';
 import { initScrollBrand } from './brand-slot.js';
@@ -208,9 +207,10 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
-/* ---------- Wizard de brief projet ---------- */
-const brief = initBrief();
-document.querySelectorAll('.js-brief').forEach((b) => b.addEventListener('click', () => brief.open()));
+/* ---------- Brief projet → page dédiée /brief/ ---------- */
+document.querySelectorAll('.js-brief').forEach((b) =>
+  b.addEventListener('click', () => { window.location.href = '/brief/'; }),
+);
 
 /* ---------- CTA « Estimer mon projet » → l'assembleur EST l'estimation ---------- */
 document.querySelectorAll('.js-estimate').forEach((b) =>
@@ -362,7 +362,10 @@ document.querySelectorAll('.js-estimate').forEach((b) =>
 
   root.querySelector('.js-rdv-builder')?.addEventListener('click', () => {
     const [lo, hi] = estimate([...sel('base'), ...sel('options')], kind);
-    brief.open({ kind, blocs: sel('base'), options: sel('options'), low: lo, high: hi });
+    try {
+      sessionStorage.setItem('scory:brief', JSON.stringify({ kind, blocs: sel('base'), options: sel('options'), low: lo, high: hi }));
+    } catch (_e) { /* sessionStorage optionnel */ }
+    window.location.href = '/brief/';
   });
 
   updateEstimate();

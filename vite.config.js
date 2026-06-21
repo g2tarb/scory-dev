@@ -8,6 +8,7 @@ const serveUniversIndex = {
   configureServer(server) {
     server.middlewares.use((req, _res, next) => {
       if (req.url === '/univers' || req.url === '/univers/') req.url = '/univers/index.html';
+      else if (req.url === '/brief' || req.url === '/brief/') req.url = '/brief/index.html';
       next();
     });
   },

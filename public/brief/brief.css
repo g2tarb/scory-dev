@@ -1,0 +1,130 @@
+/* Page de brief — feuille autonome, alignée sur la DA (or #c9a962 + glacier #9ec8ff sur noir). */
+:root {
+  --bg: #07060a;
+  --surface: #141417;
+  --text: #ececee;
+  --text-dim: #9a9aa3;
+  --accent: #c9a962;
+  --glacier: #9ec8ff;
+  --accent-soft: rgba(201, 169, 98, 0.14);
+  --border: rgba(255, 255, 255, 0.1);
+  --sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --expr: 'Baloo 2', var(--sans);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pad: clamp(20px, 5vw, 80px);
+  color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100svh; background: var(--bg); color: var(--text);
+  font-family: var(--sans); font-size: 17px; line-height: 1.6;
+  background-image: radial-gradient(120% 90% at 80% -10%, rgba(158, 200, 255, 0.06), transparent 55%),
+    radial-gradient(120% 90% at 0% 110%, rgba(201, 169, 98, 0.07), transparent 55%);
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 5px; }
+::selection { background: rgba(201, 169, 98, 0.28); color: #fff; }
+
+.bf-top {
+  position: sticky; top: 0; z-index: 60; display: flex; align-items: center; justify-content: space-between;
+  padding: 16px var(--pad); background: rgba(7, 6, 10, 0.6); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+}
+.bf-brand { font-family: var(--expr); font-weight: 800; font-size: 20px; text-decoration: none; letter-spacing: -0.01em; }
+.bf-brand span { color: var(--accent); }
+.bf-back { font-size: 14px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.bf-back:hover { color: var(--accent); }
+
+.bf-main {
+  position: relative; z-index: 42; max-width: 640px; margin: 0 auto;
+  /* On dégage le haut : la sphère IA et sa bulle occupent cette zone, le form vient dessous. */
+  padding: clamp(190px, 32vh, 340px) var(--pad) 90px;
+}
+.bf-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* Panneau du formulaire (au-dessus de la sphère, sous sa bulle) */
+.brief-panel {
+  position: relative; z-index: 42; text-align: left; padding: clamp(22px, 4vw, 36px); border-radius: 22px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, rgba(158, 200, 255, 0.07), transparent 55%),
+    radial-gradient(120% 80% at 0% 100%, rgba(201, 169, 98, 0.08), transparent 55%),
+    rgba(18, 18, 22, 0.92);
+  border: 1px solid var(--border); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px);
+}
+
+.brief-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+.brief-dots { display: flex; gap: 8px; }
+.brief-dot { width: 26px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.12); transition: background 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.brief-dot.is-done { background: linear-gradient(90deg, var(--accent), var(--glacier)); }
+.brief-dot.is-cur { background: var(--glacier); box-shadow: 0 0 12px rgba(158, 200, 255, 0.55); }
+.brief-stepnum { font-family: var(--mono); font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+
+.brief-stage { min-height: 264px; }
+.brief-step, .brief-done { opacity: 0; transform: translateX(16px); transition: opacity 0.32s var(--ease), transform 0.32s var(--ease); }
+.brief-step.in, .brief-done.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .brief-step, .brief-done { transition: none; } }
+
+.brief-eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+.brief-q { font-size: clamp(22px, 3.4vw, 30px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 18px; }
+.brief-hint { color: var(--text-dim); font-size: 14px; margin: -10px 0 16px; }
+.brief-sub { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-dim); margin: 16px 0 10px; }
+.brief-sub:first-of-type { margin-top: 0; }
+
+.brief-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.brief-choice {
+  display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;
+  padding: 14px 16px; border-radius: 13px; border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.025); color: var(--text); font: inherit; font-size: 15px;
+  transition: transform 0.18s var(--ease), border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.brief-choice:hover { transform: translateY(-2px); border-color: rgba(201, 169, 98, 0.45); background: rgba(255, 255, 255, 0.05); }
+.brief-choice.is-on { border-color: transparent; background: var(--accent-soft); box-shadow: 0 0 0 1.5px var(--accent), 0 10px 26px rgba(201, 169, 98, 0.14); }
+.brief-choice__i { font-size: 20px; line-height: 1; flex: none; }
+.brief-choice.is-on .brief-choice__l { color: #fff; }
+.brief-choice__l { font-weight: 500; }
+
+.brief-field { display: block; margin-bottom: 12px; }
+.brief-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+.brief-input {
+  width: 100%; padding: 12px 14px; border-radius: 11px; font: inherit; font-size: 15px;
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); color: var(--text); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.brief-input::placeholder { color: rgba(154, 154, 163, 0.7); }
+.brief-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.brief-textarea { margin-top: 14px; min-height: 90px; resize: vertical; line-height: 1.5; }
+.brief-error { color: #ff8f8f; font-size: 13px; margin: 12px 0 0; min-height: 1.2em; }
+
+.brief-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 26px; }
+.brief-next { margin-left: auto; }
+
+/* Boutons */
+.bf-glow, .bf-btn, .bf-link {
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 11px; border: 1px solid transparent;
+  transition: transform 0.18s var(--ease), background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+.bf-glow { position: relative; z-index: 0; color: #1a1306; isolation: isolate; background: #0c0c0e; }
+.bf-glow::before { content: ''; position: absolute; inset: -2px; z-index: -2; border-radius: 13px; background: linear-gradient(-45deg, #c9a962, #9ec8ff); }
+.bf-glow:hover { transform: translateY(-1px); }
+.bf-glow:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.bf-btn.bf-primary, .bf-primary { background: var(--accent); color: #1a1306; }
+.bf-primary:hover { background: #d8ba74; }
+.bf-link { background: none; color: var(--text-dim); padding-left: 6px; padding-right: 6px; }
+.bf-link:hover { color: var(--accent); }
+.bf-link[style*="hidden"] { visibility: hidden; }
+
+.brief-done { text-align: center; padding: 10px 0; }
+.brief-muted { color: var(--text-dim); margin: 0 0 22px; }
+.brief-check { width: 76px; height: 76px; margin: 6px auto 18px; }
+.brief-check svg { width: 100%; height: 100%; }
+.brief-check circle { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 151; stroke-dashoffset: 151; animation: bfRing 0.6s var(--ease) forwards; }
+.brief-check path { stroke: var(--glacier); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: bfTick 0.4s 0.45s var(--ease) forwards; }
+@keyframes bfRing { to { stroke-dashoffset: 0; } }
+@keyframes bfTick { to { stroke-dashoffset: 0; } }
+
+@media (max-width: 460px) {
+  .brief-grid { grid-template-columns: 1fr 1fr; }
+  .brief-dot { width: 18px; }
+}
