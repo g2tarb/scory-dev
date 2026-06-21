@@ -82,8 +82,8 @@ export const TRANSLATIONS = {
   "booking.title": { fr: "Prendre rendez-vous", en: "Book a meeting" },
   "booking.submit": { fr: "Confirmer le rendez-vous", en: "Confirm meeting" },
   "booking.done": {
-    fr: "Demande envoyee ! Un email pre-rempli s'est ouvert dans votre messagerie. Scory vous recontacte sous 24h.",
-    en: "Request sent! A pre-filled email opened in your mail app. Scory will get back to you within 24h.",
+    fr: "Demande envoyee ! Scory vous recontacte sous 24h pour confirmer votre creneau.",
+    en: "Request sent! Scory will get back to you within 24h to confirm your slot.",
   },
   "booking.back.date": { fr: "Changer de date", en: "Change date" },
   "booking.back.time": { fr: "Changer l'heure", en: "Change time" },
