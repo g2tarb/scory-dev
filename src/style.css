@@ -435,6 +435,7 @@ body.site-error::after {
   --mline: rgba(255, 255, 255, 0.1);
   display: flex; flex-direction: column;
   height: min(600px, 76vh); /* fenêtre à hauteur fixe → les widgets flottants restent dans le cadre */
+  container: mock / inline-size; /* sert de conteneur de requête pour son contenu */
 }
 /* Zone défilable (le « site » à l'intérieur du navigateur) */
 .mock-view { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; background: #0f0f12; overscroll-behavior: contain; }
@@ -613,12 +614,19 @@ body.site-error::after {
 .app-ai-ic { font-family: var(--mono); font-size: 12px; font-weight: 700; color: #1a1306; }
 .app-offline { position: absolute; left: 50%; top: 76px; transform: translateX(-50%); z-index: 6; font-family: var(--mono); font-size: 10px; color: var(--glacier); background: rgba(12, 12, 14, 0.9); border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; }
 
-@media (max-width: 600px) {
+/* La maquette s'adapte à SA PROPRE largeur (container queries) → responsive
+   quel que soit l'endroit où elle est affichée. */
+@container mock (max-width: 540px) {
   .mock-nav { display: none; }
   .mock-grid, .mock-grid.two { grid-template-columns: 1fr 1fr; }
   .mock-split { grid-template-columns: 1fr; }
-  .mock-hero-t { max-width: 92%; }
-  .mock-orb { width: 100px; right: -40px; }
+  .mock-hero-t { max-width: 88%; }
+  .mock-orb { width: 96px; }
+}
+@container mock (max-width: 340px) {
+  .mock-grid, .mock-grid.two { grid-template-columns: 1fr; }
+  .mock-hero-t { max-width: 100%; }
+  .mock-orb { opacity: 0.5; }
 }
 
 /* ---------- Réalisations ---------- */

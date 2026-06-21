@@ -241,6 +241,12 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
   const highEl = root.querySelector('.estim-high');
   const band = root.querySelector('.estim-band');
 
+  // Sur tactile, on touche (pas de survol) → adapte l'indice.
+  const hint = root.querySelector('.mock-hint');
+  if (hint && window.matchMedia('(pointer: coarse)').matches) {
+    hint.innerHTML = hint.innerHTML.replace('Survolez', 'Touchez');
+  }
+
   let kind = 'site';
   let shown = false;
   let raf = 0;

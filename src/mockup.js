@@ -370,15 +370,45 @@ function getTipBox() {
 }
 
 function bindTips(host) {
-  // Inutile sur tactile (pas de survol) + délégation liée une seule fois.
-  if (host.dataset.tipBound || window.matchMedia('(pointer: coarse)').matches) return;
+  if (host.dataset.tipBound) return; // délégation liée une seule fois
   host.dataset.tipBound = '1';
 
   const box = getTipBox();
   const bTitle = box.querySelector('b');
   const bText = box.querySelector('span');
-  let current = null;
+  const fill = (t) => { bTitle.textContent = t.dataset.tipTitle || ''; bText.textContent = t.dataset.tipText || ''; };
+  const hide = () => box.classList.remove('show');
 
+  // --- Tactile : on TOUCHE un élément pour afficher (re-touche pour fermer) ---
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    let cur = null;
+    const clear = () => { if (cur) cur.classList.remove('mock-tip-on'); cur = null; hide(); };
+    host.addEventListener('click', (e) => {
+      const t = e.target.closest('.mock-tipable');
+      if (!t || cur === t) { clear(); return; }
+      if (cur) cur.classList.remove('mock-tip-on');
+      cur = t;
+      t.classList.add('mock-tip-on');
+      fill(t);
+      box.classList.add('show');
+      window.requestAnimationFrame(() => {
+        const r = t.getBoundingClientRect();
+        const br = box.getBoundingClientRect();
+        let x = r.left + r.width / 2 - br.width / 2;
+        let y = r.top - br.height - 10;
+        if (y < 10) y = r.bottom + 10; // sinon en dessous de l'élément
+        x = Math.max(10, Math.min(x, window.innerWidth - br.width - 10));
+        y = Math.max(10, Math.min(y, window.innerHeight - br.height - 10));
+        box.style.left = `${x}px`;
+        box.style.top = `${y}px`;
+      });
+    });
+    document.addEventListener('click', (e) => { if (!host.contains(e.target)) clear(); });
+    return;
+  }
+
+  // --- Pointeur fin : survol ---
+  let current = null;
   const place = (x, y) => {
     const pad = 14;
     const r = box.getBoundingClientRect();
@@ -389,27 +419,19 @@ function bindTips(host) {
     box.style.left = `${Math.max(pad, nx)}px`;
     box.style.top = `${Math.max(pad, ny)}px`;
   };
-
   host.addEventListener('mousemove', (e) => {
     const t = e.target.closest('.mock-tipable');
     if (t !== current) {
       if (current) current.classList.remove('mock-tip-on');
       current = t;
-      if (t) {
-        t.classList.add('mock-tip-on');
-        bTitle.textContent = t.dataset.tipTitle || '';
-        bText.textContent = t.dataset.tipText || '';
-        box.classList.add('show');
-      } else {
-        box.classList.remove('show');
-      }
+      if (t) { t.classList.add('mock-tip-on'); fill(t); box.classList.add('show'); }
+      else hide();
     }
     if (t) place(e.clientX, e.clientY);
   });
-
   host.addEventListener('mouseleave', () => {
     if (current) current.classList.remove('mock-tip-on');
     current = null;
-    box.classList.remove('show');
+    hide();
   });
 }
