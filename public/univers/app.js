@@ -228,27 +228,66 @@ async function main() {
     try {
       switch (index) {
         case 0: {
-          const video = document.createElement("video");
-          video.setAttribute("preload", "none"); // Lazy — don't load 3MB until needed
-          video.poster = "./image/fondJimmy.webp"; // Static poster while loading
-          video.loop = true;
-          video.muted = true;
-          video.playsInline = true;
-          video.setAttribute("webkit-playsinline", "");
-          video.className = "project-bg-canvas scory-bg-video";
-          video.style.display = "none";
-          projectBgHost.appendChild(video);
+          // Scory : pas de video. L'IA prend le centre, presente Scory et explique la navigation.
+          const ai = document.createElement("div");
+          ai.className = "project-bg-canvas scory-ai-center";
+          ai.style.display = "none";
+          ai.innerHTML =
+            '<div class="scory-ai-inner">' +
+              '<div class="scory-ai-orb" aria-hidden="true">' +
+                '<span class="scory-ai-core"></span>' +
+                '<span class="scory-ai-ring"></span>' +
+                '<span class="scory-ai-ring scory-ai-ring--2"></span>' +
+              '</div>' +
+              '<div class="scory-ai-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
+              '<p class="scory-ai-caption" aria-live="polite"></p>' +
+            '</div>';
+          projectBgHost.appendChild(ai);
+          const caption = ai.querySelector(".scory-ai-caption");
+
+          const AI_LINES = {
+            fr: [
+              "Salut. C'est moi, l'IA de Scory. Il m'a laisse les cles de la visite.",
+              "Pour naviguer : les fleches ‹ › ou un swipe changent de disque. Cliquez un disque pour l'ouvrir.",
+              "Scory, c'est un developpeur web freelance base a Paris. Full-stack, du design au deploiement.",
+              "Zero template, tout est code a la main. Chaque disque autour de moi est un projet, avec son univers.",
+              "Et tout en bas, vous pouvez estimer votre projet en 30 secondes. Bonne visite.",
+            ],
+            en: [
+              "Hi. I'm Scory's AI, he left me in charge of the tour.",
+              "To navigate: the ‹ › arrows or a swipe change discs. Click a disc to open it.",
+              "Scory is a freelance web developer based in Paris. Full-stack, from design to deployment.",
+              "Zero templates, everything hand-coded. Each disc around me is a project, with its own universe.",
+              "And right at the bottom, you can estimate your project in 30 seconds. Enjoy the tour.",
+            ],
+          };
+
+          let typeTimer = null;
+          let lineIdx = 0;
+          function typeLine() {
+            const lines = AI_LINES[getLang() === "en" ? "en" : "fr"];
+            const line = lines[lineIdx % lines.length];
+            let i = 0;
+            ai.classList.add("is-speaking");
+            const step = () => {
+              caption.textContent = line.slice(0, i);
+              if (i < line.length) { i++; typeTimer = setTimeout(step, 30); }
+              else {
+                ai.classList.remove("is-speaking"); // ondes au repos entre 2 phrases
+                typeTimer = setTimeout(() => { lineIdx++; typeLine(); }, 3600);
+              }
+            };
+            step();
+          }
+
           projectBgs[0] = {
-            canvas: video,
+            canvas: ai,
             orb: null,
-            start() {
-              if (!video.src) video.src = "./scoryModel.mp4"; // Lazy load
-              video.play().catch(() => {
-                const playOnce = () => { video.play().catch(() => {}); document.removeEventListener("touchstart", playOnce); };
-                document.addEventListener("touchstart", playOnce, { once: true });
-              });
+            start() { if (typeTimer) clearTimeout(typeTimer); lineIdx = 0; typeLine(); },
+            stop() {
+              if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+              ai.classList.remove("is-speaking");
             },
-            stop() { video.pause(); }
           };
           break;
         }

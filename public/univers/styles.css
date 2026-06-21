@@ -171,10 +171,51 @@ body {
 .project-bg-host .project-bg-canvas {
   position: absolute; inset: 0; display: block; width: 100%; height: 100%;
 }
-.project-bg-host .scory-bg-video {
-  object-fit: cover;
-  opacity: 0.35;
-  filter: saturate(1.2) brightness(0.9);
+/* ===== Centre IA (disque Scory) : l'IA présente Scory et guide la navigation ===== */
+.scory-ai-center { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+/* Wrapper interne : porte le flex (le lifecycle met display:block/none en inline sur .scory-ai-center). */
+.scory-ai-inner {
+  width: 100%; height: 100%; box-sizing: border-box; text-align: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(10px, 2.4vh, 20px); padding: 20px 24px;
+}
+.scory-ai-orb { position: relative; flex: none; width: clamp(84px, 11vw, 138px); aspect-ratio: 1; }
+.scory-ai-core {
+  position: absolute; inset: 18%; border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #9ec8ff 0%, #6f8fff 42%, #c9a962 92%, transparent 100%);
+  box-shadow: 0 0 40px rgba(158,200,255,0.5), 0 0 90px rgba(201,169,98,0.3);
+  animation: aiBreathe 3.4s ease-in-out infinite;
+}
+.scory-ai-ring {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid rgba(158,200,255,0.35);
+  animation: aiSpin 9s linear infinite;
+}
+.scory-ai-ring--2 { inset: 10%; border-color: rgba(201,169,98,0.3); animation-duration: 6s; animation-direction: reverse; }
+@keyframes aiBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+@keyframes aiSpin { to { transform: rotate(360deg); } }
+.scory-ai-wave {
+  display: flex; align-items: center; gap: 5px; height: 20px; flex: none;
+  opacity: 0.3; transition: opacity 0.3s ease;
+}
+.scory-ai-wave i { width: 4px; height: 28%; border-radius: 2px; background: linear-gradient(#c9a962, #9ec8ff); }
+.scory-ai-center.is-speaking .scory-ai-wave { opacity: 0.9; }
+.scory-ai-center.is-speaking .scory-ai-wave i { animation: aiWave 0.85s ease-in-out infinite; }
+.scory-ai-wave i:nth-child(1), .scory-ai-wave i:nth-child(7) { animation-delay: 0s; }
+.scory-ai-wave i:nth-child(2), .scory-ai-wave i:nth-child(6) { animation-delay: .12s; }
+.scory-ai-wave i:nth-child(3), .scory-ai-wave i:nth-child(5) { animation-delay: .24s; }
+.scory-ai-wave i:nth-child(4) { animation-delay: .36s; }
+@keyframes aiWave { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+.scory-ai-caption {
+  margin: 0; flex: none; max-width: min(460px, 90%);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: clamp(14px, 1.7vw, 18px); line-height: 1.45;
+  color: rgba(245,242,255,0.94); text-shadow: 0 2px 16px rgba(0,0,0,0.85);
+}
+.scory-ai-caption::after { content: '▍'; margin-left: 1px; color: #9ec8ff; animation: aiCaret 1s steps(1) infinite; }
+@keyframes aiCaret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .scory-ai-core, .scory-ai-ring, .scory-ai-wave i, .scory-ai-caption::after { animation: none !important; }
 }
 /* Fallback image CSS quand Canvas/WebGL echoue */
 .project-bg-host {
@@ -522,13 +563,13 @@ html[lang="en"] .project-disc.is-active .disc-label::after {
 .nav-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   z-index: 5;
-  width: 60px; height: 60px;
+  width: 78px; height: 78px;
   border-radius: 50%; display: grid; place-items: center;
   cursor: pointer;
   background: rgba(255,255,255,0.12);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.34);
   box-shadow:
     0 4px 20px rgba(0,0,0,0.6),
     0 0 20px var(--theme-glow);
@@ -2014,7 +2055,7 @@ body.eco-mode .eco-switch:active .eco-switch__knob {
    ============================================================================= */
 @media (max-width: 768px) {
   .project-disc { width: clamp(180px, 36vmin, 260px); }
-  .nav-arrow { width: 54px; height: 54px; }
+  .nav-arrow { width: 64px; height: 64px; }
   .museum-label { padding: 1rem 1.15rem; }
   .detail-panel { width: min(92vw, 440px); padding: 1.75rem; max-height: 80vh; }
   .detail-panel__title { font-size: 1.35rem; }
