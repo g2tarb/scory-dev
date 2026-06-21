@@ -54,9 +54,9 @@ const LINE_SETS = [
   ],
   // 4 — DYG
   [
-    "DYG, Do Your Game : une plateforme SaaS full-stack pour développeurs.",
-    "Scan GitHub, scoring sur 8 piliers, équipes en temps réel. Fastify, Postgres, Docker.",
-    "La preuve qu'au-delà des vitrines, Scory livre de vraies apps de production.",
+    "DYG, Do Your Game : un scanner de profil GitHub, gratuit et sans compte.",
+    "Il note ton profil sur 8 axes, te donne ton archétype de dev et des conseils.",
+    "Front vanilla JS, back Fastify, PostgreSQL. Rapide, lisible, droit au but.",
   ],
   // 5 — SecurEats
   [
