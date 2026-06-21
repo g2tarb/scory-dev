@@ -17,6 +17,39 @@ const bars = (parent, widths, cls = '') =>
     parent.append(b);
   });
 
+// Rend un élément « explicable » : titre + texte affichés au survol.
+const tip = (el, title, text) => {
+  el.classList.add('mock-tipable');
+  el.dataset.tipTitle = title;
+  el.dataset.tipText = text;
+  return el;
+};
+
+// Explications par section (ce que c'est + à quoi ça sert).
+const SECTION_TIPS = {
+  Accueil: ['Section d’accueil', 'La première impression : accroche, promesse et bouton d’action qui captent le visiteur en 3 secondes.'],
+  Services: ['Vos services', 'Présente ce que vous proposez en cartes claires — bénéfices et tarifs — pour que le visiteur sache vite si c’est pour lui.'],
+  Réalisations: ['Réalisations', 'Vos projets en images. La preuve concrète de votre savoir-faire : ça rassure et ça convainc.'],
+  'À propos': ['À propos', 'Votre histoire et votre visage. Crée la confiance et l’attachement à votre marque.'],
+  Témoignages: ['Témoignages', 'La parole de vos clients. La preuve sociale qui lève les derniers doutes avant de vous contacter.'],
+  Blog: ['Blog', 'Des articles qui attirent du trafic via Google et démontrent votre expertise sur la durée.'],
+  Contact: ['Contact', 'Le point de conversion : formulaire ou prise de RDV pour transformer le visiteur en client.'],
+};
+
+// Explications par option / surcouche.
+const OPTION_TIPS = {
+  rdv: ['Prise de RDV', 'Le visiteur réserve un créneau en ligne, sans échange de mails. Plus de rendez-vous, moins de friction.'],
+  paiement: ['Paiement en ligne', 'Vendez et encaissez directement sur le site (CB, Stripe). Le client paie en deux clics.'],
+  membre: ['Espace membre', 'Comptes clients sécurisés : connexion, profils et contenu réservé aux inscrits.'],
+  multi: ['Multilingue', 'Le site bascule en plusieurs langues pour toucher une audience internationale.'],
+  ia: ['Agent IA', 'Un assistant qui répond aux visiteurs 24/7, qualifie les leads et soulage votre support.'],
+  orb: ['Animations 3D', 'Des effets immersifs (WebGL / Three.js) qui marquent les esprits et différencient votre image.'],
+  seo: ['SEO avancé', 'Optimisation pour Google : structure, vitesse et métadonnées. Plus de visibilité, plus de visiteurs.'],
+  auto: ['Automatisations', 'Connecte vos outils (CRM, e-mails, n8n) pour éliminer les tâches répétitives.'],
+  nav: ['Navigation', 'La barre du haut : logo et menu pour se repérer et accéder à chaque section.'],
+  cta: ['Bouton d’action', 'L’appel à l’action principal qui guide le visiteur vers l’objectif (devis, achat, RDV).'],
+};
+
 // Ordre de page canonique, indépendant de l'ordre de sélection.
 const ORDER = ['Accueil', 'Services', 'Réalisations', 'À propos', 'Témoignages', 'Blog', 'Contact'];
 
@@ -25,13 +58,13 @@ function buildSection(kind, has) {
 
   if (kind === 'Accueil') {
     s.className = 'mock-sec mock-hero';
-    if (has('Animations 3D')) s.append(el('span', 'mock-orb'));
+    if (has('Animations 3D')) s.append(tip(el('span', 'mock-orb'), ...OPTION_TIPS.orb));
     const t = el('div', 'mock-hero-t');
     bars(t, [60, 80, 38], 'big');
     s.append(t);
     bars(s, [50]);
     const row = el('div', 'mock-row');
-    row.append(el('span', 'mock-btn'), el('span', 'mock-btn ghost'));
+    row.append(tip(el('span', 'mock-btn'), ...OPTION_TIPS.cta), el('span', 'mock-btn ghost'));
     s.append(row);
     return s;
   }
@@ -43,7 +76,7 @@ function buildSection(kind, has) {
       const c = el('div', 'mock-card');
       c.append(el('span', 'mock-ico'));
       bars(c, [70, 95]);
-      if (has('Paiement en ligne')) c.append(el('span', 'mock-price'));
+      if (has('Paiement en ligne')) c.append(tip(el('span', 'mock-price'), ...OPTION_TIPS.paiement));
       g.append(c);
     }
     s.append(g);
@@ -108,7 +141,7 @@ function buildSection(kind, has) {
     s.append(el('span', 'mock-h'));
     if (has('Prise de RDV')) {
       // Mini-calendrier de prise de rendez-vous.
-      const cal = el('div', 'mock-cal');
+      const cal = tip(el('div', 'mock-cal'), ...OPTION_TIPS.rdv);
       const on = new Set([4, 5, 9, 12, 16]);
       for (let i = 0; i < 21; i++) {
         const d = el('span', 'mock-day');
@@ -139,24 +172,24 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
   const bar = el('div', 'mock-bar');
   bar.append(el('span', 'mock-dot r'), el('span', 'mock-dot y'), el('span', 'mock-dot g'));
   bar.append(el('span', 'mock-url', has('Multilingue') ? 'votre-site.fr/fr' : 'votre-site.fr'));
-  if (has('Multilingue')) bar.append(el('span', 'mock-lang', 'FR · EN'));
+  if (has('Multilingue')) bar.append(tip(el('span', 'mock-lang', 'FR · EN'), ...OPTION_TIPS.multi));
   host.append(bar);
 
   // --- Page ---
   const page = el('div', 'mock-page');
 
   // Header : logo + nav (1 lien par section) + pills optionnelles
-  const header = el('div', 'mock-head');
+  const header = tip(el('div', 'mock-head'), ...OPTION_TIPS.nav);
   header.append(el('span', 'mock-logo'));
   const nav = el('div', 'mock-nav');
   sections.filter((s) => s !== 'Accueil').slice(0, 5).forEach(() => nav.append(el('span', 'mock-navi')));
   header.append(nav);
-  if (has('Espace membre')) header.append(el('span', 'mock-pill ghost', 'Connexion'));
-  if (has('Prise de RDV')) header.append(el('span', 'mock-pill cta', 'RDV'));
+  if (has('Espace membre')) header.append(tip(el('span', 'mock-pill ghost', 'Connexion'), ...OPTION_TIPS.membre));
+  if (has('Prise de RDV')) header.append(tip(el('span', 'mock-pill cta', 'RDV'), ...OPTION_TIPS.rdv));
   page.append(header);
 
-  // Sections
-  sections.forEach((kind) => page.append(buildSection(kind, has)));
+  // Sections (chacune explicable au survol)
+  sections.forEach((kind) => page.append(tip(buildSection(kind, has), ...SECTION_TIPS[kind])));
 
   // Footer
   const foot = el('div', 'mock-foot');
@@ -167,11 +200,15 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
   }
   page.append(foot);
 
-  host.append(page);
+  // La page défile à l'intérieur de la fenêtre (hauteur fixe) ;
+  // les widgets flottants (chat, badges) restent ancrés au cadre visible.
+  const view = el('div', 'mock-view');
+  view.append(page);
+  host.append(view);
 
   // --- Surcouches flottantes (options) ---
   if (has('Agent IA')) {
-    const chat = el('div', 'mock-chat');
+    const chat = tip(el('div', 'mock-chat'), ...OPTION_TIPS.ia);
     chat.append(el('span', 'mock-chat-ai', 'IA'));
     host.append(chat);
   }
@@ -179,10 +216,12 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
   if (has('SEO avancé')) badges.push(['SEO 98', 'seo']);
   if (has('Automatisations')) badges.push(['⚙ auto', 'auto']);
   badges.forEach(([txt, cls], i) => {
-    const b = el('span', `mock-badge ${cls}`, txt);
+    const b = tip(el('span', `mock-badge ${cls}`, txt), ...OPTION_TIPS[cls]);
     b.style.bottom = `${14 + i * 34}px`;
     host.append(b);
   });
+
+  bindTips(host); // tooltips au survol (lié une seule fois)
 
   // Révélation étagée : « génération » vivante mais quasi-instantanée.
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -192,4 +231,60 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
       node.classList.add('mock-in');
     });
   }
+}
+
+/* ----- Tooltips explicatifs au survol ----- */
+let tipBox = null;
+function getTipBox() {
+  if (tipBox) return tipBox;
+  tipBox = document.createElement('div');
+  tipBox.className = 'mock-tip';
+  tipBox.innerHTML = '<b></b><span></span>';
+  document.body.append(tipBox);
+  return tipBox;
+}
+
+function bindTips(host) {
+  // Inutile sur tactile (pas de survol) + délégation liée une seule fois.
+  if (host.dataset.tipBound || window.matchMedia('(pointer: coarse)').matches) return;
+  host.dataset.tipBound = '1';
+
+  const box = getTipBox();
+  const bTitle = box.querySelector('b');
+  const bText = box.querySelector('span');
+  let current = null;
+
+  const place = (x, y) => {
+    const pad = 14;
+    const r = box.getBoundingClientRect();
+    let nx = x + 18;
+    let ny = y + 18;
+    if (nx + r.width + pad > window.innerWidth) nx = x - r.width - 18;
+    if (ny + r.height + pad > window.innerHeight) ny = y - r.height - 18;
+    box.style.left = `${Math.max(pad, nx)}px`;
+    box.style.top = `${Math.max(pad, ny)}px`;
+  };
+
+  host.addEventListener('mousemove', (e) => {
+    const t = e.target.closest('.mock-tipable');
+    if (t !== current) {
+      if (current) current.classList.remove('mock-tip-on');
+      current = t;
+      if (t) {
+        t.classList.add('mock-tip-on');
+        bTitle.textContent = t.dataset.tipTitle || '';
+        bText.textContent = t.dataset.tipText || '';
+        box.classList.add('show');
+      } else {
+        box.classList.remove('show');
+      }
+    }
+    if (t) place(e.clientX, e.clientY);
+  });
+
+  host.addEventListener('mouseleave', () => {
+    if (current) current.classList.remove('mock-tip-on');
+    current = null;
+    box.classList.remove('show');
+  });
 }
