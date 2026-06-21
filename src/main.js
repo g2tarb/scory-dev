@@ -207,6 +207,16 @@ if (!reduced && window.matchMedia('(hover: hover)').matches) {
 const booking = initBooking();
 document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', () => booking.open()));
 
+/* ---------- CTA « Estimer mon projet » → l'assembleur EST l'estimation ---------- */
+document.querySelectorAll('.js-estimate').forEach((b) =>
+  b.addEventListener('click', () => {
+    const target = document.getElementById('builder');
+    if (!target) return booking.open();
+    if (lenis && !reduced) lenis.scrollTo(target, { offset: -16 });
+    else target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }),
+);
+
 /* ---------- Assembleur 2-en-1 (site ⇄ app) → maquette + estimation ---------- */
 (function builder() {
   const root = document.querySelector('.builder');
@@ -293,9 +303,10 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
     const all = [...blocs, ...options];
     if (recap) {
       const u = TEXT[kind].unit;
+      const blocPart = `${blocs.length} ${u}${blocs.length > 1 ? 's' : ''}`;
+      const optPart = options.length ? ` · ${options.length} option${options.length > 1 ? 's' : ''}` : '';
       recap.textContent =
-        `${blocs.length} ${u}${blocs.length > 1 ? 's' : ''} · ${options.length} option${options.length > 1 ? 's' : ''}` +
-        (all.length ? ` : ${all.join(' · ')}` : ' : rien de sélectionné');
+        blocPart + optPart + (all.length ? ` : ${all.join(' · ')}` : ' : rien de sélectionné');
     }
     mock.className = kind === 'app' ? 'appmock' : 'mock';
     mockWrap.classList.toggle('mock-wrap--app', kind === 'app');
@@ -357,10 +368,10 @@ document.querySelectorAll('.js-rdv').forEach((b) => b.addEventListener('click', 
   const fx = document.querySelector('.portal-fx');
   const go = (e) => {
     if (e) e.preventDefault();
-    if (reduced || !fx) { window.location.href = '/univers/index.html'; return; }
+    if (reduced || !fx) { window.location.href = '/univers/'; return; }
     fx.classList.add('expand');
     window.setTimeout(() => fx.classList.add('loading'), 480); // loader une fois l'écran couvert
-    window.setTimeout(() => { window.location.href = '/univers/index.html'; }, 2000); // mini-chargement masquant
+    window.setTimeout(() => { window.location.href = '/univers/'; }, 2000); // mini-chargement masquant
   };
   document.querySelectorAll('.js-portal').forEach((a) => a.addEventListener('click', go));
 })();

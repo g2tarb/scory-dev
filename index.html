@@ -26,10 +26,10 @@
       />
     </noscript>
 
-    <title>Scory · Développeur web freelance | Sites, web apps & SaaS</title>
+    <title>Scory · Développeur web freelance à Paris | Sites, web apps & SaaS</title>
     <meta
       name="description"
-      content="Scory, développeur web freelance. Sites, web apps et SaaS sur mesure, du design au déploiement. Code soigné, livré vite, pensé pour convertir. Réponse sous 24 h."
+      content="Scory, développeur web freelance à Paris. Sites, web apps et SaaS sur mesure, du design au déploiement. Code soigné, livré vite, pensé pour convertir. Réponse sous 24 h."
     />
     <meta name="author" content="Scory" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -62,7 +62,8 @@
         "url": "https://scory.dev/",
         "image": "https://scory.dev/univers/image/mediascory.webp",
         "email": "contact@scory.dev",
-        "areaServed": "FR",
+        "address": { "@type": "PostalAddress", "addressLocality": "Paris", "addressCountry": "FR" },
+        "areaServed": ["Paris", "Île-de-France", "France"],
         "priceRange": "€€",
         "sameAs": ["https://github.com/g2tarb"],
         "contactPoint": {
@@ -93,7 +94,7 @@
     <!-- SEO (invisible, crawlable) -->
     <div class="visually-hidden">
       <p>
-        Scory · développeur web full-stack freelance. Je conçois des sites vitrines, des sites
+        Scory · développeur web full-stack freelance à Paris. Je conçois des sites vitrines, des sites
         e-commerce et des applications web (SaaS) sur mesure, du design au déploiement.
         Automatisation de workflows et agents IA. Réalisations : DYG, NAKAMA, SecurEats, 4Dayvelopment.
       </p>
@@ -114,6 +115,7 @@
       <nav class="topnav">
         <a href="#services">Services</a>
         <a href="#work">Réalisations</a>
+        <a href="#about">À propos</a>
         <a href="#process">Process</a>
         <a href="#faq">FAQ</a>
       </nav>
@@ -124,7 +126,7 @@
       <!-- HERO -->
       <section class="hero section" id="top">
         <canvas id="heroFx" aria-hidden="true"></canvas>
-        <p class="eyebrow reveal">Développeur web freelance</p>
+        <p class="eyebrow reveal">Développeur web freelance · Paris</p>
         <h1 class="hero-title reveal">
           On transforme les idées en<br />
           <span class="rotator" data-words="sites,web apps,SaaS,e-commerces">sites</span><br />
@@ -135,8 +137,8 @@
           Code soigné, livré vite, pensé pour convertir.
         </p>
         <div class="actions reveal">
-          <button type="button" class="btn btn-glow js-rdv">Estimer mon projet</button>
-          <a class="btn btn-link js-portal" href="/univers/index.html">Entrer dans mon univers <span>→</span></a>
+          <button type="button" class="btn btn-glow js-estimate">Estimer mon projet</button>
+          <a class="btn btn-link js-portal" href="/univers/">Entrer dans mon univers <span>→</span></a>
         </div>
         <p class="micro reveal">Disponible · Réponse sous 24 h · 100 % sur mesure</p>
       </section>
@@ -178,6 +180,11 @@
             <h3>Agent IA</h3>
             <p>Assistant IA sur mesure : support, qualification de leads, FAQ intelligente, 24/7.</p>
             <p class="price">nouveau</p>
+          </article>
+          <article class="card reveal">
+            <h3>Refonte &amp; perf</h3>
+            <p>Votre site existant repensé : design, vitesse, SEO. On garde ce qui marche, on corrige le reste.</p>
+            <p class="price">sur devis</p>
           </article>
         </div>
       </section>
@@ -300,8 +307,27 @@
             <span class="work-stack">Web app</span>
           </li>
         </ul>
-        <a class="btn btn-link js-portal reveal" href="/univers/index.html">Voir tout dans mon univers <span>→</span></a>
+        <a class="btn btn-link js-portal reveal" href="/univers/">Voir tout dans mon univers <span>→</span></a>
         <div class="work-preview" aria-hidden="true"><img alt="" /></div>
+      </section>
+
+      <!-- À PROPOS -->
+      <section class="section about" id="about">
+        <p class="eyebrow reveal">À propos</p>
+        <h2 class="h2 reveal">Qui code votre projet</h2>
+        <div class="about-grid">
+          <div class="about-text reveal">
+            <p>Je suis Scory, développeur web full-stack freelance basé à Paris. Je conçois et code chaque projet à la main, du design à la mise en ligne, sans template ni page recyclée.</p>
+            <p>Un seul interlocuteur, de la première maquette au déploiement : moins d'allers-retours, plus de cohérence, et un site qui vous ressemble vraiment. J'aime le code propre, les pages qui chargent vite et les interfaces qui convertissent.</p>
+            <p>Du front au back, je couvre toute la chaîne : JavaScript, Node.js (Fastify), PostgreSQL et l'écosystème moderne. De la vitrine au SaaS.</p>
+          </div>
+          <ul class="about-facts reveal">
+            <li><span class="about-k">Basé à</span><span class="about-v">Paris · à distance partout</span></li>
+            <li><span class="about-k">Spécialité</span><span class="about-v">Full-stack JavaScript, sur mesure</span></li>
+            <li><span class="about-k">Méthode</span><span class="about-v">Codé à la main, zéro template</span></li>
+            <li><span class="about-k">Vous repartez avec</span><span class="about-v">Le code, vous en êtes propriétaire</span></li>
+          </ul>
+        </div>
       </section>
 
       <!-- PROCESS -->
@@ -361,7 +387,7 @@
               <span>Puis-je voir des réalisations ?</span>
               <svg class="faq-chevron" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
-            <div class="faq-a"><div><p>Bien sûr, <a class="faq-link js-portal" href="/univers/index.html">entrez dans mon univers</a> pour explorer le portfolio créatif en détail.</p></div></div>
+            <div class="faq-a"><div><p>Bien sûr, <a class="faq-link js-portal" href="/univers/">entrez dans mon univers</a> pour explorer le portfolio créatif en détail.</p></div></div>
           </div>
         </div>
       </section>

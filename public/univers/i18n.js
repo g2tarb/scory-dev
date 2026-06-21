@@ -32,7 +32,7 @@ export const TRANSLATIONS = {
   "scroll.text": { fr: "Estimez votre projet", en: "Estimate your project" },
   // Stats
   "stat.custom": { fr: "Sur mesure", en: "Fully custom" },
-  "stat.satisfaction": { fr: "Satisfaction client", en: "Client satisfaction" },
+  "stat.projets": { fr: "Projets livres", en: "Projects shipped" },
   "stat.template": { fr: "Template utilise", en: "Template used" },
   // Services
   "services.title": { fr: "Ce que je fais", en: "What I do" },
