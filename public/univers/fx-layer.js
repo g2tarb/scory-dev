@@ -25,9 +25,9 @@ const SPHERE = (() => {
 })();
 
 const LINES = [
+  "D'abord la navigation : les flèches ‹ › ou un swipe font tourner les disques.",
+  "Cliquez un disque pour ouvrir le projet et lire son histoire. Regardez.",
   "Je suis le guide IA de Scory, je reste avec vous tout le long de la visite.",
-  "Pour naviguer : les flèches ‹ › ou un swipe font tourner les disques.",
-  "Cliquez un disque pour ouvrir le projet et lire son histoire.",
   "Chaque disque est un vrai projet livré par Scory. Faites-les défiler.",
   "Scory : développeur web freelance à Paris, du design au déploiement.",
   "Du sur-mesure, jamais un template. Je vous le garantis, et je suis une IA.",
