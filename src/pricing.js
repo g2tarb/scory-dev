@@ -3,8 +3,8 @@
 
 export const TABLES = {
   site: {
-    // Socle : design, intégration, responsive, mise en ligne.
-    floor: [900, 1600],
+    // Socle : design sur-mesure, intégration, responsive, mise en ligne (hand-coded, zéro template).
+    floor: [1500, 2500],
     max: 14000,
     prices: {
       // Blocs de base
@@ -22,7 +22,8 @@ export const TABLES = {
       Multilingue: [400, 1000],
       'Agent IA': [1500, 4000],
       Automatisations: [800, 2500],
-      'Animations 3D': [600, 1800],
+      'Animations 3D': [1500, 4500],
+      'Direction artistique': [800, 3000],
       'SEO avancé': [400, 1000],
     },
   },

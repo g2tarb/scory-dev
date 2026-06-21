@@ -46,6 +46,7 @@ const OPTION_TIPS = {
   orb: ['Animations 3D', 'Des effets immersifs (WebGL / Three.js) qui marquent les esprits et différencient votre image.'],
   seo: ['SEO avancé', 'Optimisation pour Google : structure, vitesse et métadonnées. Plus de visibilité, plus de visiteurs.'],
   auto: ['Automatisations', 'Connecte vos outils (CRM, e-mails, n8n) pour éliminer les tâches répétitives.'],
+  da: ['Direction artistique', 'Une identité visuelle sur-mesure : couleurs, typographie, animations. Ce qui fait qu’on se souvient de votre site.'],
   nav: ['Navigation', 'La barre du haut : logo et menu pour se repérer et accéder à chaque section.'],
   cta: ['Bouton d’action', 'L’appel à l’action principal qui guide le visiteur vers l’objectif (devis, achat, RDV).'],
 };
@@ -243,6 +244,7 @@ export function renderMockup(host, { blocs = [], options = [] } = {}) {
   const badges = [];
   if (has('SEO avancé')) badges.push(['SEO 98', 'seo']);
   if (has('Automatisations')) badges.push(['⚙ auto', 'auto']);
+  if (has('Direction artistique')) badges.push(['✦ sur-mesure', 'da']);
   badges.forEach(([txt, cls], i) => {
     const b = tip(el('span', `mock-badge ${cls}`, txt), ...OPTION_TIPS[cls]);
     b.style.bottom = `${14 + i * 34}px`;

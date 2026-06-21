@@ -531,6 +531,7 @@ body.site-error::after {
 }
 .mock-badge.seo { color: #7ee08a; }
 .mock-badge.auto { color: var(--accent); }
+.mock-badge.da { color: #c9a0ff; }
 @keyframes mock-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
 /* Génération étagée */
