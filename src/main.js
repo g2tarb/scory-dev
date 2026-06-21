@@ -63,12 +63,16 @@ window.requestAnimationFrame(() => loader && loader.classList.add('is-hidden'));
   const SELECTOR = '.rotator, #vitrine .h2, .work-name, .step-t';
   let saved = [];
   window.addEventListener('scory:error', () => {
-    saved = [...document.querySelectorAll(SELECTOR)].map((el) => {
-      const orig = el.textContent;
-      el.textContent = 'error';
-      el.classList.add('text-error');
-      return { el, orig };
-    });
+    saved = [...document.querySelectorAll(SELECTOR)]
+      // L'assembleur a un interrupteur (<span>) dans son <h2> : écraser le textContent
+      // le détruirait. On exclut donc #builder de la corruption.
+      .filter((el) => !el.closest('#builder'))
+      .map((el) => {
+        const orig = el.textContent;
+        el.textContent = 'error';
+        el.classList.add('text-error');
+        return { el, orig };
+      });
   });
   window.addEventListener('scory:error-end', () => {
     saved.forEach(({ el, orig }) => { el.textContent = orig; el.classList.remove('text-error'); });
