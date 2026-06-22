@@ -189,7 +189,6 @@ function initEcoMode() {
 
 async function main() {
   const stage = document.getElementById("museum-stage");
-  const neuralHost = document.getElementById("neural-host");
   const carousel = document.getElementById("project-carousel");
   const track = document.getElementById("project-track");
   const labelNum = document.getElementById("label-num");
@@ -204,16 +203,13 @@ async function main() {
   const dotsContainer = document.getElementById("nav-dots");
   const particleCanvas = document.getElementById("particle-canvas");
 
-  if (!stage || !neuralHost || !carousel || !track) return;
+  if (!stage || !carousel || !track) return;
 
   const reduced = prefersReducedMotion();
   const ecoMode = document.body.classList.contains("eco-mode");
   const loader = document.getElementById("loader");
   const projectBgHost = document.getElementById("project-bg-host");
 
-  /* ===== Neural supprime — stub permanent ===== */
-  const neural = { resize() {}, setTransitionProgress() {}, setRotationInfluence() {} };
-  if (neuralHost) neuralHost.style.display = "none";
   const threeReady = Promise.resolve();
 
   /* ---------- Fonds projet (initialisés au premier usage) ---------- */
@@ -704,7 +700,6 @@ async function main() {
     });
   }
 
-  gsap.set(neuralHost, { opacity: 1 });
 
   /* ---------- Particules (lazy) ---------- */
   let particles = { transition() { return Promise.resolve(); }, resize() {}, setColors() {} };
@@ -728,7 +723,6 @@ async function main() {
     s.setProperty("--theme-glow-disc", t.glowDisc);
     s.setProperty("--font-display", t.fontDisplay);
     s.setProperty("--font-sans", t.fontSans);
-    neuralHost.style.filter = t.neuralFilter;
     // Tints derives du theme (utilises par sections, panels, accents)
     s.setProperty("--theme-tint-a", hexToRgba(t.magenta, 0.08));
     s.setProperty("--theme-tint-b", hexToRgba(t.magenta, 0.18));
@@ -988,12 +982,6 @@ async function main() {
       { rotation: -direction * 360, x: -direction * window.innerWidth * 0.45, scale: 0.4, opacity: 1 },
       { rotation: 0, x: 0, scale: 1, opacity: 1,
         duration: 0.7, ease: "power2.out",
-        onStart: () => {
-          if (!ecoMode) {
-            const p = { v: 0.15 };
-            gsap.to(p, { v: 0, duration: 0.4, onUpdate: () => neural.setTransitionProgress(p.v) });
-          }
-        }
       },
       0.4 // le nouveau commence avant que l'ancien ait fini de disparaitre
     );
@@ -1116,8 +1104,7 @@ async function main() {
             const warp = { p: 0 };
             gsap.to(warp, {
               p: 1, duration: 0.8, ease: "power3.in",
-              onUpdate: () => neural.setTransitionProgress(warp.p),
-              onComplete: () => { window.open(href, "_blank"); neural.setTransitionProgress(0); },
+              onComplete: () => { window.open(href, "_blank"); },
             });
             gsap.to(document.body, { opacity: 0, duration: 0.6, delay: 0.4, onComplete: () => { gsap.set(document.body, { opacity: 1 }); } });
           } else {
@@ -1321,13 +1308,12 @@ async function main() {
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      neural.resize();
       particles.resize();
     }, RESIZE_DEBOUNCE_MS);
   }, { passive: true });
 
   /* ---------- Curseur custom (module cursor.js) ---------- */
-  initCursor({ neural, reduced });
+  initCursor({ reduced });
   initMagneticArrows([arrowLeft, arrowRight]);
 
   // Rotation lente continue du disque actif (guard contre double boucle)
@@ -1409,10 +1395,6 @@ async function main() {
   applyTheme(startIndex);
 
 
-  if (reduced) {
-    neural.setRotationInfluence(0);
-    neural.setTransitionProgress(0);
-  }
 
   await yieldToBrowser(); // Liberer le main thread avant les observers
 

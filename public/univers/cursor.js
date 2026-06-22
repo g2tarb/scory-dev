@@ -9,7 +9,7 @@ const THROTTLE_MS = 16;
 
 /**
  * Initialise le curseur custom.
- * @param {{ neural: { setRotationInfluence(v: number): void }, reduced: boolean }} ctx
+ * @param {{ reduced: boolean }} ctx
  */
 export function initCursor(ctx) {
   const dot = document.getElementById("cursor-dot");
@@ -28,11 +28,6 @@ export function initCursor(ctx) {
     lastFrame = now;
 
     gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.28, ease: "power2.out" });
-
-    if (!ctx.reduced && ctx.neural) {
-      const influence = Math.hypot(e.clientX / innerWidth - 0.5, e.clientY / innerHeight - 0.5) * 0.35;
-      ctx.neural.setRotationInfluence(influence);
-    }
   }, { passive: true });
 
   document.addEventListener("mouseover", (e) => {
