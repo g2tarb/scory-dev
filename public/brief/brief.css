@@ -91,6 +91,14 @@ a { color: inherit; }
 .brief-choice--desc.is-on::after { top: 16px; transform: none; }
 .brief-choice__d { font-size: 12.5px; line-height: 1.4; font-weight: 400; color: var(--text-dim); }
 .brief-choice.is-on .brief-choice__d { color: rgba(255, 241, 224, 0.72); }
+/* Badge « Recommandé » sur la tranche de budget suggérée (le client reste libre). */
+.brief-choice.is-reco { border-color: rgba(201, 169, 98, 0.55); }
+.brief-reco {
+  position: absolute; top: -8px; right: 12px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700;
+  background: linear-gradient(90deg, var(--accent), #d8ba74); color: #1a1306;
+  padding: 3px 8px; border-radius: 99px; box-shadow: 0 4px 12px rgba(201, 169, 98, 0.25);
+}
 
 .brief-field { display: block; margin-bottom: 12px; }
 .brief-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }

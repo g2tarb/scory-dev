@@ -44,13 +44,35 @@ const FEATURE_MAP = {
   'Agent IA': 'Agent IA', 'Animations 3D': 'Animations 3D', 'SEO avancé': 'SEO avancé', 'Notifications push': 'Notifications',
 };
 const eur = (n) => `${Math.round(n).toLocaleString('fr-FR')} €`;
-const budgetBucket = (lo, hi) => {
-  const mid = (lo + hi) / 2;
-  if (mid < 2000) return 'Moins de 2 000 €';
-  if (mid < 5000) return '2 à 5 000 €';
-  if (mid < 10000) return '5 à 10 000 €';
+const bucketOf = (total) => {
+  if (total < 2000) return 'Moins de 2 000 €';
+  if (total < 5000) return '2 à 5 000 €';
+  if (total < 10000) return '5 à 10 000 €';
   return 'Plus de 10 000 €';
 };
+const budgetBucket = (lo, hi) => bucketOf((lo + hi) / 2);
+
+// Estimation indicative pour RECOMMANDER une tranche de budget (le client reste libre).
+const TYPE_BASE = {
+  'Site vitrine': 1500, 'E-commerce': 3500, 'Web app / SaaS': 6000,
+  'Application mobile': 8000, Refonte: 2000, Autre: 3000,
+};
+const FEAT_COST = {
+  'Prise de RDV': 700, 'Paiement en ligne': 1500, 'Espace membre': 2000, Blog: 800,
+  Multilingue: 800, 'Agent IA': 2500, 'Animations 3D': 2500, 'SEO avancé': 800,
+  'Tableau de bord': 2500, Notifications: 800,
+};
+function recommendBudget() {
+  if (!state.projectType || state.projectType === 'Autre') return null;
+  let total = TYPE_BASE[state.projectType] || 3000;
+  state.features.forEach((f) => { total += FEAT_COST[f] || 0; });
+  return bucketOf(total);
+}
+function budgetAdvice() {
+  const reco = recommendBudget();
+  if (reco) return `Vu tes choix, je te suggère plutôt « ${reco} ». Mais le budget, c'est toi qui décides : prends la tranche qui te va.`;
+  return ADVICE[3];
+}
 
 const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
 const isEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -161,7 +183,17 @@ function render() {
     wrap.appendChild(el('p', 'brief-eyebrow', '04 · Cadre'));
     wrap.appendChild(el('h2', 'brief-q', 'Budget & délai ?'));
     wrap.appendChild(el('span', 'brief-sub', 'Budget indicatif'));
-    wrap.appendChild(choiceGrid(BUDGETS, false, (v) => state.budget === v, (v) => { state.budget = v; markSingle(); }));
+    const budgetGrid = choiceGrid(BUDGETS, false, (v) => state.budget === v, (v) => { state.budget = v; markSingle(); });
+    const reco = recommendBudget();
+    if (reco) {
+      budgetGrid.querySelectorAll('.brief-choice').forEach((bb) => {
+        if (bb.querySelector('.brief-choice__l').textContent === reco) {
+          bb.classList.add('is-reco');
+          bb.appendChild(el('span', 'brief-reco', 'Recommandé'));
+        }
+      });
+    }
+    wrap.appendChild(budgetGrid);
     wrap.appendChild(el('span', 'brief-sub', 'Pour quand ?'));
     wrap.appendChild(choiceGrid(TIMELINES, false, (v) => state.timeline === v, (v) => { state.timeline = v; markSingle(); }));
   } else if (step === 5) {
@@ -191,7 +223,7 @@ function render() {
   requestAnimationFrame(() => wrap.classList.add('in'));
   syncChrome();
   if (step === 6) { const f = stage.querySelector('input'); if (f) f.focus(); }
-  advise(step === 1 && prefilled ? ADVICE_PREFILL : ADVICE[step - 1]);
+  advise(step === 1 && prefilled ? ADVICE_PREFILL : step === 4 ? budgetAdvice() : ADVICE[step - 1]);
 }
 
 function canNext() {
