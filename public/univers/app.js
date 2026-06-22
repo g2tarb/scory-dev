@@ -567,6 +567,7 @@ async function main() {
   // PHASE 3 : Montrer le site apres le loader (n'attend PAS Three.js)
   setTimeout(() => {
     if (loader) loader.classList.add("is-hidden");
+    window.scrollTo(0, 0); // garantit qu'on découvre le musée par le HAUT
     if (!reduced) {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.from(".floating-brand", { opacity: 0, y: -20, duration: 0.7 }, 0.1)

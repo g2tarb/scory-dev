@@ -5,8 +5,10 @@
     <script>
       // On entre toujours en HAUT du portfolio (pas de restauration de scroll).
       if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-      window.scrollTo(0, 0);
-      addEventListener('load', () => window.scrollTo(0, 0));
+      var toTop = function () { window.scrollTo(0, 0); };
+      toTop();
+      document.addEventListener('DOMContentLoaded', toTop);
+      addEventListener('load', function () { toTop(); setTimeout(toTop, 200); setTimeout(toTop, 700); });
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#07060a" />

@@ -67,12 +67,13 @@ const LINE_SETS = [
 ];
 
 // Palette qui défile (la sphère change de couleur en continu).
+// Couleurs vives et chaudes : la sphère IA respire l'ambre/l'orange/l'or.
 const PALETTE = [
-  [158, 200, 255], // glacier
+  [255, 176, 59],  // ambre vif
+  [255, 122, 41],  // orange
+  [255, 209, 102], // jaune chaud
+  [255, 94, 87],   // corail
   [201, 169, 98],  // or
-  [169, 139, 255], // violet
-  [107, 224, 216], // cyan
-  [255, 139, 208], // rose
 ];
 function curColor(t) {
   const f = (t / 5) % PALETTE.length; // 5 s par couleur
@@ -99,14 +100,14 @@ export function initFxLayer(opts = {}) {
   // Bulle DOM + machine à écrire (pilote l'état "parle").
   const style = document.createElement('style');
   style.textContent = `
-    .ai-bubble{position:fixed;z-index:45;max-width:270px;padding:11px 14px;border-radius:14px;background:rgba(9,16,24,.84);
-      border:1px solid rgba(170,205,255,.45);box-shadow:0 0 26px rgba(110,200,255,.25),inset 0 0 22px rgba(0,40,60,.4);backdrop-filter:blur(6px);
-      color:#e6efff;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;line-height:1.5;pointer-events:none;
+    .ai-bubble{position:fixed;z-index:45;max-width:270px;padding:11px 14px;border-radius:14px;background:rgba(22,13,6,.85);
+      border:1px solid rgba(255,184,92,.5);box-shadow:0 0 26px rgba(255,150,60,.28),inset 0 0 22px rgba(50,25,0,.4);backdrop-filter:blur(6px);
+      color:#fff1e0;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;line-height:1.5;pointer-events:none;
       opacity:0;transform:translate(-50%,0) scale(.92);transition:opacity .35s ease,transform .35s ease;}
     .ai-bubble.on{opacity:1;transform:translate(-50%,0) scale(1);}
-    .ai-bubble::after{content:'';position:absolute;left:26px;bottom:-7px;width:12px;height:12px;background:rgba(9,16,24,.84);
-      border-right:1px solid rgba(170,205,255,.45);border-bottom:1px solid rgba(170,205,255,.45);transform:rotate(45deg);}
-    .ai-cur{display:inline-block;color:#aacdff;animation:ai-blink 1s steps(2) infinite;}@keyframes ai-blink{50%{opacity:0}}
+    .ai-bubble::after{content:'';position:absolute;left:26px;bottom:-7px;width:12px;height:12px;background:rgba(22,13,6,.85);
+      border-right:1px solid rgba(255,184,92,.5);border-bottom:1px solid rgba(255,184,92,.5);transform:rotate(45deg);}
+    .ai-cur{display:inline-block;color:#ffc060;animation:ai-blink 1s steps(2) infinite;}@keyframes ai-blink{50%{opacity:0}}
     @media (max-width:820px){.ai-bubble{max-width:168px;font-size:11px;padding:8px 11px;border-radius:11px;}.ai-bubble::after{left:18px;}}`;
   document.head.appendChild(style);
   const bubble = document.createElement('div'); bubble.className = 'ai-bubble'; bubble.setAttribute('aria-hidden', 'true');
