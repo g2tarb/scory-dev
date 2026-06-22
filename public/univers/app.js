@@ -227,10 +227,72 @@ async function main() {
     if (!projectBgHost) return null;
     try {
       switch (index) {
-        case 0:
-          // Scory : pas de fond projet ni vidéo. C'est la sphère IA binaire (fx-layer) qui
-          // présente le site ; la démo de navigation est déclenchée au chargement (voir plus bas).
-          return null;
+        case 0: {
+          // Scory : vortex multicolore en fond, DERRIÈRE la sphère IA binaire (qui est en z-index 40).
+          const canvas = document.createElement("canvas");
+          canvas.className = "project-bg-canvas scory-vortex";
+          canvas.style.cssText = "display:none;position:absolute;inset:0;width:100%;height:100%;";
+          projectBgHost.appendChild(canvas);
+          const ctx = canvas.getContext("2d");
+          const TWO_PI = Math.PI * 2;
+          const COLORS = [
+            [255, 176, 59], [255, 94, 87], [201, 169, 98],
+            [158, 200, 255], [192, 132, 252], [107, 224, 216],
+          ];
+          const small = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
+          const ARMS = small ? 4 : 6;
+          const PTS = small ? 22 : 32;
+          let raf = null;
+          function resize() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = projectBgHost.offsetWidth * dpr;
+            canvas.height = projectBgHost.offsetHeight * dpr;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          }
+          const ro = new ResizeObserver(resize); ro.observe(projectBgHost);
+          function render(now) {
+            const W = projectBgHost.offsetWidth, H = projectBgHost.offsetHeight;
+            const cx = W / 2, cy = H * 0.34;                 // aligné sur le centre de la sphère
+            const t = reduced ? 0 : now / 1000;
+            const rMax = Math.min(W, H) * 0.46;
+            ctx.clearRect(0, 0, W, H);
+            // Halo central diffus (multicolore lent)
+            const hue = ctx.createRadialGradient(cx, cy, 0, cx, cy, rMax * 0.7);
+            hue.addColorStop(0, "rgba(255,150,70,0.18)");
+            hue.addColorStop(0.5, "rgba(192,132,252,0.10)");
+            hue.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = hue;
+            ctx.beginPath(); ctx.arc(cx, cy, rMax * 0.7, 0, TWO_PI); ctx.fill();
+            // Bras spiralés en additif → effet vortex
+            ctx.globalCompositeOperation = "lighter";
+            for (let a = 0; a < ARMS; a++) {
+              const col = COLORS[a % COLORS.length];
+              const base = (a / ARMS) * TWO_PI;
+              for (let i = 1; i <= PTS; i++) {
+                const f = i / PTS;
+                const r = f * rMax;
+                const ang = base + f * 7 + t * (0.45 + a * 0.05);
+                const x = cx + Math.cos(ang) * r;
+                const y = cy + Math.sin(ang) * r * 0.92;
+                const size = (1 - f) * (small ? 9 : 14) + 2;
+                ctx.globalAlpha = (1 - f) * 0.5;
+                const g = ctx.createRadialGradient(x, y, 0, x, y, size);
+                g.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},0.9)`);
+                g.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`);
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(x, y, size, 0, TWO_PI); ctx.fill();
+              }
+            }
+            ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+          }
+          function loop(now) { render(now); raf = requestAnimationFrame(loop); }
+          projectBgs[0] = {
+            canvas, orb: null,
+            start() { resize(); if (reduced) { render(0); return; } if (!raf) raf = requestAnimationFrame(loop); },
+            stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } },
+          };
+          break;
+        }
         case 1: { const { UniverseBackground } = await import("./universe.js"); projectBgs[1] = new UniverseBackground(projectBgHost); break; }
         case 2: { const { AuroraBorealis } = await import("./aurora.js"); projectBgs[2] = new AuroraBorealis(projectBgHost); break; }
         case 3: {
