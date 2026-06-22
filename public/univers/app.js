@@ -228,21 +228,19 @@ async function main() {
     try {
       switch (index) {
         case 0: {
-          // Scory : vortex multicolore en fond, DERRIÈRE la sphère IA binaire (qui est en z-index 40).
+          // Scory : TROU DE VER glitché en fond, DERRIÈRE la sphère IA (z-index 40) — l'IA en émerge.
           const canvas = document.createElement("canvas");
-          canvas.className = "project-bg-canvas scory-vortex";
+          canvas.className = "project-bg-canvas scory-worm";
           canvas.style.cssText = "display:none;position:absolute;inset:0;width:100%;height:100%;";
           projectBgHost.appendChild(canvas);
           const ctx = canvas.getContext("2d");
           const TWO_PI = Math.PI * 2;
-          const COLORS = [
-            [255, 176, 59], [255, 94, 87], [201, 169, 98],
-            [158, 200, 255], [192, 132, 252], [107, 224, 216],
-          ];
           const small = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
-          const ARMS = small ? 4 : 6;
-          const PTS = small ? 22 : 32;
-          let raf = null;
+          const WARM = ["255,176,59", "255,122,41", "255,94,87", "201,169,98"];
+          const GLITCH = ["120,230,255", "255,90,200"]; // cyan / magenta : RGB-split
+          let raf = null, last = 0, ringT = 0, glitchUntil = 0, glitchNext = 0;
+          const rings = [];   // anneaux du tunnel { r, a, c }
+          const streaks = []; // jaillissements { ang, r, sp, len, c }
           function resize() {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             canvas.width = projectBgHost.offsetWidth * dpr;
@@ -251,36 +249,53 @@ async function main() {
           }
           const ro = new ResizeObserver(resize); ro.observe(projectBgHost);
           function render(now) {
+            const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
             const W = projectBgHost.offsetWidth, H = projectBgHost.offsetHeight;
-            const cx = W / 2, cy = H * 0.34;                 // aligné sur le centre de la sphère
-            const t = reduced ? 0 : now / 1000;
-            const rMax = Math.min(W, H) * 0.46;
+            const cx = W / 2, cy = H * 0.34, rMax = Math.min(W, H) * 0.5;
             ctx.clearRect(0, 0, W, H);
-            // Halo central diffus (multicolore lent)
-            const hue = ctx.createRadialGradient(cx, cy, 0, cx, cy, rMax * 0.7);
-            hue.addColorStop(0, "rgba(255,150,70,0.18)");
-            hue.addColorStop(0.5, "rgba(192,132,252,0.10)");
-            hue.addColorStop(1, "rgba(0,0,0,0)");
-            ctx.fillStyle = hue;
-            ctx.beginPath(); ctx.arc(cx, cy, rMax * 0.7, 0, TWO_PI); ctx.fill();
-            // Bras spiralés en additif → effet vortex
+            if (now > glitchNext) { glitchUntil = now + 100 + Math.random() * 180; glitchNext = now + 1400 + Math.random() * 2800; }
+            const glitch = !reduced && now < glitchUntil;
+
+            // Bouche du trou de ver (halo chaud)
+            const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, rMax * 0.55);
+            core.addColorStop(0, "rgba(255,170,80,0.32)");
+            core.addColorStop(0.45, "rgba(255,110,60,0.12)");
+            core.addColorStop(1, "rgba(0,0,0,0)");
+            ctx.fillStyle = core; ctx.beginPath(); ctx.arc(cx, cy, rMax * 0.55, 0, TWO_PI); ctx.fill();
+
             ctx.globalCompositeOperation = "lighter";
-            for (let a = 0; a < ARMS; a++) {
-              const col = COLORS[a % COLORS.length];
-              const base = (a / ARMS) * TWO_PI;
-              for (let i = 1; i <= PTS; i++) {
-                const f = i / PTS;
-                const r = f * rMax;
-                const ang = base + f * 7 + t * (0.45 + a * 0.05);
-                const x = cx + Math.cos(ang) * r;
-                const y = cy + Math.sin(ang) * r * 0.92;
-                const size = (1 - f) * (small ? 9 : 14) + 2;
-                ctx.globalAlpha = (1 - f) * 0.5;
-                const g = ctx.createRadialGradient(x, y, 0, x, y, size);
-                g.addColorStop(0, `rgba(${col[0]},${col[1]},${col[2]},0.9)`);
-                g.addColorStop(1, `rgba(${col[0]},${col[1]},${col[2]},0)`);
-                ctx.fillStyle = g;
-                ctx.beginPath(); ctx.arc(x, y, size, 0, TWO_PI); ctx.fill();
+            // Anneaux du tunnel : naissent au centre, foncent vers l'extérieur (l'IA émerge)
+            ringT += dt;
+            if (!reduced && ringT > 0.15) { ringT = 0; rings.push({ r: 5, a: 1, c: WARM[(rings.length) % WARM.length] }); }
+            if (reduced && rings.length === 0) for (let k = 0; k < 5; k++) rings.push({ r: rMax * (k / 5) + 10, a: 1 - k / 6, c: WARM[k % WARM.length] });
+            for (let i = rings.length - 1; i >= 0; i--) {
+              const rg = rings[i];
+              if (!reduced) { rg.r += dt * rMax * 0.95; rg.a -= dt * 0.5; }
+              if (rg.a <= 0 || rg.r > rMax * 1.25) { rings.splice(i, 1); continue; }
+              const gx = glitch ? (Math.random() - 0.5) * 7 : 0;
+              ctx.globalAlpha = rg.a * 0.5;
+              ctx.lineWidth = 1.3 + (1 - rg.a) * 2.2;
+              ctx.strokeStyle = `rgba(${rg.c || WARM[0]},1)`;
+              ctx.beginPath(); ctx.ellipse(cx + gx, cy, rg.r, rg.r * 0.74, 0, 0, TWO_PI); ctx.stroke();
+            }
+            // Streaks radiaux (ce qui jaillit du trou)
+            if (!reduced && streaks.length < (small ? 14 : 26) && Math.random() < 0.45) {
+              streaks.push({ ang: Math.random() * TWO_PI, r: 8, sp: 0.6 + Math.random() * 0.9, len: 18 + Math.random() * 46, c: WARM[(streaks.length) % WARM.length] });
+            }
+            for (let i = streaks.length - 1; i >= 0; i--) {
+              const s = streaks[i]; s.r += dt * rMax * s.sp;
+              if (s.r > rMax) { streaks.splice(i, 1); continue; }
+              const a = Math.max(0, 1 - s.r / rMax);
+              const co = Math.cos(s.ang), si = Math.sin(s.ang) * 0.74;
+              ctx.globalAlpha = a * 0.6; ctx.lineWidth = 1.4; ctx.strokeStyle = `rgba(${s.c},1)`;
+              ctx.beginPath(); ctx.moveTo(cx + co * s.r, cy + si * s.r); ctx.lineTo(cx + co * (s.r + s.len), cy + si * (s.r + s.len)); ctx.stroke();
+            }
+            // Glitch : tranches RGB-split cyan/magenta
+            if (glitch) {
+              for (let g = 0; g < 4; g++) {
+                const gy = cy - rMax * 0.7 + Math.random() * rMax * 1.4;
+                ctx.globalAlpha = 0.45; ctx.fillStyle = `rgba(${GLITCH[g % 2]},0.5)`;
+                ctx.fillRect(cx - rMax + (Math.random() - 0.5) * 36, gy, rMax * 2, 1.5 + Math.random() * 7);
               }
             }
             ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
