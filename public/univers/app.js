@@ -238,9 +238,7 @@ async function main() {
           const small = window.matchMedia("(max-width: 820px), (pointer: coarse)").matches;
           const WARM = ["255,176,59", "255,122,41", "255,94,87", "201,169,98"];
           const GLITCH = ["120,230,255", "255,90,200"]; // cyan / magenta : RGB-split
-          let raf = null, last = 0, ringT = 0, glitchUntil = 0, glitchNext = 0;
-          const rings = [];   // anneaux du tunnel { r, a, c }
-          const streaks = []; // jaillissements { ang, r, sp, len, c }
+          let raf = null, last = 0, glitchUntil = 0, glitchNext = 0;
           function resize() {
             const dpr = Math.min(window.devicePixelRatio || 1, 2);
             canvas.width = projectBgHost.offsetWidth * dpr;
@@ -249,53 +247,51 @@ async function main() {
           }
           const ro = new ResizeObserver(resize); ro.observe(projectBgHost);
           function render(now) {
-            const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
+            last = now;
             const W = projectBgHost.offsetWidth, H = projectBgHost.offsetHeight;
-            const cx = W / 2, cy = H * 0.34, rMax = Math.min(W, H) * 0.5;
+            const cx = W / 2, cy = H * 0.34, rMax = Math.min(W, H) * 0.5; // grand : ~moitié de l'espace
+            const t = reduced ? 0 : now / 1000;
             ctx.clearRect(0, 0, W, H);
             if (now > glitchNext) { glitchUntil = now + 100 + Math.random() * 180; glitchNext = now + 1400 + Math.random() * 2800; }
             const glitch = !reduced && now < glitchUntil;
+            const gx = glitch ? (Math.random() - 0.5) * 6 : 0;
+            const squash = 0.9; // vu de face (presque rond)
 
-            // Bouche du trou de ver (halo chaud)
-            const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, rMax * 0.55);
-            core.addColorStop(0, "rgba(255,170,80,0.32)");
-            core.addColorStop(0.45, "rgba(255,110,60,0.12)");
+            // Gorge lumineuse de l'entonnoir — l'IA en sort
+            const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, rMax * 0.6);
+            core.addColorStop(0, "rgba(255,190,110,0.42)");
+            core.addColorStop(0.3, "rgba(255,120,60,0.16)");
             core.addColorStop(1, "rgba(0,0,0,0)");
-            ctx.fillStyle = core; ctx.beginPath(); ctx.arc(cx, cy, rMax * 0.55, 0, TWO_PI); ctx.fill();
+            ctx.fillStyle = core; ctx.beginPath(); ctx.arc(cx, cy, rMax * 0.6, 0, TWO_PI); ctx.fill();
 
+            // Entonnoir / vortex de face : bras spiralés qui s'enroulent vers la gorge
             ctx.globalCompositeOperation = "lighter";
-            // Anneaux du tunnel : naissent au centre, foncent vers l'extérieur (l'IA émerge)
-            ringT += dt;
-            if (!reduced && ringT > 0.15) { ringT = 0; rings.push({ r: 5, a: 1, c: WARM[(rings.length) % WARM.length] }); }
-            if (reduced && rings.length === 0) for (let k = 0; k < 5; k++) rings.push({ r: rMax * (k / 5) + 10, a: 1 - k / 6, c: WARM[k % WARM.length] });
-            for (let i = rings.length - 1; i >= 0; i--) {
-              const rg = rings[i];
-              if (!reduced) { rg.r += dt * rMax * 0.95; rg.a -= dt * 0.5; }
-              if (rg.a <= 0 || rg.r > rMax * 1.25) { rings.splice(i, 1); continue; }
-              const gx = glitch ? (Math.random() - 0.5) * 7 : 0;
-              ctx.globalAlpha = rg.a * 0.5;
-              ctx.lineWidth = 1.3 + (1 - rg.a) * 2.2;
-              ctx.strokeStyle = `rgba(${rg.c || WARM[0]},1)`;
-              ctx.beginPath(); ctx.ellipse(cx + gx, cy, rg.r, rg.r * 0.74, 0, 0, TWO_PI); ctx.stroke();
+            const ARMS = small ? 3 : 4, N = small ? 70 : 110, TURNS = small ? 5 : 7;
+            for (let a = 0; a < ARMS; a++) {
+              const phase = (a / ARMS) * TWO_PI;
+              const c = WARM[a % WARM.length];
+              ctx.beginPath();
+              for (let i = 0; i <= N; i++) {
+                const f = i / N;                               // 0 = gorge, 1 = bord
+                const r = rMax * f;
+                const ang = phase + f * TURNS * TWO_PI - t * 0.6; // enroulement + rotation
+                const x = cx + Math.cos(ang) * r + gx;
+                const y = cy + Math.sin(ang) * r * squash;
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+              }
+              ctx.globalAlpha = 0.5; ctx.lineWidth = small ? 1.6 : 2.4;
+              ctx.strokeStyle = `rgba(${c},1)`;
+              ctx.shadowColor = `rgba(${c},0.7)`; ctx.shadowBlur = small ? 4 : 9;
+              ctx.stroke();
             }
-            // Streaks radiaux (ce qui jaillit du trou)
-            if (!reduced && streaks.length < (small ? 14 : 26) && Math.random() < 0.45) {
-              streaks.push({ ang: Math.random() * TWO_PI, r: 8, sp: 0.6 + Math.random() * 0.9, len: 18 + Math.random() * 46, c: WARM[(streaks.length) % WARM.length] });
-            }
-            for (let i = streaks.length - 1; i >= 0; i--) {
-              const s = streaks[i]; s.r += dt * rMax * s.sp;
-              if (s.r > rMax) { streaks.splice(i, 1); continue; }
-              const a = Math.max(0, 1 - s.r / rMax);
-              const co = Math.cos(s.ang), si = Math.sin(s.ang) * 0.74;
-              ctx.globalAlpha = a * 0.6; ctx.lineWidth = 1.4; ctx.strokeStyle = `rgba(${s.c},1)`;
-              ctx.beginPath(); ctx.moveTo(cx + co * s.r, cy + si * s.r); ctx.lineTo(cx + co * (s.r + s.len), cy + si * (s.r + s.len)); ctx.stroke();
-            }
+            ctx.shadowBlur = 0;
+
             // Glitch : tranches RGB-split cyan/magenta
             if (glitch) {
               for (let g = 0; g < 4; g++) {
-                const gy = cy - rMax * 0.7 + Math.random() * rMax * 1.4;
+                const gy = cy - rMax + Math.random() * rMax * 2;
                 ctx.globalAlpha = 0.45; ctx.fillStyle = `rgba(${GLITCH[g % 2]},0.5)`;
-                ctx.fillRect(cx - rMax + (Math.random() - 0.5) * 36, gy, rMax * 2, 1.5 + Math.random() * 7);
+                ctx.fillRect(cx - rMax + (Math.random() - 0.5) * 40, gy, rMax * 2, 1.5 + Math.random() * 7);
               }
             }
             ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
