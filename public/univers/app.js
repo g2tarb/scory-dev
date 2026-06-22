@@ -1434,7 +1434,7 @@ async function main() {
           entry.target.classList.add("is-revealed");
           // Mobile: stagger les enfants pour un effet cascade
           if (isMobileView && !reduced) {
-            const children = entry.target.querySelectorAll(".stat-item, .process-card, .about-value, .contact-card, .service-row, .testimonial");
+            const children = entry.target.querySelectorAll(".stat-item, .process-card, .about-value, .contact-card, .service-row");
             children.forEach((child, i) => {
               child.style.opacity = "0";
               child.style.transform = "translateY(20px)";
@@ -1453,7 +1453,7 @@ async function main() {
   }
 
   /* ---------- Teleportation sections (vide → mi-vide → rempli + rebond) ---------- */
-  const teleportSections = document.querySelectorAll(".stats-section, .services-section, .process-section, .about-section, .testimonials-section");
+  const teleportSections = document.querySelectorAll(".stats-section, .services-section, .process-section, .about-section");
   if (teleportSections.length > 0 && !reduced && !ecoMode) {
     teleportSections.forEach((section) => {
       gsap.set(section, { opacity: 0, scale: 0.3, y: 60, filter: "blur(8px)" });
@@ -1473,7 +1473,7 @@ async function main() {
           onComplete: () => gsap.set(section, { clearProps: "all" }),
         });
         // Stagger enfants (cartes) pour un effet cascade
-        const cards = section.querySelectorAll(".glass-panel, .section-title, .about-mission, .about-philosophy, .about-values, .stat-item, .service-row, .service-divider, .testimonial");
+        const cards = section.querySelectorAll(".glass-panel, .section-title, .about-mission, .about-philosophy, .about-values, .stat-item, .service-row, .service-divider");
         if (cards.length > 0) {
           gsap.fromTo(cards,
             { opacity: 0, y: 30, scale: 0.8 },

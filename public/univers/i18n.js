@@ -35,7 +35,6 @@ export const TRANSLATIONS = {
   "stat.projets": { fr: "Projets livres", en: "Projects shipped" },
   "stat.template": { fr: "Template utilise", en: "Template used" },
   // Services
-  "services.title": { fr: "Ce que je fais", en: "What I do" },
   "service.1.name": { fr: "Site vitrine premium", en: "Premium showcase site" },
   "service.1.price": { fr: "Premium", en: "Premium" },
   "service.1.desc": { fr: "Design sur mesure, responsive, animations, SEO. Votre image, sublimee.", en: "Bespoke design, responsive, animations, SEO. Your brand, elevated." },
@@ -90,7 +89,6 @@ export const TRANSLATIONS = {
   "booking.name": { fr: "Votre nom", en: "Your name" },
   "booking.email": { fr: "Votre email", en: "Your email" },
   "booking.msg": { fr: "Un mot sur votre projet (optionnel)", en: "A word about your project (optional)" },
-  "booking.outside": { fr: "Cliquez en dehors pour fermer", en: "Click outside to close" },
   // Footer
   "footer.signature": {
     fr: "Votre vision, mon code. Sans limites.",
@@ -155,7 +153,7 @@ export const CHAT_FLOW = {
 export const CHAT_TX = {
   fr: {
     contactIntro: "Top, j'ai ce qu'il faut. Laisse-moi tes coordonnees, je te recontacte sous 24h.",
-    namePh: "Ton prenom...", emailPh: "ton@email.com", msgPh: "Un mot de plus ? (optionnel)",
+    emailPh: "ton@email.com", msgPh: "Un mot de plus ? (optionnel)",
     submit: "Envoyer", submitting: "Envoi...", invalidEmail: "Email invalide",
     done: "Merci ! Je te reviens vite.", restart: "Recommencer",
     summaryHeader: "Resume de ta demande",
@@ -166,7 +164,7 @@ export const CHAT_TX = {
   },
   en: {
     contactIntro: "Got it. Drop your contact info, I'll get back to you within 24h.",
-    namePh: "Your first name...", emailPh: "you@email.com", msgPh: "Anything else? (optional)",
+    emailPh: "you@email.com", msgPh: "Anything else? (optional)",
     submit: "Send", submitting: "Sending...", invalidEmail: "Invalid email",
     done: "Thanks! I'll be in touch.", restart: "Start over",
     summaryHeader: "Your request",
