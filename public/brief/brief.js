@@ -5,8 +5,22 @@
 import { initFxLayer } from '../univers/fx-layer.js';
 
 const TOTAL = 6;
-const TYPES = ['Site vitrine', 'E-commerce', 'Web app / SaaS', 'Application mobile', 'Refonte', 'Autre'];
-const GOALS = ['Vendre en ligne', 'Générer des leads', 'Image de marque', 'Recruter', 'Me lancer', 'Autre'];
+const TYPES = [
+  { v: 'Site vitrine', d: 'Présenter votre activité et inspirer confiance. Pour être trouvé sur Google et convaincre.' },
+  { v: 'E-commerce', d: 'Vendre vos produits en ligne : catalogue, panier, paiement sécurisé, commandes.' },
+  { v: 'Web app / SaaS', d: 'Une vraie application : comptes, tableau de bord, abonnements, données.' },
+  { v: 'Application mobile', d: 'Une app installable iOS / Android : notifications, caméra, mode hors-ligne.' },
+  { v: 'Refonte', d: 'Moderniser un site existant : design, vitesse, SEO, plus de conversions.' },
+  { v: 'Autre', d: 'Une idée hybride ou particulière ? On la cadre ensemble.' },
+];
+const GOALS = [
+  { v: 'Vendre en ligne', d: 'Transformer les visites en achats ou en commandes.' },
+  { v: 'Générer des leads', d: 'Capter des contacts qualifiés : formulaire, prise de RDV, devis.' },
+  { v: 'Image de marque', d: 'Asseoir votre crédibilité et marquer les esprits.' },
+  { v: 'Recruter', d: 'Attirer et convaincre les bons candidats.' },
+  { v: 'Me lancer', d: 'Donner vie à un nouveau projet, valider une idée.' },
+  { v: 'Autre', d: "Un objectif différent ? Dites-le, on s'adapte." },
+];
 const FEATURES = ['Prise de RDV', 'Paiement en ligne', 'Espace membre', 'Blog', 'Multilingue', 'Agent IA', 'Animations 3D', 'SEO avancé', 'Tableau de bord', 'Notifications'];
 const BUDGETS = ['Moins de 2 000 €', '2 à 5 000 €', '5 à 10 000 €', 'Plus de 10 000 €', 'À définir'];
 const TIMELINES = ['Au plus vite', 'Sous 1 mois', '2 à 3 mois', 'Pas pressé'];
@@ -91,13 +105,16 @@ for (let i = 0; i < TOTAL; i++) dots.appendChild(el('span', 'brief-dot'));
 
 /* ---------- Rendu ---------- */
 function choiceGrid(items, isMulti, getActive, onPick) {
-  const grid = el('div', 'brief-grid');
+  const hasDesc = items.some((it) => it && typeof it === 'object' && it.d);
+  const grid = el('div', 'brief-grid' + (hasDesc ? ' brief-grid--desc' : ''));
   items.forEach((it) => {
     const v = typeof it === 'string' ? it : it.v;
-    const icon = typeof it === 'string' ? null : it.i;
-    const b = el('button', 'brief-choice'); b.type = 'button';
-    if (icon) b.appendChild(el('span', 'brief-choice__i', icon));
-    b.appendChild(el('span', 'brief-choice__l', v));
+    const d = typeof it === 'object' ? it.d : null;
+    const b = el('button', 'brief-choice' + (d ? ' brief-choice--desc' : '')); b.type = 'button';
+    const txt = el('span', 'brief-choice__txt');
+    txt.appendChild(el('span', 'brief-choice__l', v));
+    if (d) txt.appendChild(el('span', 'brief-choice__d', d));
+    b.appendChild(txt);
     const sync = () => b.classList.toggle('is-on', getActive(v));
     sync();
     b.addEventListener('click', () => { onPick(v); if (isMulti) sync(); });

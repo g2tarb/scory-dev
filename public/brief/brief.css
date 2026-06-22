@@ -84,6 +84,13 @@ a { color: inherit; }
   font-size: 12px; color: var(--accent);
 }
 .brief-choice__l { font-weight: 500; }
+/* Cartes avec description (Type, Objectif) : le client comprend la différence d'un coup d'œil. */
+.brief-choice__txt { display: flex; flex-direction: column; gap: 4px; }
+.brief-grid--desc { grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); }
+.brief-choice--desc { align-items: flex-start; padding-top: 15px; padding-bottom: 15px; color: var(--text); }
+.brief-choice--desc.is-on::after { top: 16px; transform: none; }
+.brief-choice__d { font-size: 12.5px; line-height: 1.4; font-weight: 400; color: var(--text-dim); }
+.brief-choice.is-on .brief-choice__d { color: rgba(255, 241, 224, 0.72); }
 
 .brief-field { display: block; margin-bottom: 12px; }
 .brief-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
