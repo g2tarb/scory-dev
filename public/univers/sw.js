@@ -1,8 +1,8 @@
 /**
- * SCORY — Service Worker v12
+ * SCORY — Service Worker v13
  * Cache les assets statiques + CDN critiques pour resilience totale.
  */
-const CACHE_NAME = "scory-v26";
+const CACHE_NAME = "scory-v27";
 const STATIC_ASSETS = [
   "./",
   "./index.html",
@@ -18,6 +18,9 @@ const STATIC_ASSETS = [
   "./universe.js",
   "./cursor.js",
   "./audio.js",
+  "./fx-layer.js",
+  "./return-portal.js",
+  "./retro-tv.js",
   "./manifest.json",
   "./fondAnime/secureEats.mp4",
 ];

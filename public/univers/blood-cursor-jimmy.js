@@ -429,10 +429,7 @@
     if ('ontouchstart' in window) {
         canvas.style.display = 'none';
         document.body.style.cursor = 'auto';
-        if (oldCursor) oldCursor.style.display = 'none';
     }
-
-    console.log('[BLOOD] Three.js blood cursor ready (hidden until JIMMY project)');
 
     // Global toggle functions
     window.enableBloodCursor = function() {

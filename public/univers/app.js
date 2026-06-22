@@ -7,7 +7,7 @@
 import gsap from "gsap";
 import Lenis from "lenis";
 import { PROJECTS as PROJECTS_ALL, THEMES } from "./data.js";
-import { getLang, setLang, t } from "./i18n.js";
+import { getLang, setLang } from "./i18n.js";
 import { initCursor, initMagneticArrows } from "./cursor.js";
 import { initAudio } from "./audio.js";
 
@@ -15,7 +15,6 @@ import { initAudio } from "./audio.js";
 function PROJECTS() { return PROJECTS_ALL[getLang()] || PROJECTS_ALL.fr; }
 
 /* ---------- Constantes ---------- */
-const EASE_SPRING_HEAVY = "back.out(1.32)";
 const LOADER_DELAY_MS = 1500;
 const CLOSE_OUTSIDE_DELAY_MS = 600;
 const DISC_SPIN_SPEED = 0.06;
@@ -209,7 +208,6 @@ async function main() {
 
   const reduced = prefersReducedMotion();
   const ecoMode = document.body.classList.contains("eco-mode");
-  const skipNeural = ecoMode;
   const loader = document.getElementById("loader");
   const projectBgHost = document.getElementById("project-bg-host");
 
